@@ -10,7 +10,6 @@
     "postinstall": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1",
     "deploy": "git add . && git commit -m Heroku && git push heroku master"
-
   },
   "author": "Evelina",
   "license": "ISC",
@@ -18,7 +17,7 @@
     "@types/dotenv": "^8.2.0",
     "@types/node": "^20.2.1",
     "npm-run-all": "^4.1.5",
-    "typescript": "^5.0.4"
+    "typescript": "^5.1.3"
   },
   "dependencies": {
     "@sequelize/core": "^7.0.0-alpha.23",
