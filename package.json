@@ -7,7 +7,7 @@
     "build": "tsc",
     "start-dev": "npm-run-all --parallel build node ./dist/app.js",
     "start": "node ./dist/app.js",
-    "postinstall": "tsc",
+    "postinstall": "npm i typecript && tsc",
     "test": "echo \"Error: no test specified\" && exit 1",
     "deploy": "git add . && git commit -m Heroku && git push heroku master"
   },
