@@ -77,7 +77,7 @@ class Bot{
                     }
                 }
             }, 180000)
-            console.log('middleware')
+
 
             await next()
         })
@@ -120,7 +120,7 @@ class Bot{
         await this.serverStart()
         await this.routing()
 
-
+console.log(this.bot.session)
 
         this.commands = [ new StartCommand(this.bot), new ProductsCommand(this.bot), new OrdersCommand(this.bot), new ReviewsCommand(this.bot)]
         for(const command of this.commands){
