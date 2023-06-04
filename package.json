@@ -8,7 +8,7 @@
     "start-dev": "npm-run-all --parallel build node ./dist/app.js",
     "start": "node ./dist/app.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "deploy": "npm run build && git add . && git commit -m Heroku && git push heroku master"
+    "deploy": "git add . && git commit -m Heroku && git push heroku master"
   },
   "author": "Evelina",
   "license": "ISC",
