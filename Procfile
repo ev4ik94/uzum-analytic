@@ -1,1 +1,1 @@
-web: ./node_modules/.bin/tsc --module commonjs --outDir dist/ --noImplicitAny --sourceMap --target ES5 lib/index.ts && node dist/index.js
+web: npm start
