@@ -11,11 +11,11 @@ import OrdersService from "./orders.service";
 import PermissionService from "./permissions.service";
 
 
-const configService = new ConfigService()
 
-const ReviewService = new ReviewsService(configService)
-const OrdersServices = new OrdersService(configService)
-const PermissionServiceData = new PermissionService(configService)
+
+const ReviewService = new ReviewsService()
+const OrdersServices = new OrdersService()
+const PermissionServiceData = new PermissionService()
 
 export  default class UpdatesService{
 

@@ -6,7 +6,7 @@ import OrdersService from "../services/orders.service";
 import {month, NumReplace} from "../utils";
 import ReviewsService from "../services/reviews.service";
 
-const reviewsService = new ReviewsService(new ConfigService())
+const reviewsService = new ReviewsService()
 
 
 export class ReviewsCommand extends Command{

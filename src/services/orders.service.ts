@@ -4,7 +4,7 @@ import {IOrders} from '../context/context.interface'
 
 
 export  default class OrdersService{
-    constructor(private readonly configService: IConfig) {
+    constructor() {
     }
 
     async getOrders(data:{shopId:number, token:string, status:string, ctx:any, page?:string}){
@@ -22,11 +22,11 @@ export  default class OrdersService{
             let response_orders:any;
 
             if(data.status==='ALL'){
-                response_orders = await fetch(`${this.configService.get('API')}/seller/finance/orders?group=false&size=${params.size}&page=${params.page}`, {
+                response_orders = await fetch(`${process.env.API}/seller/finance/orders?group=false&size=${params.size}&page=${params.page}`, {
                     headers: {'Authorization': `Bearer ${data.token}`, 'accept-language': 'ru-RU'}
                 });
             }else{
-                response_orders = await fetch(`${this.configService.get('API')}/seller/finance/orders?group=false&size=${params.size}&page=${params.page}&statuses=${params.statuses}`, {
+                response_orders = await fetch(`${process.env.API}/seller/finance/orders?group=false&size=${params.size}&page=${params.page}&statuses=${params.statuses}`, {
                     headers: {'Authorization': `Bearer ${data.token}`, 'accept-language': 'ru-RU'}
                 });
             }

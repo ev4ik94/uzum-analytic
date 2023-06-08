@@ -17,17 +17,19 @@ import {ReviewsCommand} from "./command/reviews.command";
 import ReviewsService from "./services/reviews.service";
 import UpdatesService from "./services/updates.service";
 import PermissionService from "./services/permissions.service";
+import dotenv from "dotenv"
 
-const AuthService = new AuthenticatedService(new ConfigService())
-const ReviewService = new ReviewsService(new ConfigService())
-const OrdersServices = new OrdersService(new ConfigService())
+const AuthService = new AuthenticatedService()
+const ReviewService = new ReviewsService()
+const OrdersServices = new OrdersService()
 const UpdateService = new UpdatesService()
-const PermissionServiceData = new PermissionService(new ConfigService())
+const PermissionServiceData = new PermissionService()
 
 
 const app:Express = express()
 app.use(express.json())
 app.use(cors())
+dotenv.config()
 
 
 class Bot{

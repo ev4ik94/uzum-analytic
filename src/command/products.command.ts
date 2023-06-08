@@ -5,7 +5,7 @@ import {ConfigService} from "../config/config.service";
 import ProductsService from "../services/products.service";
 import AuthenticatedService from "../services/authenticated.service";
 
-const productsService = new ProductsService(new ConfigService(), new AuthenticatedService(new ConfigService()))
+const productsService = new ProductsService(new AuthenticatedService())
 
 
 export class ProductsCommand extends Command{

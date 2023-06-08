@@ -4,7 +4,7 @@ import {IReview} from "../context/context.interface";
 
 
 export  default class ReviewsService{
-    constructor(private readonly configService: IConfig) {
+    constructor() {
     }
 
     async getReviews(data:{shopId:number, token:string, status:string}){
@@ -16,11 +16,11 @@ export  default class ReviewsService{
 
             if(data.status==='NEW'){
 
-                response_reviews = await fetch(`${this.configService.get('API')}/seller/product-reviews?page=0&filter=NEW&shopIds=${data.shopId}&size=20`, {
+                response_reviews = await fetch(`${process.env.API}/seller/product-reviews?page=0&filter=NEW&shopIds=${data.shopId}&size=20`, {
                     headers: {'Authorization': `Bearer ${data.token}`, 'accept-language': 'ru-RU'}
                 });
             }else{
-                response_reviews = await fetch(`${this.configService.get('API')}/seller/product-reviews?page=0&filter=${data.status}&shopIds=${data.shopId}&size=20`, {
+                response_reviews = await fetch(`${process.env.API}/seller/product-reviews?page=0&filter=${data.status}&shopIds=${data.shopId}&size=20`, {
                     headers: {'Authorization': `Bearer ${data.token}`, 'accept-language': 'ru-RU'}
                 });
             }
@@ -53,7 +53,7 @@ export  default class ReviewsService{
     async getReviewById(data:{token:string, reviewId:string}){
         try{
 
-            const response_reviews = await fetch(`${this.configService.get('API')}/seller/product-reviews/review/${data.reviewId}`, {
+            const response_reviews = await fetch(`${process.env.API}/seller/product-reviews/review/${data.reviewId}`, {
                 headers: {'Authorization': `Bearer ${data.token}`, 'accept-language': 'ru-RU'}
             });
 
@@ -72,7 +72,7 @@ export  default class ReviewsService{
     async reviewMark(data:{token:string, reviewId: string}){
 
         try{
-            const response = await fetch(`${this.configService.get('API')}/seller/product-reviews/mark`, {
+            const response = await fetch(`${process.env.API}/seller/product-reviews/mark`, {
                 method: 'post',
                 body: JSON.stringify({
                     action: "READ",
@@ -93,7 +93,7 @@ export  default class ReviewsService{
     async reviewAnswer(data:{token:string, reviewId:string, text:string}){
         try{
 
-            const response_reviews = await fetch(`${this.configService.get('API')}/seller/product-reviews/reply/create`, {
+            const response_reviews = await fetch(`${process.env.API}/seller/product-reviews/reply/create`, {
                 method: 'post',
                 body: JSON.stringify([
                     {

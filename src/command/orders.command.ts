@@ -6,7 +6,7 @@ import OrdersService from "../services/orders.service";
 import {DateFormatter, HTMLFormatter, month, NumReplace} from "../utils";
 import AuthenticatedService from "../services/authenticated.service";
 
-const ordersService = new OrdersService(new ConfigService())
+const ordersService = new OrdersService()
 
 
 export class OrdersCommand extends Command{

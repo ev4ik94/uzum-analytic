@@ -9,7 +9,7 @@ import moment from "moment";
 
 export  default class PermissionsService{
 
-    constructor(private readonly configService: IConfig) {
+    constructor() {
         //@ts-ignore
         Date.prototype.addDays = function(days:number){
             var date_r = new Date(this.valueOf());
