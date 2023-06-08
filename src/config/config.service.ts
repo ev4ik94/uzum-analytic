@@ -9,7 +9,9 @@ export class ConfigService implements IConfig{
         const {error, parsed} = config();
 
         if(error){
-            throw new Error('Не найден файл .env')
+            //@ts-ignore
+            this.configs = process.env
+            //throw new Error('Не найден файл .env')
         }
 
         if(!parsed){
