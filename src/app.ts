@@ -36,7 +36,7 @@ class Bot{
     constructor() {
         console.log('БОТ запущен')
 
-        this.bot = new Telegraf<IBotContext>(process.env.TOKEN);
+        this.bot = new Telegraf<IBotContext>(process.env.TOKEN!);
 
         this.bot.use((new LocalSession({ database: 'sessions.json' })).middleware())
 
