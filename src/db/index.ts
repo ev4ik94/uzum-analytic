@@ -1,7 +1,7 @@
 import {Sequelize} from "sequelize";
-import {ConfigService} from "../config/config.service";
+import dotenv from "dotenv"
+dotenv.config()
 
-const config = new ConfigService()
 console.log(process.env.USER)
 
 

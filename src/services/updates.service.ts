@@ -3,7 +3,6 @@ import {Users, Statuses} from "../models";
 import {IBotContext} from "../context/context.interface";
 import moment from "moment";
 import {Markup} from "telegraf";
-import {ConfigService} from "../config/config.service";
 import AuthenticatedService from "./authenticated.service";
 import ReviewsService from "./reviews.service";
 import OrdersService from "./orders.service";

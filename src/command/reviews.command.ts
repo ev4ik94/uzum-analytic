@@ -1,7 +1,6 @@
 import {Command} from "./command.class";
 import {Markup, Telegraf} from "telegraf";
 import {IBotContext, IOrders, IResponseProduct, IReview} from "../context/context.interface";
-import {ConfigService} from "../config/config.service";
 import OrdersService from "../services/orders.service";
 import {month, NumReplace} from "../utils";
 import ReviewsService from "../services/reviews.service";

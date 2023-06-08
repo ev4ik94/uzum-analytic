@@ -2,11 +2,8 @@ import {Command} from "./command.class";
 
 import {Markup, Telegraf} from "telegraf";
 import {IBotContext} from "../context/context.interface";
-import {ConfigService} from "../config/config.service";
 import UpdatesService from "../services/updates.service";
 
-
-const configService = new ConfigService()
 
 
 const UpdateService = new UpdatesService()
@@ -34,7 +31,7 @@ export class StartCommand extends Command{
                 return await ctx.reply('Для начала работы с ботом, вам необходимо авторизоваться', {
                     reply_markup:{
                         inline_keyboard: [
-                            [{text: 'Авторизоваться', web_app:{url:configService.get('FRONT_URL')}}]
+                            [{text: 'Авторизоваться', web_app:{url:process.env.FRONT_URL!}}]
                         ]
                     }
                 })
