@@ -62,6 +62,7 @@ class Bot{
                 }
 
             }else{
+                console.log('NO authorize')
                 //@ts-ignore
                 if(ctx.update&&ctx.update.message){
                     //@ts-ignore
