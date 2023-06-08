@@ -35,7 +35,7 @@ class Bot{
     commands: Command[] = []
     constructor() {
         console.log('БОТ запущен')
-
+        console.log(process.env.PORT)
         this.bot = new Telegraf<IBotContext>(process.env.TOKEN!);
 
         this.bot.use((new LocalSession({ database: 'sessions.json' })).middleware())
@@ -80,8 +80,11 @@ class Bot{
     }
 
     async serverStart(){
-        console.log(process.env.PORT)
+
         const PORT = process.env.PORT||8080;
+        app.on("error", (err) =>
+           console.log(err)
+        )
         app.listen(PORT, ()=>{
             console.log('Server listen on port '+PORT)
         })
