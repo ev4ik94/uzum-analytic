@@ -6,7 +6,7 @@ import OrdersService from "../services/orders.service";
 import {DateFormatter, HTMLFormatter, month, NumReplace} from "../utils";
 import AuthenticatedService from "../services/authenticated.service";
 
-const ordersService = new OrdersService(new ConfigService(), new AuthenticatedService(new ConfigService()))
+const ordersService = new OrdersService(new ConfigService())
 
 
 export class OrdersCommand extends Command{
@@ -16,13 +16,15 @@ export class OrdersCommand extends Command{
 
     handle() {
 
-        const action_orders_regexp = new RegExp(/^order/)
+        const action_orders_regexp = new RegExp(/^orderstatus/)
         const action_orders_view_regexp = new RegExp(/^orderView/)
+        const action_orders_pagination = new RegExp(/^orderpage/)
+        const action_orders_get = new RegExp(/^(orderpage)|(orderstatus)/)
 
         const buttons_orders = [
-            Markup.button.callback('В обработке 🕒', `orderPROCESSING`),
-            Markup.button.callback('Одобренные ✅', `orderTO_WITHDRAW`),
-            Markup.button.callback('Вернули ❌', `orderCANCELED`)
+            Markup.button.callback('В обработке 🕒', `orderstatusPROCESSING`),
+            Markup.button.callback('Одобренные ✅', `orderstatusTO_WITHDRAW`),
+            Markup.button.callback('Вернули ❌', `orderstatusCANCELED`)
         ]
 
         this.bot.hears('/orders', async (ctx)=>{
@@ -57,44 +59,55 @@ export class OrdersCommand extends Command{
 
                 if(elem.status==='CANCELED'){
 
-                    message = `\n<strong>Причина отказа: ${elem.returnCause||'Причина не указана'}</strong>\n\n<b>SKU:</b> ${elem.skuTitle}\n<b>Товар:</b> ${elem.productTitle}\n<b>Цена:</b> ${NumReplace(elem.sellPrice)} сум\n<b>Сумма к выводу:</b> ${NumReplace(elem.sellerProfit)} сум\n\n<b>Дата заказа:</b> ${dateFormater}\n<b>Дата Получения:</b> ${dateFormaterIssue}\n\n-------------------------------------`
+                    message = `\n<strong>Причина отказа: ${elem.returnCause||'Причина не указана'}</strong>\n\n<b>SKU:</b> ${elem.skuTitle}\n<b>Товар:</b> ${elem.productTitle}\n<b>Цена:</b> ${NumReplace(elem.sellPrice)} сум\n<b>Сумма к выводу:</b> ${NumReplace(elem.sellerProfit)} сум\n\n<b>Дата заказа:</b> ${dateFormater}\n<b>Дата Получения:</b> ${dateFormaterIssue}\n\n`
                 }else if(elem.dateIssued){
-                   message = `\n<b>SKU:</b> ${elem.skuTitle}\n<b>Товар:</b> ${elem.productTitle}\n<b>Цена:</b> ${NumReplace(elem.sellPrice)} сум\n<b>Сумма к выводу:</b> ${NumReplace(elem.sellerProfit)} сум\n\n<b>Дата заказа:</b> ${dateFormater}\n<b>Дата Получения:</b> ${dateFormaterIssue}\n\n-------------------------------------`
+                   message = `\n<b>SKU:</b> ${elem.skuTitle}\n<b>Товар:</b> ${elem.productTitle}\n<b>Цена:</b> ${NumReplace(elem.sellPrice)} сум\n<b>Сумма к выводу:</b> ${NumReplace(elem.sellerProfit)} сум\n\n<b>Дата заказа:</b> ${dateFormater}\n<b>Дата Получения:</b> ${dateFormaterIssue}\n\n`
                 }else{
-                    message = `\n<b>SKU:</b> ${elem.skuTitle}\n<b>Товар:</b> ${elem.productTitle}\n<b>Цена:</b> ${NumReplace(elem.sellPrice)} сум\n<b>Сумма к выводу:</b> ${NumReplace(elem.sellerProfit)} сум\n\n<b>Дата заказа:</b> ${dateFormater}\n<b>Дата Получения:</b> ${dateFormaterIssue}\n\n-------------------------------------`
+                    message = `\n<b>SKU:</b> ${elem.skuTitle}\n<b>Товар:</b> ${elem.productTitle}\n<b>Цена:</b> ${NumReplace(elem.sellPrice)} сум\n<b>Сумма к выводу:</b> ${NumReplace(elem.sellerProfit)} сум\n\n<b>Дата заказа:</b> ${dateFormater}\n<b>Дата Получения:</b> ${dateFormaterIssue}\n\n`
                 }
 
-                await ctx.sendPhoto(elem.productImage.photo['480'].high)
-                await ctx.replyWithHTML(message)
+                return await ctx.sendPhoto(elem.productImage.photo['480'].high, {
+                    caption: message,
+                    parse_mode: 'HTML'
+                })
+
 
             }
         })
 
 
 
-        this.bot.action(action_orders_regexp, async (ctx)=>{
+
+        this.bot.action(action_orders_get, async (ctx)=>{
             const {update} = ctx
             //@ts-ignore
             const data = update.callback_query.data
 
 
+
             if(data.match('order')) {
 
-                const status = data.replace('order', '')
+                const page = data.match(action_orders_regexp)?undefined:
+                    data.replace('orderpage', '').split('-')[1]
+                const status = data.match(action_orders_regexp)?
+                    data.replace('orderstatus', ''):
+                    data.replace('orderpage', '').split('-')[0]
+
                 const dataOrders:any = (await ordersService.getOrders({
                     shopId: ctx.session.current_shop,
                     token: ctx.session.token,
                     status,
-                    ctx
+                    ctx,
+                    page
                 }))
 
                 const orders:IOrders[] = dataOrders?.orderItems
                 const total:number = dataOrders?.totalElements
-                const amount:number = dataOrders?.amount
+                const pagination:{currentPage:number, total_pages:number, size:number} = dataOrders?.pagination
 
 
 
-                let message = `\n<strong>Общее кол-во: ${total}</strong>\n\n<strong>Общая сумма: ${NumReplace(amount+'')}</strong>\n`
+                let message = `\n<strong>Общее кол-во: ${total}</strong>\n`
 
                 if(Array.isArray(orders)){
                     if(orders.length>0){
@@ -103,13 +116,18 @@ export class OrdersCommand extends Command{
                             const dateFormater = DateFormatter(new Date(item.date))
                             let dateFormaterIssue:string=item.dateIssued?DateFormatter(new Date(item.dateIssued)):'';
 
+                            let num = pagination.currentPage===1?index+1:
+                                (index+1)+(pagination.size*(pagination.currentPage-1))
+
+
+
 
                             message+=HTMLFormatter([
-                                `/n№:${index+1}`,
+                                `/n№:${num}`,
                                 `${item.status==='CANCELED'?`/n/sВернули Заказ ❌/nпо причине: ${item.returnCause}/s`:item.dateIssued?`/n/sПолучили ✅/s`:''}/n`,
                                 `${(item.comment||'').replace(/\./g, '')?`/bКоментарий клиента:/b ${item.comment}/n`:''}`,
                                 `/bКол-во товара:/b ${item.status==='CANCELED'?item.amountReturns:item.amount}/n`,
-                                `/bSKU:/b ${item.skuTitle}`,
+                                `/bSKU:/b ${item.skuTitle}/n`,
                                 `/bТовар:/b ${item.productTitle}/n`,
                                 `/bЦена:/b ${NumReplace(item.sellPrice)} сум/n`,
                                 `/bСумма к выводу:/b ${NumReplace(item.sellerProfit)} сум/n`,
@@ -125,9 +143,28 @@ export class OrdersCommand extends Command{
                 }else{
                     message = 'Список пуст ⭕️'
                 }
-                //@ts-ignore
-                await ctx.reply(message, {parse_mode:'HTML'})
-                return  await ctx.reply(`Заказы за последние 2 недели`, Markup.inlineKeyboard(buttons_orders))
+
+
+                const pagination_buttons:any[] = []
+
+                if(pagination.currentPage>1){
+                    pagination_buttons.push(Markup.button.callback(`⬅️ Назад`, `orderpage${status}-${pagination.currentPage-1}`))
+                }
+
+                pagination_buttons.push(Markup.button.callback(`${pagination.currentPage}/${pagination.total_pages}`, `actionNo`))
+
+                if(pagination.currentPage<pagination.total_pages){
+                    pagination_buttons.push(Markup.button.callback(`Вперед ➡️`, `orderpage${status}-${pagination.currentPage+1}`))
+                }
+
+                if(pagination.total_pages>1){
+                    return await ctx.replyWithHTML(message, Markup.inlineKeyboard(pagination_buttons))
+                }else{
+                    return await ctx.replyWithHTML(message, Markup.inlineKeyboard(buttons_orders))
+                }
+
+
+
 
 
             }

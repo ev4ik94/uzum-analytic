@@ -15,10 +15,14 @@ import OrdersService from "./services/orders.service";
 import AuthenticatedService from "./services/authenticated.service";
 import {ReviewsCommand} from "./command/reviews.command";
 import ReviewsService from "./services/reviews.service";
+import UpdatesService from "./services/updates.service";
+import PermissionService from "./services/permissions.service";
 
 const AuthService = new AuthenticatedService(new ConfigService())
 const ReviewService = new ReviewsService(new ConfigService())
-const OrdersServices = new OrdersService(new ConfigService(), AuthService)
+const OrdersServices = new OrdersService(new ConfigService())
+const UpdateService = new UpdatesService()
+const PermissionServiceData = new PermissionService(new ConfigService())
 
 
 const app:Express = express()
@@ -33,50 +37,41 @@ class Bot{
         console.log('БОТ запущен')
 
         this.bot = new Telegraf<IBotContext>(this.configService.get('TOKEN'));
+
         this.bot.use((new LocalSession({ database: 'sessions.json' })).middleware())
+
 
         this.bot.use(async(ctx, next)=>{
 
-            setInterval(async()=>{
-                const notified_data = await OrdersServices.notificationOrdersNew(ctx)
-                const new_reviews = await ReviewService.getReviews({shopId: ctx.session.current_shop, token: ctx.session.token, status: 'NEW'})
 
+            if(ctx.session.token){
+                await AuthService.checkToken(ctx)
 
+                if(!ctx.session.shops||!ctx.session.shops.length){
+                    ctx.session.shops = await AuthService.getUserShops(ctx.session.token)
 
-                if(notified_data){
-                    for(let k=0; k<notified_data.length;k++){
-                        if(notified_data[k].type==='new_order'){
-                            await ctx.reply('Новый заказ ❗️❗️❗️',  Markup.inlineKeyboard([Markup.button.callback('Просмотреть', `orderView${notified_data[k].order.orderId}`)]))
-                        }else if(notified_data[k].type==='change_status'){
-                            const status = notified_data[k].order?.status
+                    if(ctx.session.shops.length>1){
 
-                            if(status==='CANCELED'){
-                                await ctx.reply('Заказ отменен ❌',  Markup.inlineKeyboard([Markup.button.callback('Просмотреть', `orderView${notified_data[k].order.orderId}`)]))
-                            }
+                        const buttons_shop = ctx.session.shops.map((item:any)=>{
+                            return Markup.button.callback(item.shopTitle, `shop-${item.id}`)
+                        })
 
-                            if(status==='TO_WITHDRAW'){
-                                await ctx.reply('Заказ одобрен',  Markup.inlineKeyboard([Markup.button.callback('Просмотреть', `orderView${notified_data[k].order.orderId}`)]))
-                            }
+                        return await ctx.reply("Выберите магазин для дальнейшей работы с ботом", Markup.inlineKeyboard(buttons_shop))
 
-                            // await ctx.reply('Заказ изменен',  Markup.inlineKeyboard([Markup.button.callback('Просмотреть', `orderView${notified_data[k].order.orderId}`)]))
-
-                        }else if(notified_data[k].type==='change_date'){
-                            if(notified_data[k].order.dateIssued){
-                                await ctx.reply('Заказ получен ✅',  Markup.inlineKeyboard([Markup.button.callback('Просмотреть', `orderView${notified_data[k].order.orderId}`)]))
-                            }
-
-                        }
-                    }
-
-
-                }
-
-                if(new_reviews.length>0){
-                    for(let i=0; i<new_reviews.length;i++){
-                        await ctx.reply('Новый отзыв 🙋‍♀️',  Markup.inlineKeyboard([Markup.button.callback('Просмотреть', `reviewId${new_reviews[i].reviewId}`)]))
                     }
                 }
-            }, 180000)
+
+            }else{
+                //@ts-ignore
+                if(ctx.update&&ctx.update.message){
+                    //@ts-ignore
+                    const text = ctx.update.message.text
+                    if(text!=='/start') return await ctx.reply('Вы не авторизованы')
+                }else{
+                    return await ctx.reply('Вы не авторизованы')
+                }
+
+            }
 
 
             await next()
@@ -84,7 +79,7 @@ class Bot{
     }
 
     async serverStart(){
-        const PORT = process.env.PORT||8000;
+        const PORT = process.env.PORT||8080;
         app.listen(PORT, ()=>{
             console.log('Server listen on port '+PORT)
         })
@@ -93,12 +88,23 @@ class Bot{
     async routing(){
         app.post('/web-data', async(req:Request, res:Response)=>{
             const {query_id, token, refresh_token} = req.body
+
+            if(this.bot.context.session){
+                this.bot.context.session.token = token
+                this.bot.context.session.refresh_token = refresh_token
+            }
+
+
+            await PermissionServiceData.addUser(this.bot.context)
+
+
+
             try{
                 await this.bot.telegram.answerWebAppQuery(query_id, {
                     type:'article',
                     id: query_id,
                     title: 'Успешно',
-                    input_message_content: {message_text: 'Вы авторизовались '+token + ' ' + refresh_token}
+                    input_message_content: {message_text: 'Вы успешно авторизовались'}
                 })
 
                 return res.status(200).json({})
@@ -107,7 +113,7 @@ class Bot{
                     type:'article',
                     id: query_id,
                     title: 'Не удалось авторизоваться',
-                    input_message_content: {message_text: 'Вы не авторизовались'}
+                    input_message_content: {message_text: 'Авторизация не прошла'}
                 })
                 return res.status(500).json({})
             }
@@ -115,12 +121,13 @@ class Bot{
     }
 
     async init(){
-        // await sequelize.authenticate()
-        // await sequelize.sync()
+        await sequelize.authenticate()
+        await sequelize.sync()
         await this.serverStart()
         await this.routing()
 
-// console.log(this.bot.session)
+
+
 
         this.commands = [ new StartCommand(this.bot), new ProductsCommand(this.bot), new OrdersCommand(this.bot), new ReviewsCommand(this.bot)]
         for(const command of this.commands){
@@ -128,7 +135,11 @@ class Bot{
         }
 
 
+        this.bot.catch((err:any) => {
+            console.log(err)
+        })
         await this.bot.launch()
+
     }
 
 }
@@ -138,4 +149,3 @@ bot.init()
 
 
 
-//, new ProductsCommand(this.bot), new OrdersCommand(this.bot), new ReviewsCommand(this.bot),

@@ -57,7 +57,8 @@ export class ReviewsCommand extends Command{
                             Markup.button.callback('Ответить', `reviewAnswer${review.reviewId}`)]
                         ))
                     }else{
-                        await ctx.replyWithHTML(message)
+
+                        return await ctx.replyWithHTML(message)
                     }
                 }
             }catch(err:any){
@@ -128,6 +129,8 @@ export class ReviewsCommand extends Command{
                             }
                         }
                     })).join('')
+
+
 
                     const message = `\n<strong>Товар: ${reviews[k].product.productTitle}</strong>\n<b>Дата: </b>${date_text}\n<b>Оценка: </b>${stars}\n<b>Текст: </b> ${text}...`
                     await ctx.replyWithHTML(message, Markup.inlineKeyboard([

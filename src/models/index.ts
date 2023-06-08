@@ -1,68 +1,41 @@
 import {sequelize} from "../db";
-import {Model, DataTypes, Optional, ForeignKey, CreationOptional, HasManyAddAssociationMixin, HasManySetAssociationsMixin,
-    InferAttributes, InferCreationAttributes, NonAttribute, HasManyGetAssociationsMixin, HasManyRemoveAssociationMixin,
-    HasManyAddAssociationsMixin, HasManyRemoveAssociationsMixin, HasManyHasAssociationMixin,
-    HasManyHasAssociationsMixin, Association, HasManyCreateAssociationMixin} from 'sequelize'
+import {Model, DataTypes, Optional, CreationOptional} from 'sequelize'
+export enum Statuses {
+    TRIAL= 'TRIAL',
+    ACTIVE= 'ACTIVE',
+    NO_ACTIVE= 'NO_ACTIVE'
 
+}
 
-interface IUsers {
+export interface IUsers {
     id: Number | null | undefined;
     chatId: Number;
-    login: String;
+    username: String;
     userId: Number;
+    status: Statuses;
+    date_start: Date;
+    date_end: Date;
 }
 
-interface IPermission {
-    id: Number | null | undefined;
-    login: String;
-    userId: Number;
-}
-
-type UserCreationAttributes = Optional<IUsers, 'id'>;
-type PermissionCreationAttributes = Optional<IPermission, 'id'>;
 
 
 
-export class Users extends Model<InferAttributes<Users, { omit: 'permissions' }>,
-    InferCreationAttributes<Users, { omit: 'permissions' }>> {
+
+// type UserCreationAttributes = Optional<IUsers, 'id'>;
+
+
+
+export class Users extends Model {
     declare id: CreationOptional<number>
-    declare login: string
+    declare username: string
     declare userId: number
     declare chatId: number
-    declare permissions?: NonAttribute<Permissions[]>;
+    declare status: Statuses
+    declare date_start: Date
+    declare date_end: Date
 
-    declare getPermissions: HasManyGetAssociationsMixin<Permissions>;
-    declare addPermission: HasManyAddAssociationMixin<Permissions, number>;
-    declare addPermissions: HasManyAddAssociationsMixin<Permissions, number>;
-    declare setPermissions: HasManySetAssociationsMixin<Permissions, number>;
-    declare removePermission: HasManyRemoveAssociationMixin<Permissions, number>;
-    declare removePermissions: HasManyRemoveAssociationsMixin<Permissions, number>;
-    declare hasPermission: HasManyHasAssociationMixin<Permissions, number>;
-    declare hasPermissions: HasManyHasAssociationsMixin<Permissions, number>;
-    declare createPermission: HasManyCreateAssociationMixin<Permissions, 'ownerId'>;
-
-    declare static associate:{
-        // Users.hasMany(Permissions, {
-        //     onDelete: 'CASCADE',
-        //     foreignKey: 'ownerId'
-        // })
-        permissions: Association<Users, Permissions>;
-    }
 }
 
-
-export class Permissions extends Model <InferAttributes<Permissions>,
-    InferCreationAttributes<Permissions>>{
-    declare id?: CreationOptional<number>
-    declare login: string
-    declare userId: number
-    declare ownerId?: ForeignKey<Users['id']>;
-    declare owner?: NonAttribute<Users>;
-
-    static associate(models:any){
-        Permissions.belongsTo(Users)
-    }
-}
 
 
 Users.init(
@@ -76,12 +49,24 @@ Users.init(
             type: DataTypes.INTEGER,
             allowNull: false,
         },
-        login: {
+        username: {
             type: DataTypes.STRING,
             allowNull: false,
         },
         userId: {
             type: DataTypes.INTEGER,
+            allowNull: false,
+        },
+        status: {
+            type: DataTypes.ENUM(...Object.values(Statuses)),
+            allowNull: false
+        },
+        date_start: {
+            type: DataTypes.DATE,
+            allowNull: false,
+        },
+        date_end: {
+            type: DataTypes.DATE,
             allowNull: false,
         },
     },
@@ -93,37 +78,6 @@ Users.init(
 );
 
 
-Permissions.init(
-    {
-        id: {
-            type: DataTypes.INTEGER.UNSIGNED,
-            autoIncrement: true,
-            primaryKey: true,
-        },
-
-        login: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
-
-        userId: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-        },
-    },
-
-    {
-        sequelize: sequelize,
-        tableName: 'permissions',
-    }
-);
-
-
-Users.hasMany(Permissions, {
-    sourceKey: 'id',
-    foreignKey: 'ownerId',
-    as: 'permissions' // this determines the name in `associations`!
-});
 
 
 

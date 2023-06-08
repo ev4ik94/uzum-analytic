@@ -1,37 +1,38 @@
-import {IAuth, IConfig} from "../config/config.interface";
-import {Markup} from "telegraf";
+import {IConfig} from "../config/config.interface";
 const fetch = require('node-fetch')
-import moment from "moment";
-import {IOrders} from "../context/context.interface";
+import {IOrders} from '../context/context.interface'
 
 
 export  default class OrdersService{
-    constructor(private readonly configService: IConfig, private readonly authService: IAuth) {
+    constructor(private readonly configService: IConfig) {
     }
 
-    async getOrders(data:{shopId:number, token:string, status:string, ctx:any}){
+    async getOrders(data:{shopId:number, token:string, status:string, ctx:any, page?:string}){
         try{
 
-            let params = {
+            let params:{group:boolean, statuses:string, size: number, page: number} = {
                 group: false,
                 statuses: data.status,
-                size: 20,
-                page: 0,
-                dateFrom: moment().subtract(2, 'week').unix(),
-                dateTo: moment().unix()
+                size: 5,
+                page: data?.page?+data.page-1:0
             }
+
+
 
             let response_orders:any;
 
             if(data.status==='ALL'){
-                response_orders = await fetch(`${this.configService.get('API')}/seller/finance/orders?group=false&size=${params.size}&page=0&dateFrom=${params.dateFrom}&dateTo=${params.dateTo}`, {
+                response_orders = await fetch(`${this.configService.get('API')}/seller/finance/orders?group=false&size=${params.size}&page=${params.page}`, {
                     headers: {'Authorization': `Bearer ${data.token}`, 'accept-language': 'ru-RU'}
                 });
             }else{
-                response_orders = await fetch(`${this.configService.get('API')}/seller/finance/orders?group=false&size=${params.size}&page=0&statuses=${params.statuses}&dateFrom=${params.dateFrom}&dateTo=${params.dateTo}`, {
+                response_orders = await fetch(`${this.configService.get('API')}/seller/finance/orders?group=false&size=${params.size}&page=${params.page}&statuses=${params.statuses}`, {
                     headers: {'Authorization': `Bearer ${data.token}`, 'accept-language': 'ru-RU'}
                 });
             }
+
+
+            if(!response_orders.ok) throw new Error(`URL: ${response_orders.url} STATUS: ${response_orders.status} TEXT: ${response_orders.statusText}`)
 
 
 
@@ -39,37 +40,21 @@ export  default class OrdersService{
             const body = await response_orders.json()
 
 
-            if(body.status>300){
-                throw new Error(`ОШИБКА ${body.status}\n${this.configService.get('API')}/seller/finance/orders?size=100&page=0&group=false`)
-            }else if(body.errors||body.error){
 
-                if(body.error){
-                    if(body.error==='invalid_token'){
-                        return this.authService.refreshToken(data.ctx)
-                    }
-                    throw new Error(`ОШИБКА \n${this.configService.get('API')}/seller/finance/orders\n${body.error}`)
-                }
-                throw new Error(`ОШИБКА \n${this.configService.get('API')}/seller/finance/orders?group=false&statuses=${params.statuses}&size=100&page=0&dateFrom=${params.dateFrom}&dateTo=${params.dateTo}`)
+            const {orderItems, totalElements}:{orderItems:any[], totalElements:number} = body
+            const total_pages:number = +Math.ceil(totalElements/params.size).toFixed(0)
+
+
+
+            const pagination = {
+                currentPage: params.page+1,
+                total_pages:total_pages,
+                size: params.size
+
             }
 
 
-
-            const {orderItems, totalElements} = body
-
-
-            let amount = orderItems.reduce((accumulator:any, currentValue:any)=>{
-                if(data.status==='PROCESSING'||data.status==='TO_WITHDRAW'){
-                    return accumulator+(+currentValue.sellerProfit)
-                }else{
-                    return accumulator+(+currentValue.sellPrice)
-                }
-
-
-            }, 0)
-
-            return {orderItems, totalElements, amount}
-
-
+            return {orderItems, totalElements, pagination}
 
 
 
@@ -119,7 +104,7 @@ export  default class OrdersService{
 
                     if(elem){
                         if(elem.status!==orders[k].status){
-                            console.log('CHANGE')
+                            console.log('CHANGE status '+ new Date())
                             data_n['type'] = 'change_status'
                             data_n['order'] = elem
                             notify_data.push(data_n)
@@ -147,7 +132,7 @@ export  default class OrdersService{
 
                                 return {...item}
                             })
-                        }else if(+elem.dateIssued!==+orders[k].dateIssued){
+                        }else if(elem.status!=='CANCELED'&&+elem.dateIssued!==+orders[k].dateIssued){
                             data_n['type'] = 'change_date'
                             data_n['order'] = elem
                             notify_data.push(data_n)
@@ -177,7 +162,7 @@ export  default class OrdersService{
             return false
 
         }catch (err:any){
-
+            throw new Error(err)
         }
     }
 

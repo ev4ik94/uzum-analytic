@@ -17,20 +17,10 @@ export  default class ProductsService{
                 headers: {'Authorization': `Bearer ${data.token}`, 'accept-language': 'ru-RU'}
             });
 
+            if(!response_products.ok) throw new Error(`URL: ${response_products.url} STATUS: ${response_products.status} TEXT: ${response_products.statusText}`)
+
             const body:any = await response_products.json();
 
-            if(body.status>300){
-                throw new Error(`${this.configService.get('API')}/seller/shop/${data.shopId}/product/getProducts`)
-            }
-
-            if(body.errors){
-                if(body.errors.length){
-                    throw new Error(body.errors[0].code + ': ' + body.errors[0].detailMessage)
-                }else if(body.error==='invalid_token'){
-                    return this.authService.refreshToken(data.ctx)
-
-                }
-            }
 
             const buttons = body.productList.map((item:any)=>{
                 return Markup.button.callback(item.title, `productId${item.productId}`)
@@ -80,23 +70,10 @@ export  default class ProductsService{
                     method: 'GET',
                     headers: {'Authorization': `Bearer ${token}`, 'accept-language': 'ru-RU'}
                 });
+
+                if(!response_products.ok) throw new Error(`URL: ${response_products.url} STATUS: ${response_products.status} TEXT: ${response_products.statusText}`)
+
                 const body:any = await response_products.json();
-
-                if(body.status>300){
-                    throw new Error(`${this.configService.get('API')}/seller/shop/${data.shopId}/product/getProducts`)
-                    break;
-                }
-
-                if(body.errors||body.error){
-                    if(body.errors.length){
-                        throw new Error(body.errors[0].code + ': ' + body.errors[0].detailMessage)
-                        break;
-                    }else if(body.error==='invalid_token'){
-                        return this.authService.refreshToken(data.ctx)
-
-                    }
-                }
-
 
 
                 if((body?.productList||[]).find((item:any)=>item.productId===productId)){
@@ -110,17 +87,18 @@ export  default class ProductsService{
             const response1 = await fetch(`${this.configService.get('API_CLIENT')}/v2/product/${productId}`, {
                 headers: {'accept-language': 'ru-RU'}
             });
+
+            if(!response1.ok) throw new Error(`URL: ${response1.url} STATUS: ${response1.status} TEXT: ${response1.statusText}`)
+
             const actions = await fetch(`${this.configService.get('API_CLIENT')}/product/actions/${productId}`, {
                 headers: {'accept-language': 'ru-RU'}
             });
 
+            if(!actions.ok) throw new Error(`URL: ${actions.url} STATUS: ${actions.status} TEXT: ${actions.statusText}`)
+
 
             const bodyProductOne = await response1.json()
             const bodyActions = await actions.json()
-
-
-            if(bodyProductOne.status>300) throw new Error(`ОШИБКА ${bodyProductOne.status}\n${this.configService.get('API')}/v2/product/${productId}`)
-            if(bodyActions.status>300) throw new Error( `ОШИБКА ${bodyActions.status}\n${this.configService.get('API')}/product/actions/${productId}`)
 
 
             const {payload} = bodyProductOne

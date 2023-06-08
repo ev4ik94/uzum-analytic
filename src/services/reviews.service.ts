@@ -1,8 +1,6 @@
-import {IAuth, IConfig} from "../config/config.interface";
-import {Markup} from "telegraf";
+import {IConfig} from "../config/config.interface";
 const fetch = require('node-fetch')
-import moment from "moment";
-import {IOrders, IReview} from "../context/context.interface";
+import {IReview} from "../context/context.interface";
 
 
 export  default class ReviewsService{
@@ -27,7 +25,7 @@ export  default class ReviewsService{
                 });
             }
 
-            if(!response_reviews.ok)  throw new Error(`ОШИБКА ${this.configService.get('API')}/seller/product-reviews  ${response_reviews.statusText}`)
+            if(!response_reviews.ok)  throw new Error(`URL: ${response_reviews.url} STATUS: ${response_reviews.status} TEXT: ${response_reviews.statusText}`)
 
 
             const body = await response_reviews.json()
@@ -47,8 +45,6 @@ export  default class ReviewsService{
 
 
         }catch (err:any){
-            console.log(err)
-            console.log('ERRRRRRRR')
             throw new Error(err)
         }
     }
@@ -61,21 +57,11 @@ export  default class ReviewsService{
                 headers: {'Authorization': `Bearer ${data.token}`, 'accept-language': 'ru-RU'}
             });
 
-            const body = await response_reviews.json()
-
-            if(body.status>300){
-                throw new Error(`ОШИБКА ${body.status}\n${this.configService.get('API')}/seller/product-reviews`)
-            }else if(body.errors||body.error){
-
-                if(body.error){
-                    throw new Error(`ОШИБКА \n${this.configService.get('API')}/seller/product-reviews\n${body.error}`)
-                }
-                throw new Error(`ОШИБКА \n${this.configService.get('API')}/seller/product-reviews`)
+            if(!response_reviews.ok) {
+                throw new Error(`URL: ${response_reviews.url} STATUS: ${response_reviews.status} TEXT: ${response_reviews.statusText}`)
             }
 
-            return body
-
-
+            return await response_reviews.json()
 
         }catch (err:any){
             throw new Error(err)
@@ -95,7 +81,7 @@ export  default class ReviewsService{
                 headers: {'Authorization': `Bearer ${data.token}`, 'accept-language': 'ru-RU', 'content-type':'application/json'}
             })
 
-            if(!response.ok) throw new Error(`ОШИБКА \n${this.configService.get('API')}/seller/product-reviews/mark\n${response.statusText}`)
+            if(!response.ok) throw new Error(`URL: ${response.url} STATUS: ${response.status} TEXT: ${response.statusText}`)
 
 
         }catch (err:any){
@@ -106,7 +92,7 @@ export  default class ReviewsService{
 
     async reviewAnswer(data:{token:string, reviewId:string, text:string}){
         try{
-console.log('answer')
+
             const response_reviews = await fetch(`${this.configService.get('API')}/seller/product-reviews/reply/create`, {
                 method: 'post',
                 body: JSON.stringify([
@@ -119,17 +105,12 @@ console.log('answer')
                 headers: {'Authorization': `Bearer ${data.token}`, 'accept-language': 'ru-RU', 'content-type':'application/json'}
             });
 
+            if(!response_reviews.ok) {
+                throw new Error(`URL: ${response_reviews.url} STATUS: ${response_reviews.status} TEXT: ${response_reviews.statusText}`)
+            }
+
             const body = await response_reviews.json()
 
-            if(body.status>300){
-                throw new Error(`ОШИБКА ${body.status}\n${this.configService.get('API')}/seller/product-reviews`)
-            }else if(body.errors||body.error){
-
-                if(body.error){
-                    throw new Error(`ОШИБКА \n${this.configService.get('API')}/seller/product-reviews\n${body.error}`)
-                }
-                throw new Error(`ОШИБКА \n${this.configService.get('API')}/seller/product-reviews`)
-            }
 
             return await this.getReviewById({token: data.token, reviewId: data.reviewId})
 
