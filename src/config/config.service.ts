@@ -9,16 +9,18 @@ export class ConfigService implements IConfig{
         const {error, parsed} = config();
 
         if(error){
-            //@ts-ignore
-            this.configs = process.env
+
+
             //throw new Error('Не найден файл .env')
         }
+        //@ts-ignore
+        if(process.env) this.configs = process.env
 
         if(!parsed){
-            throw new Error('Пустой файл .env')
+            //throw new Error('Пустой файл .env')
         }
 
-        this.configs = parsed
+        if(parsed) this.configs = parsed
     }
 
     get(key:string):string{
