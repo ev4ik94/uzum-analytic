@@ -2,8 +2,7 @@ import {Sequelize} from "sequelize";
 import dotenv from "dotenv"
 dotenv.config()
 
-console.log(process.env.USER)
-console.log(process.env.PASSWORD)
+
 
 
 const DATABASE_URL=`postgresql://${process.env.USER!}:${process.env.PASSWORD!}@${process.env.HOST}:${process.env.PORT_DB}/${process.env.DB_NAME}?schema=public`

@@ -23,7 +23,9 @@ export class StartCommand extends Command{
 
         this.bot.start(async(ctx)=>{
 
-            console.log(ctx)
+
+            console.log('handle')
+
 
 
             if(!ctx.session.token){
