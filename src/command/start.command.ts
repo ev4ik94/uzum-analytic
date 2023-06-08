@@ -21,12 +21,12 @@ export class StartCommand extends Command{
 
     handle() {
 
-
+        console.log('handle')
 
 
         this.bot.start(async(ctx)=>{
 
-
+console.log('START')
 
             if(!ctx.session.token){
 
