@@ -13,14 +13,18 @@ export class ConfigService implements IConfig{
 
             //throw new Error('Не найден файл .env')
         }
-        //@ts-ignore
-        if(process.env) this.configs = process.env
-
-        if(!parsed){
-            //throw new Error('Пустой файл .env')
-        }
 
         if(parsed) this.configs = parsed
+        //@ts-ignore
+        else this.configs = process.env
+        // //@ts-ignore
+        // if(process.env)
+        //
+        // if(!parsed){
+        //     //throw new Error('Пустой файл .env')
+        // }
+        //
+        // if(parsed)
     }
 
     get(key:string):string{
