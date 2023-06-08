@@ -14,7 +14,6 @@ export const sequelize =  new Sequelize(
 
     {
         dialect: 'postgres',
-        native: true,
         ssl: true,
         host: process.env.HOST!,
         port: +process.env.PORT_DB!,
