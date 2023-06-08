@@ -1,4 +1,3 @@
-import {IConfig} from "../config/config.interface";
 const fetch = require('node-fetch')
 import {Users} from "../models";
 import {IBotContext} from "../context/context.interface";

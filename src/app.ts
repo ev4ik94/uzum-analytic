@@ -1,7 +1,5 @@
-import {ConfigService} from "./config/config.service";
 import express, { Express, Request, Response } from 'express';
 const cors = require('cors')
-import {IConfig} from "./config/config.interface";
 import {Markup, Telegraf} from "telegraf";
 const TelegramApi = require('node-telegram-bot-api')
 import {IBotContext} from "./context/context.interface";
@@ -35,10 +33,10 @@ dotenv.config()
 class Bot{
     bot: Telegraf<IBotContext>
     commands: Command[] = []
-    constructor(private readonly configService:IConfig) {
+    constructor() {
         console.log('БОТ запущен')
 
-        this.bot = new Telegraf<IBotContext>(this.configService.get('TOKEN'));
+        this.bot = new Telegraf<IBotContext>(process.env.TOKEN);
 
         this.bot.use((new LocalSession({ database: 'sessions.json' })).middleware())
 
@@ -147,7 +145,7 @@ class Bot{
 
 }
 
-const bot = new Bot(new ConfigService());
+const bot = new Bot();
 bot.init()
 
 

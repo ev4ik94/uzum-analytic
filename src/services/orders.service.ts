@@ -1,4 +1,3 @@
-import {IConfig} from "../config/config.interface";
 const fetch = require('node-fetch')
 import {IOrders} from '../context/context.interface'
 
