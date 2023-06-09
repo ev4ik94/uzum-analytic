@@ -5,7 +5,7 @@ dotenv.config()
 
 
 
-const DATABASE_URL=`postgresql://${process.env.USER!}:${process.env.PASSWORD!}@${process.env.HOST}:${process.env.PORT_DB}/${process.env.DB_NAME}?schema=public`
+const DATABASE_URL=`postgresql://${process.env.USER!}:${process.env.PASSWORD!}@${process.env.HOST}:${process.env.PORT_DB}/${process.env.DB_NAME}?schema=public&ssl=true`
 
 
 export const sequelize = new Sequelize(DATABASE_URL);
