@@ -21,7 +21,7 @@ export const sequelize =  new Sequelize(
         port: +process.env.PORT_DB!,
         dialectOptions: {
             ssl: {
-                required: true,
+                required: false,
                 rejectUnauthorized: false
             },
 

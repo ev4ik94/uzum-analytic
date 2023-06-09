@@ -150,6 +150,7 @@ class Bot{
 
 const bot = new Bot();
 bot.init()
+bot.init()
 
 
 
