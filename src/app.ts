@@ -125,8 +125,8 @@ class Bot{
     }
 
     async init(){
-        // await sequelize.authenticate()
-        // await sequelize.sync()
+        await sequelize.authenticate()
+        await sequelize.sync()
         await this.serverStart()
         await this.routing()
 
