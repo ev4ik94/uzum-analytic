@@ -86,6 +86,7 @@ class Bot{
         )
         app.listen(PORT, ()=>{
             console.log('Server listen on port '+PORT)
+            this.init()
         })
     }
 
@@ -127,7 +128,6 @@ class Bot{
     async init(){
         await sequelize.authenticate()
         await sequelize.sync()
-        await this.serverStart()
         await this.routing()
 
 
@@ -149,8 +149,8 @@ class Bot{
 }
 
 const bot = new Bot();
-bot.init()
-bot.init()
+bot.serverStart()
+
 
 
 
