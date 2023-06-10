@@ -23,9 +23,9 @@ export  default class PermissionsService{
 
 
 
-    async addUser(ctx:any){
+    async addUser(data:{userId:number, chatId:number, username:string}){
 
-        const data = ctx.update
+
 console.log(data)
         try {
 
@@ -33,9 +33,9 @@ console.log(data)
 
 
             const data_create = {
-                userId: data.message.from.id,
-                chatId: data.message.chat.id,
-                username: data.message.from?.username||'',
+                userId: data.userId,
+                chatId: data.chatId,
+                username: data.username,
                 date_start: date.getTime(),
                 //@ts-ignore
                 date_end: date.addDays(5),

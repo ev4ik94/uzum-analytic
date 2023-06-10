@@ -33,6 +33,7 @@ dotenv.config()
 class Bot{
     bot: Telegraf<IBotContext>
     commands: Command[] = []
+    user_auth: any
     constructor() {
         console.log('БОТ запущен')
         this.bot = new Telegraf<IBotContext>(process.env.TOKEN!);
@@ -42,7 +43,7 @@ class Bot{
 
         this.bot.use(async(ctx, next)=>{
 
-
+console.log(ctx)
 
             if(ctx.session.token){
                 await AuthService.checkToken(ctx)
@@ -63,10 +64,7 @@ class Bot{
 
             }else{
 
-                //@ts-ignore
-                ctx.session.token = null
-                //@ts-ignore
-                ctx.session.refresh_token = null
+
                 //@ts-ignore
                 if(ctx.update&&ctx.update.message){
                     //@ts-ignore
@@ -100,8 +98,11 @@ class Bot{
         })
         app.post('/web-data', async(req:Request, res:Response)=>{
             const {query_id, token, refresh_token, tg_data} = req.body
-            console.log(tg_data)
-            console.log(this.bot)
+            const data_parse = JSON.parse(tg_data)
+            const {user} = data_parse
+
+            this.user_auth = {token, refresh_token}
+
 
             // //@ts-ignore
             // this.bot.context.session.token = token
@@ -115,7 +116,11 @@ class Bot{
 
 
 
-            await PermissionServiceData.addUser(this.bot.context)
+            await PermissionServiceData.addUser({
+                userId: user.id,
+                chatId: user.id,
+                username: user.username||''
+            })
 
 
 
@@ -124,7 +129,7 @@ class Bot{
                     type:'article',
                     id: query_id,
                     title: 'Успешно',
-                    input_message_content: {message_text: 'Вы успешно авторизовались'}
+                    input_message_content: {message_text: 'Вы успешно авторизовались \n Нажмите "Продолжить" \n <a href="https://t.me/businessUzumBot?start=continue">Продолжить 👍🏻</a>', parse_mode: "HTML"}
                 })
 
                 return res.status(200).json({})
