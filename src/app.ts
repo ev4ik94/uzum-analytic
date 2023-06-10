@@ -91,6 +91,9 @@ class Bot{
     }
 
     async routing(){
+        app.get(`/`, (req:Request, res:Response)=>{
+            res.send('HELLO I`m work')
+        })
         app.post('/web-data', async(req:Request, res:Response)=>{
             const {query_id, token, refresh_token} = req.body
 
@@ -150,7 +153,6 @@ class Bot{
 
 const bot = new Bot();
 bot.serverStart()
-
 
 
 
