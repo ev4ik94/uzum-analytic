@@ -44,12 +44,11 @@ class Bot{
         this.bot.use(async(ctx, next)=>{
 
 
-//@ts-ignore
-console.log(ctx?.session?.token)
-
 
             if(ctx.session.token){
                 await AuthService.checkToken(ctx)
+
+                if(ctx.session.shops.length&&!ctx.session.current_shop) ctx.session.current_shop = ctx.session.shops[0].id
 
                 if(!ctx.session.shops||!ctx.session.shops.length){
                     ctx.session.shops = await AuthService.getUserShops(ctx.session.token)
@@ -62,6 +61,8 @@ console.log(ctx?.session?.token)
 
                         return await ctx.reply("Выберите магазин для дальнейшей работы с ботом", Markup.inlineKeyboard(buttons_shop))
 
+                    }else{
+                        ctx.session.current_shop = ctx.session.shops[0].id
                     }
                 }
 
