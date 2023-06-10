@@ -43,6 +43,7 @@ class Bot{
         this.bot.use(async(ctx, next)=>{
 
 
+
             if(ctx.session.token){
                 await AuthService.checkToken(ctx)
 
@@ -61,7 +62,11 @@ class Bot{
                 }
 
             }else{
-                console.log('NO authorize')
+
+                //@ts-ignore
+                ctx.session.token = null
+                //@ts-ignore
+                ctx.session.refresh_token = null
                 //@ts-ignore
                 if(ctx.update&&ctx.update.message){
                     //@ts-ignore
