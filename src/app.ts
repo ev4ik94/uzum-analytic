@@ -69,7 +69,13 @@ console.log(ctx)
                 if(ctx.update&&ctx.update.message){
                     //@ts-ignore
                     const text = ctx.update.message.text
-                    if(text!=='/start') return await ctx.reply('Вы не авторизованы')
+                    if(text!=='/start'|| text!=='/start continue') return await ctx.reply('Вы не авторизованы')
+                    if(text==='/start continue'){
+                        ctx.session.token = this.user_auth.token
+                        ctx.session.refresh_token = this.user_auth.refresh_token
+
+                        await ctx.reply('Добро пожаловать в бот!')
+                    }
                 }else{
                     return await ctx.reply('Вы не авторизованы')
                 }
