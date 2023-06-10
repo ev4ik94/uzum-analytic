@@ -95,12 +95,16 @@ class Bot{
         })
         app.post('/web-data', async(req:Request, res:Response)=>{
             const {query_id, token, refresh_token} = req.body
-            console.log(req.body)
+            console.log(this.bot.telegram)
 
-            if(this.bot.context.session){
-                this.bot.context.session.token = token
-                this.bot.context.session.refresh_token = refresh_token
-            }
+            //@ts-ignore
+            this.bot.context.session.token = token
+            //@ts-ignore
+            this.bot.context.session.refresh_token = refresh_token
+
+            // if(this.bot.context.session){
+            //
+            // }
 
             console.log('context')
 
