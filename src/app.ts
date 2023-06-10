@@ -43,7 +43,8 @@ class Bot{
 
         this.bot.use(async(ctx, next)=>{
 
-            const {update} = ctx
+
+
 
 
 
@@ -65,24 +66,37 @@ class Bot{
                 }
 
             }else{
+//@ts-ignore
+                console.log(ctx.update.message)
+                if(this.user_auth.token&&this.user_auth.refresh_token){
+                    ctx.session.token = this.user_auth.token
+                    ctx.session.refresh_token = this.user_auth.refresh_token
 
-
-                //@ts-ignore
-                if(ctx.update&&ctx.update.message){
-                    console.log(ctx.update)
-                    //@ts-ignore
-                    const text = ctx.update.message.text
-                    if(text!=='/start'|| text!=='/start continue'||!text.match('Вы успешно авторизовались')) return await ctx.reply('Вы не авторизованы')
-                    console.log(text)
-                    if(text==='/start continue'){
-                        ctx.session.token = this.user_auth.token
-                        ctx.session.refresh_token = this.user_auth.refresh_token
-
-                        await ctx.reply('Добро пожаловать в бот!')
-                    }
+                    await ctx.reply('Добро пожаловать в бот!')
                 }else{
-                    return await ctx.reply('Вы не авторизованы')
+                    //@ts-ignore
+                    if(ctx.update&&ctx.update.message){
+
+                        //@ts-ignore
+                        const text = ctx.update.message.text
+                        console.log('text')
+                        console.log(text)
+                        if(text!=='/start') return await ctx.reply('Вы не авторизованы')
+
+                        // if(text==='/start continue'){
+                        //     ctx.session.token = this.user_auth.token
+                        //     ctx.session.refresh_token = this.user_auth.refresh_token
+                        //
+                        //     await ctx.reply('Добро пожаловать в бот!')
+                        // }
+                    }else{
+                        return await ctx.reply('Вы не авторизованы')
+                    }
                 }
+
+
+
+
 
             }
 
