@@ -44,8 +44,8 @@ class Bot{
         this.bot.use(async(ctx, next)=>{
 
 
-
-
+//@ts-ignore
+console.log(ctx?.session?.token)
 
 
             if(ctx.session.token){
