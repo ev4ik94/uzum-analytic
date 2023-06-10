@@ -102,6 +102,8 @@ class Bot{
                 this.bot.context.session.refresh_token = refresh_token
             }
 
+            console.log(this.bot.context)
+
 
             await PermissionServiceData.addUser(this.bot.context)
 

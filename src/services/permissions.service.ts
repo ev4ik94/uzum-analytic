@@ -26,7 +26,7 @@ export  default class PermissionsService{
     async addUser(ctx:any){
 
         const data = ctx.update
-
+console.log(data)
         try {
 
             const date = new Date()
