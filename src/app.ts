@@ -43,7 +43,9 @@ class Bot{
 
         this.bot.use(async(ctx, next)=>{
 
-console.log(ctx)
+            const {update} = ctx
+
+
 
             if(ctx.session.token){
                 await AuthService.checkToken(ctx)
@@ -67,9 +69,11 @@ console.log(ctx)
 
                 //@ts-ignore
                 if(ctx.update&&ctx.update.message){
+                    console.log(ctx.update)
                     //@ts-ignore
                     const text = ctx.update.message.text
-                    if(text!=='/start'|| text!=='/start continue') return await ctx.reply('Вы не авторизованы')
+                    if(text!=='/start'|| text!=='/start continue'||!text.match('Вы успешно авторизовались')) return await ctx.reply('Вы не авторизованы')
+                    console.log(text)
                     if(text==='/start continue'){
                         ctx.session.token = this.user_auth.token
                         ctx.session.refresh_token = this.user_auth.refresh_token
