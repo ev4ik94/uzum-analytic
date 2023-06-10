@@ -33,7 +33,7 @@ dotenv.config()
 class Bot{
     bot: Telegraf<IBotContext>
     commands: Command[] = []
-    user_auth: any
+    user_auth: any = {}
     constructor() {
         console.log('БОТ запущен')
         this.bot = new Telegraf<IBotContext>(process.env.TOKEN!);
@@ -68,7 +68,7 @@ class Bot{
             }else{
 //@ts-ignore
                 console.log(ctx.update.message)
-                if(this.user_auth.token&&this.user_auth.refresh_token){
+                if(this.user_auth?.token&&this.user_auth?.refresh_token){
                     ctx.session.token = this.user_auth.token
                     ctx.session.refresh_token = this.user_auth.refresh_token
 
@@ -83,12 +83,6 @@ class Bot{
                         console.log(text)
                         if(text!=='/start') return await ctx.reply('Вы не авторизованы')
 
-                        // if(text==='/start continue'){
-                        //     ctx.session.token = this.user_auth.token
-                        //     ctx.session.refresh_token = this.user_auth.refresh_token
-                        //
-                        //     await ctx.reply('Добро пожаловать в бот!')
-                        // }
                     }else{
                         return await ctx.reply('Вы не авторизованы')
                     }
