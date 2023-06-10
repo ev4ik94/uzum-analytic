@@ -94,21 +94,20 @@ class Bot{
             res.send('HELLO I`m work')
         })
         app.post('/web-data', async(req:Request, res:Response)=>{
-            const {query_id, token, refresh_token} = req.body
-            console.log(this.bot.telegram)
+            const {query_id, token, refresh_token, tg_data} = req.body
+            console.log(tg_data)
+            console.log(this.bot)
 
-            //@ts-ignore
-            this.bot.context.session.token = token
-            //@ts-ignore
-            this.bot.context.session.refresh_token = refresh_token
-
-            // if(this.bot.context.session){
+            // //@ts-ignore
+            // this.bot.context.session.token = token
+            // //@ts-ignore
+            // this.bot.context.session.refresh_token = refresh_token
             //
-            // }
+            // // if(this.bot.context.session){
+            // //
+            // // }
 
-            console.log('context')
 
-            console.log(this.bot.context)
 
 
             await PermissionServiceData.addUser(this.bot.context)
