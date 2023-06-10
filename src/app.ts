@@ -86,7 +86,6 @@ class Bot{
         )
         app.listen(PORT, ()=>{
             console.log('Server listen on port '+PORT)
-            this.init()
         })
     }
 
@@ -96,11 +95,14 @@ class Bot{
         })
         app.post('/web-data', async(req:Request, res:Response)=>{
             const {query_id, token, refresh_token} = req.body
+            console.log(req.body)
 
             if(this.bot.context.session){
                 this.bot.context.session.token = token
                 this.bot.context.session.refresh_token = refresh_token
             }
+
+            console.log('context')
 
             console.log(this.bot.context)
 
@@ -133,7 +135,9 @@ class Bot{
     async init(){
         await sequelize.authenticate()
         await sequelize.sync()
+        await this.serverStart()
         await this.routing()
+
 
 
 
@@ -154,7 +158,7 @@ class Bot{
 }
 
 const bot = new Bot();
-bot.serverStart()
+bot.init()
 
 
 
