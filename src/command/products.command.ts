@@ -13,7 +13,7 @@ export class ProductsCommand extends Command{
     }
 
     handle() {
-        console.log('hadle product')
+
 
         const action_productId_regexp = new RegExp(/^productId/)
 
@@ -52,6 +52,7 @@ export class ProductsCommand extends Command{
 
 
         this.bot.hears('/products', async (ctx)=>{
+            console.log(ctx.session)
             if(ctx.session.current_shop&&ctx.session.token){
                const data_products = await productsService.getProducts({shopId: ctx.session.current_shop, token: ctx.session.token, page:0, ctx})
 
