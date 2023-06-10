@@ -13,6 +13,7 @@ export class ProductsCommand extends Command{
     }
 
     handle() {
+        console.log('hadle product')
 
         const action_productId_regexp = new RegExp(/^productId/)
 
