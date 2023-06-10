@@ -66,11 +66,11 @@ class Bot{
                 }
 
             }else{
-//@ts-ignore
-                console.log(ctx.update.message)
+
                 if(this.user_auth?.token&&this.user_auth?.refresh_token){
                     ctx.session.token = this.user_auth.token
                     ctx.session.refresh_token = this.user_auth.refresh_token
+                    this.user_auth = {}
 
                     await ctx.reply('Добро пожаловать в бот!')
                 }else{
@@ -79,8 +79,6 @@ class Bot{
 
                         //@ts-ignore
                         const text = ctx.update.message.text
-                        console.log('text')
-                        console.log(text)
                         if(text!=='/start') return await ctx.reply('Вы не авторизованы')
 
                     }else{
@@ -122,17 +120,6 @@ class Bot{
             this.user_auth = {token, refresh_token}
 
 
-            // //@ts-ignore
-            // this.bot.context.session.token = token
-            // //@ts-ignore
-            // this.bot.context.session.refresh_token = refresh_token
-            //
-            // // if(this.bot.context.session){
-            // //
-            // // }
-
-
-
 
             await PermissionServiceData.addUser({
                 userId: user.id,
@@ -147,7 +134,7 @@ class Bot{
                     type:'article',
                     id: query_id,
                     title: 'Успешно',
-                    input_message_content: {message_text: 'Вы успешно авторизовались \n Нажмите "Продолжить" \n <a href="https://t.me/businessUzumBot?start=continue">Продолжить 👍🏻</a>', parse_mode: "HTML"}
+                    input_message_content: {message_text: 'Вы успешно авторизовались'}
                 })
 
                 return res.status(200).json({})
