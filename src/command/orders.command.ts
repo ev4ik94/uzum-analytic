@@ -46,23 +46,45 @@ export class OrdersCommand extends Command{
                 const date:Date = new Date(elem.date)
                 const dateFormater:string = `${date.getDate()} ${month[date.getMonth()]} ${date.getFullYear()} года, ${date.getHours()}:${date.getMinutes()}`
 
-                let dateIssue:Date;
-                let dateFormaterIssue:string = '-'
+                let dateIssue:string;
 
                 if(elem.dateIssued){
-                    dateIssue = new Date(elem.dateIssued)
-                    dateFormaterIssue = `${dateIssue.getDate()} ${month[dateIssue.getMonth()]} ${dateIssue.getFullYear()} года, ${dateIssue.getHours()}:${dateIssue.getMinutes()}`
+                    dateIssue = DateFormatter(new Date(elem.dateIssued))
                 }
 
                 let message:string;
 
                 if(elem.status==='CANCELED'){
 
-                    message = `\n<strong>Причина отказа: ${elem.returnCause||'Причина не указана'}</strong>\n\n<b>SKU:</b> ${elem.skuTitle}\n<b>Товар:</b> ${elem.productTitle}\n<b>Цена:</b> ${NumReplace(elem.sellPrice)} сум\n<b>Сумма к выводу:</b> ${NumReplace(elem.sellerProfit)} сум\n\n<b>Дата заказа:</b> ${dateFormater}\n<b>Дата Получения:</b> ${dateFormaterIssue}\n\n`
+                    message+=HTMLFormatter([
+                        `/n/sПричина отказа: ${elem.returnCause || 'Причина не указана'}/s/n/n`,
+                        `/bSKU:/b${elem.skuTitle}/n`,
+                        `/bТовар:/b ${elem.productTitle}/n`,
+                        `/bЦена:/b ${NumReplace(elem.sellPrice)} сум/n`,
+                        `/bСумма к выводу:/b ${NumReplace(elem.sellerProfit)} сум/n/n`,
+                        `/bДата заказа:/b ${dateFormater}/n`,
+                        `/Дата Отказа:/b ${dateIssue}/n/n`,
+                    ])
+
                 }else if(elem.dateIssued){
-                   message = `\n<b>SKU:</b> ${elem.skuTitle}\n<b>Товар:</b> ${elem.productTitle}\n<b>Цена:</b> ${NumReplace(elem.sellPrice)} сум\n<b>Сумма к выводу:</b> ${NumReplace(elem.sellerProfit)} сум\n\n<b>Дата заказа:</b> ${dateFormater}\n<b>Дата Получения:</b> ${dateFormaterIssue}\n\n`
+                    message+=HTMLFormatter([
+                        `/bSKU:/b${elem.skuTitle}/n`,
+                        `/bТовар:/b ${elem.productTitle}/n`,
+                        `/bЦена:/b ${NumReplace(elem.sellPrice)} сум/n`,
+                        `/bСумма к выводу:/b ${NumReplace(elem.sellerProfit)} сум/n/n`,
+                        `/bДата заказа:/b ${dateFormater}/n`,
+                        `/Дата Получения:/b ${dateIssue}/n/n`,
+                    ])
                 }else{
-                    message = `\n<b>SKU:</b> ${elem.skuTitle}\n<b>Товар:</b> ${elem.productTitle}\n<b>Цена:</b> ${NumReplace(elem.sellPrice)} сум\n<b>Сумма к выводу:</b> ${NumReplace(elem.sellerProfit)} сум\n\n<b>Дата заказа:</b> ${dateFormater}\n<b>Дата Получения:</b> ${dateFormaterIssue}\n\n`
+                    message+=HTMLFormatter([
+                        `/bSKU:/b${elem.skuTitle}/n`,
+                        `/bТовар:/b ${elem.productTitle}/n`,
+                        `/bЦена:/b ${NumReplace(elem.sellPrice)} сум/n`,
+                        `/bСумма к выводу:/b ${NumReplace(elem.sellerProfit)} сум/n/n`,
+                        `/bДата заказа:/b ${dateFormater}/n`,
+                        `/Дата Получения:/b --- /n/n`,
+                    ])
+
                 }
 
                 return await ctx.sendPhoto(elem.productImage.photo['480'].high, {

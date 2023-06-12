@@ -71,10 +71,14 @@ class Bot{
 
 
                 if(!this.notify) {
-                    this.notify = true
-                    console.log('notify online')
-                    UpdateService.onSubsriptionsEvents('check_push_notify', ctx)
-                    UpdateService.onSubsriptionsEvents('check_subscribe', ctx)
+                    //@ts-ignore
+                    if(ctx?.message&&ctx?.message?.from){
+                        this.notify = true
+                        console.log('notify online')
+                        UpdateService.onSubsriptionsEvents('check_push_notify', ctx)
+                        UpdateService.onSubsriptionsEvents('check_subscribe', ctx)
+                    }
+
                 }
 
             }else{
