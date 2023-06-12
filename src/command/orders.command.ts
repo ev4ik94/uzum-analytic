@@ -52,7 +52,7 @@ export class OrdersCommand extends Command{
                     dateIssue = DateFormatter(new Date(elem.dateIssued))
                 }
 
-                let message:string;
+                let message:string = '';
 
                 if(elem.status==='CANCELED'){
 
