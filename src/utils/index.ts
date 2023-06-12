@@ -18,12 +18,11 @@ export const HTMLFormatter = (data:string[])=>{
 }
 
 export const DateFormatter = (date:Date)=>{
+    let date_with_timezone:Date = new Date(date.toLocaleString("en-US", {timeZone: "Asia/Dushanbe"}))
+    let hours = `0${date_with_timezone.getHours()}`.slice(-2)
+    let minutes = `0${date_with_timezone.getMinutes()}`.slice(-2)
 
-    let hours = `0${date.getHours()}`.slice(-2)
-    let minutes = `0${date.getMinutes()}`.slice(-2)
-
-    console.log(date.setTime( date.getTime() + date.getTimezoneOffset()*60*1000 ))
-    return `${date.getDate()} ${month[date.getMonth()]} ${date.getFullYear()} года, ${hours}:${minutes}`
+    return `${date_with_timezone.getDate()} ${month[date_with_timezone.getMonth()]} ${date_with_timezone.getFullYear()} года, ${hours}:${minutes}`
 }
 
 
