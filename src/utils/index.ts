@@ -18,8 +18,11 @@ export const HTMLFormatter = (data:string[])=>{
 }
 
 export const DateFormatter = (date:Date)=>{
+
     let hours = `0${date.getHours()}`.slice(-2)
     let minutes = `0${date.getMinutes()}`.slice(-2)
+
+    console.log(date.setTime( date.getTime() + date.getTimezoneOffset()*60*1000 ))
     return `${date.getDate()} ${month[date.getMonth()]} ${date.getFullYear()} года, ${hours}:${minutes}`
 }
 

@@ -28,7 +28,7 @@ export class OrdersCommand extends Command{
 
         this.bot.hears('/orders', async (ctx)=>{
             if(ctx.session.current_shop){
-                await ctx.reply(`Заказы за последние 2 недели`, Markup.inlineKeyboard(buttons_orders))
+                await ctx.reply(`Список всех заказов`, Markup.inlineKeyboard(buttons_orders))
             }
 
         })
