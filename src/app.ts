@@ -48,7 +48,7 @@ class Bot{
             if(ctx.session.token){
                 await AuthService.checkToken(ctx)
 
-                if(ctx.session.shops.length&&!ctx.session.current_shop) ctx.session.current_shop = ctx.session.shops[0].id
+                if(ctx.session.shops&&ctx.session.shops.length&&!ctx.session.current_shop) ctx.session.current_shop = ctx.session.shops[0].id
 
                 if(!ctx.session.shops||!ctx.session.shops.length){
                     ctx.session.shops = await AuthService.getUserShops(ctx.session.token)
