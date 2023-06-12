@@ -12,16 +12,14 @@ const UpdateService = new UpdatesService()
 
 
 export class StartCommand extends Command{
-    notify:boolean
-    constructor(bot:Telegraf<IBotContext>, notify:boolean) {
+
+    constructor(bot:Telegraf<IBotContext>) {
         super(bot);
-       this.notify = notify
     }
 
     handle() {
 
-        console.log('handle start')
-        console.log(this.notify)
+
 
 
         this.bot.start(async(ctx)=>{

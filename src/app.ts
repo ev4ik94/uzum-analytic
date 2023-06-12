@@ -44,12 +44,12 @@ class Bot{
 
         this.bot.use(async(ctx, next)=>{
 
-            if(!this.notify) this.notify = true
-
 
 
             if(ctx.session.token){
                 await AuthService.checkToken(ctx)
+
+
 
                 if(ctx.session.shops&&ctx.session.shops.length&&!ctx.session.current_shop) ctx.session.current_shop = ctx.session.shops[0].id
 
@@ -67,6 +67,14 @@ class Bot{
                     }else{
                         ctx.session.current_shop = ctx.session.shops[0].id
                     }
+                }
+
+
+                if(!this.notify) {
+                    this.notify = true
+                    console.log('notify online')
+                    UpdateService.onSubsriptionsEvents('check_push_notify', ctx)
+                    UpdateService.onSubsriptionsEvents('check_subscribe', ctx)
                 }
 
             }else{
@@ -164,7 +172,7 @@ class Bot{
 
 
 
-        this.commands = [ new StartCommand(this.bot, this.notify), new ProductsCommand(this.bot), new OrdersCommand(this.bot), new ReviewsCommand(this.bot)]
+        this.commands = [ new StartCommand(this.bot), new ProductsCommand(this.bot), new OrdersCommand(this.bot), new ReviewsCommand(this.bot)]
         for(const command of this.commands){
             command.handle()
         }
