@@ -46,7 +46,7 @@ export class OrdersCommand extends Command{
                 const date:Date = new Date(elem.date)
                 const dateFormater:string = `${date.getDate()} ${month[date.getMonth()]} ${date.getFullYear()} года, ${date.getHours()}:${date.getMinutes()}`
 
-                let dateIssue:string;
+                let dateIssue:string='';
 
                 if(elem.dateIssued){
                     dateIssue = DateFormatter(new Date(elem.dateIssued))
