@@ -34,6 +34,7 @@ class Bot{
     bot: Telegraf<IBotContext>
     commands: Command[] = []
     user_auth: any = {}
+    notify:boolean = false
     constructor() {
         console.log('БОТ запущен')
         this.bot = new Telegraf<IBotContext>(process.env.TOKEN!);
@@ -42,6 +43,8 @@ class Bot{
 
 
         this.bot.use(async(ctx, next)=>{
+
+            if(!this.notify) this.notify = true
 
 
 
@@ -161,7 +164,7 @@ class Bot{
 
 
 
-        this.commands = [ new StartCommand(this.bot), new ProductsCommand(this.bot), new OrdersCommand(this.bot), new ReviewsCommand(this.bot)]
+        this.commands = [ new StartCommand(this.bot, this.notify), new ProductsCommand(this.bot), new OrdersCommand(this.bot), new ReviewsCommand(this.bot)]
         for(const command of this.commands){
             command.handle()
         }

@@ -12,24 +12,23 @@ const UpdateService = new UpdatesService()
 
 
 export class StartCommand extends Command{
-    constructor(bot:Telegraf<IBotContext>) {
+    notify:boolean
+    constructor(bot:Telegraf<IBotContext>, notify:boolean) {
         super(bot);
+       this.notify = notify
     }
 
     handle() {
 
-
+        console.log('handle start')
+        console.log(this.notify)
 
 
         this.bot.start(async(ctx)=>{
 
 
-            console.log('handle')
-
-
-
             if(!ctx.session.token){
-                console.log('ENTER')
+
                 return await ctx.reply('Для начала работы с ботом, вам необходимо авторизоваться', {
                     reply_markup:{
                         inline_keyboard: [
@@ -37,18 +36,6 @@ export class StartCommand extends Command{
                         ]
                     }
                 })
-
-                // if(ctx.message.from.username==='eva_4eva'||ctx.message.from.username==='Akhadov'){
-                //     ctx.session.token = 'ZvF2QEdLAhGxEOXeM3yO0KKmOOM'
-                //     ctx.session.refresh_token = 'yz_TtM9MRXM1Ehm_-fojn5ER-_k'
-                //     return
-                // }else{
-                //
-                //
-                //
-                //
-                // }
-
 
             }
 
