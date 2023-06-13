@@ -101,8 +101,13 @@ export  default class PermissionsService{
                 message: ''
             }
         }catch (err:any){
-            console.log('ERRORRRR')
             console.log(err.code)
+            if(err?.code==='SUBSCRIPTION_NO_ACTIVE'){
+                save_activate = {
+                    status: false,
+                    message: 'Подписка истекла'
+                }
+            }
             throw new Error(err)
         }
 
