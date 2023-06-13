@@ -93,9 +93,13 @@ class Bot{
 
                 this.user_is_active = stateManagers.getIsActivate()
 
+                console.log(this.user_is_active)
+
                 if(!this.user_is_active.status){
                     return await ctx.reply(this.user_is_active.message)
                 }
+
+
 
 
             }else{
