@@ -21,11 +21,11 @@ export  default class UpdatesService{
 
     private intervalCheckSubscribe:any
     private intervalPushNotify:any
-    private stateManager:IStateManager
+    private state:IStateManager
 
 
     constructor(private readonly stateManager:IStateManager) {
-        this.stateManager = stateManager
+        this.state = stateManager
 
     }
 
@@ -54,7 +54,7 @@ export  default class UpdatesService{
     }
 
     private async onCheckSubscribe(ctx:any){
-        const PermissionServiceData = new PermissionService(this.stateManager)
+        const PermissionServiceData = new PermissionService(this.state)
         return await PermissionServiceData.checkSubscribe(ctx.message.from.id)
     }
 

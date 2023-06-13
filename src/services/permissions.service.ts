@@ -9,9 +9,9 @@ import moment from "moment";
 
 
 export  default class PermissionsService{
-    private stateManager:IStateManager
+    private state:IStateManager
     constructor(private stateManager:IStateManager) {
-        this.stateManager = stateManager
+        this.state = stateManager
         //@ts-ignore
         Date.prototype.addDays = function(days:number){
             var date_r = new Date(this.valueOf());
@@ -67,7 +67,7 @@ export  default class PermissionsService{
 
            await Users.create(data_create)
 
-            this.stateManager.setIsActivate({
+            this.state.setIsActivate({
                 status: true,
                 message:''
             })
@@ -103,7 +103,7 @@ export  default class PermissionsService{
                 return await this.deletePermission(userId)
             }
 
-            this.stateManager.setIsActivate({
+            this.state.setIsActivate({
                 status: true,
                 message:''
             })
@@ -137,7 +137,7 @@ export  default class PermissionsService{
             await Users.update(data_edit, {where: {id: data.userId}})
 
 
-            this.stateManager.setIsActivate({
+            this.state.setIsActivate({
                 status: true,
                 message:''
             })
