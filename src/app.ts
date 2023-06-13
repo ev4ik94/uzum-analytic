@@ -48,7 +48,7 @@ class Bot{
 
         this.bot.use(async(ctx, next)=>{
 
-console.log(this.user_is_active)
+// console.log(this.user_is_active)
 
             if(ctx.session.token&&this.user_is_active.status){
                 await AuthService.checkToken(ctx)
@@ -210,6 +210,7 @@ console.log(this.user_is_active)
 
 
         this.bot.catch((err:any) => {
+            console.log('CODE')
             console.log(err?.code)
             if(err?.code&&err?.code==='SUBSCRIPTION_NO_ACTIVE'){
                 this.user_is_active = {
