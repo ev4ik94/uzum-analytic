@@ -85,7 +85,8 @@ class Bot{
                     if(!this.notify){
                         stateManagers.setIsNotified(true)
                         this.notify = stateManagers.getIsNotified()
-                        console.log('notify online')
+                        console.log('Notified Online')
+                       console.log(this.notify)
                         await UpdateService.onSubsriptionsEvents('check_push_notify', ctx)
                     }
                 }
@@ -93,10 +94,6 @@ class Bot{
                 this.user_is_active = stateManagers.getIsActivate()
 
 
-
-
-
-                console.log(this.user_is_active)
 
                 if(!this.user_is_active.status){
                     return await ctx.reply(this.user_is_active.message)

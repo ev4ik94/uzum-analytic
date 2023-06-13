@@ -98,12 +98,12 @@ export  default class PermissionsService{
             const date_now:any = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Dushanbe"})).getTime()
             const date_end:any = new Date(dataValues.date_end).getTime()
 
-            console.log(date_end-date_now)
+
 
             if(!(date_end-date_now>0)){
                 return await this.deletePermission(userId)
             }
-console.log('Activate')
+
             this.state.setIsActivate({
                 status: true,
                 message:''

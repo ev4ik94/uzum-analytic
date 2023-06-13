@@ -62,7 +62,7 @@ export  default class UpdatesService{
         this.intervalPushNotify = setInterval(async()=>{
             const notified_data = await OrdersServices.notificationOrdersNew(ctx)
             const new_reviews = await ReviewService.getReviews({shopId: ctx.session.current_shop, token: ctx.session.token, status: 'NEW'})
-
+console.log('GET NOTIFY')
 
             if(notified_data){
 
@@ -97,7 +97,7 @@ export  default class UpdatesService{
                     await ctx.reply('Новый отзыв 🙋‍♀️',  Markup.inlineKeyboard([Markup.button.callback('Просмотреть', `reviewId${new_reviews[i].reviewId}`)]))
                 }
             }
-        }, 180000)
+        }, 30000)
     }
 
     private deleteCheckSubscribe(){
