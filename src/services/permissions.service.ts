@@ -80,10 +80,10 @@ export  default class PermissionsService{
         const {dataValues} = user
 
         if(dataValues.status===Statuses.NO_ACTIVE) {
-            const error = new Error("message")
+            const error = new Error("Подписка истекла")
             //@ts-ignore
             error.code = "SUBSCRIPTION_NO_ACTIVE"
-            return throw error;
+            throw error;
         }
 
         const date_now:any = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Dushanbe"})).getTime()
