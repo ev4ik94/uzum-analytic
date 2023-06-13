@@ -72,36 +72,39 @@ export  default class PermissionsService{
 
     async checkSubscribe(userId:number, save_activate:any){
 
+        try{
+            const user = await Users.findOne({where:{userId:userId}})
 
-        const user = await Users.findOne({where:{userId:userId}})
+            if(!user) throw new Error('Пользователь не найден')
 
-        if(!user) throw new Error('Пользователь не найден')
+            const {dataValues} = user
 
-        const {dataValues} = user
+            if(dataValues.status===Statuses.NO_ACTIVE) {
+                const error = new Error("Подписка истекла")
+                //@ts-ignore
+                error.code = "SUBSCRIPTION_NO_ACTIVE"
+                throw error;
+            }
 
-        if(dataValues.status===Statuses.NO_ACTIVE) {
-            const error = new Error("Подписка истекла")
-            //@ts-ignore
-            error.code = "SUBSCRIPTION_NO_ACTIVE"
-            throw error;
+            const date_now:any = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Dushanbe"})).getTime()
+            const date_end:any = new Date(dataValues.date_end).getTime()
+
+
+
+            if(!(date_end-date_now>0)){
+                return await this.deletePermission(userId)
+            }
+
+            console.log('activate SUBSCRIBE')
+            save_activate = {
+                status: true,
+                message: ''
+            }
+        }catch (err:any){
+            console.log('ERRORRRR')
+            console.log(err.code)
+            throw new Error(err)
         }
-
-        const date_now:any = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Dushanbe"})).getTime()
-        const date_end:any = new Date(dataValues.date_end).getTime()
-
-
-
-        if(!(date_end-date_now>0)){
-            return await this.deletePermission(userId)
-        }
-
-console.log('activate SUBSCRIBE')
-        save_activate = {
-            status: true,
-            message: ''
-        }
-
-
 
     }
 
