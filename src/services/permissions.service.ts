@@ -92,7 +92,7 @@ export  default class PermissionsService{
 
 
         if(!(date_end-date_now>0)){
-            await this.deletePermission(userId)
+            return await this.deletePermission(userId)
         }
 
 
