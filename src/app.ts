@@ -81,7 +81,7 @@ class Bot{
 
                 //@ts-ignore
                 if(ctx?.message&&ctx?.message?.from){
-                    await UpdateService.onSubsriptionsEvents('check_subscribe', ctx)
+                    UpdateService.onSubsriptionsEvents('check_subscribe', ctx)
 
                     if(!this.notify){
                         stateManagers.setIsNotified(true)
@@ -92,7 +92,7 @@ class Bot{
                 }
 
                 this.user_is_active = stateManagers.getIsActivate()
-                console.log(this.user_is_active)
+
                 if(!this.user_is_active.status){
                     return await ctx.reply(this.user_is_active.message)
                 }

@@ -156,12 +156,14 @@ export  default class PermissionsService{
 
             if(!find_user) throw new Error('Пользователь не найден')
 
+            const {dataValues} = find_user
+
 //@ts-ignore
             await Users.update({status: Statuses.NO_ACTIVE}, {where: {userId:userId}})
 
             this.state.setIsActivate({
                 status: false,
-                message:'Подписка истекла'
+                message:dataValues.status===Statuses.TRIAL?'Ваш пробный период окончен':'Подписка истекла'
             })
 
         }catch(err:any){

@@ -43,7 +43,7 @@ export  default class UpdatesService{
     }
 
     offSubscriptionsEvents(event:string){
-        console.log('off')
+
         if(event==='check_subscribe'){
             this.deleteCheckSubscribe()
         }
