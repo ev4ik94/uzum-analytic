@@ -137,8 +137,7 @@ class Bot{
         app.put(`/users/:id`, async(req:Request, res:Response)=>{
             const {id} = req.params
             const {body} = req
-            console.log(body)
-            await PermissionServiceData.userUpdate(+id, JSON.parse(body))
+            await PermissionServiceData.userUpdate(+id, body)
             res.status(200).json({status:'ok'})
         })
         app.delete(`/users/:id`, async(req:Request, res:Response)=>{
