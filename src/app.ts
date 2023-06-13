@@ -35,7 +35,10 @@ class Bot{
     commands: Command[] = []
     user_auth: any = {}
     notify:boolean = false
-    user_is_active:boolean = true
+    user_is_active:any = {
+        status:true,
+        message:''
+    }
     constructor() {
         console.log('БОТ запущен')
         this.bot = new Telegraf<IBotContext>(process.env.TOKEN!);
@@ -47,7 +50,7 @@ class Bot{
 
 
 
-            if(ctx.session.token&&this.user_is_active){
+            if(ctx.session.token&&this.user_is_active.status){
                 await AuthService.checkToken(ctx)
 
 
@@ -87,8 +90,8 @@ class Bot{
 
             }else{
 
-                if(!this.user_is_active){
-                    return await ctx.reply('Ваша подписка окончена идите и платите быстро')
+                if(!this.user_is_active.status){
+                    return await ctx.reply(this.user_is_active.message)
                 }else{
                     if(this.user_auth?.token&&this.user_auth?.refresh_token){
                         ctx.session.token = this.user_auth.token
@@ -209,7 +212,15 @@ class Bot{
         this.bot.catch((err:any) => {
 
             if(err?.code&&err?.code==='SUBSCRIPTION_NO_ACTIVE'){
-                this.user_is_active = false
+                this.user_is_active = {
+                    active: false,
+                    message: 'Ваша подписка истекла'
+                }
+            }else if(err?.code&&err?.code==='SUBSCRIPTION_TRIAL_IS_FINISHED'){
+                this.user_is_active = {
+                    active: false,
+                    message: 'Ваш пробный период истек, если хотите продолжить, приобретите подписку на услуги'
+                }
             }
 
             console.log(err)
