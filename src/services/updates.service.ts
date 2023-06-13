@@ -28,7 +28,7 @@ export  default class UpdatesService{
 
 
         if(event==='check_subscribe'){
-            this.onCheckSubscribe(ctx)
+            return this.onCheckSubscribe(ctx)
         }
         if(event==='check_push_notify'){
             this.onPushNotify(ctx)
