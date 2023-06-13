@@ -103,9 +103,6 @@ class Bot{
                 }
 
 
-
-
-
             }
 
 
@@ -127,6 +124,15 @@ class Bot{
     async routing(){
         app.get(`/`, (req:Request, res:Response)=>{
             res.send('HELLO I`m work')
+        })
+        app.get(`/users`, async(req:Request, res:Response)=>{
+            const users = await PermissionServiceData.getUsersAll()
+            res.status(200).json(users)
+        })
+        app.get(`/users/:id`, async(req:Request, res:Response)=>{
+            const {id} = req.params
+            const user = await PermissionServiceData.getUser(+id)
+            res.status(200).json(user)
         })
         app.post('/web-data', async(req:Request, res:Response)=>{
             const {query_id, token, refresh_token, tg_data} = req.body

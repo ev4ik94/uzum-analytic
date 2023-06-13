@@ -17,8 +17,25 @@ export  default class PermissionsService{
         }
     }
 
-    async getUser(){
+    async getUser(id:number){
+        try{
+            const user = await Users.findOne({where:{id}})
 
+            if(!user) throw new Error('Такого пользователя нет')
+
+            return user
+        }catch(err:any){
+            throw new Error(err)
+        }
+    }
+
+
+    async getUsersAll(){
+        try{
+            return await Users.findAll()
+        }catch(err:any){
+            throw new Error(err)
+        }
     }
 
 
