@@ -46,7 +46,7 @@ export  default class PermissionsService{
 console.log(data)
         try {
 
-            const date = new Date()
+            const date = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Dushanbe"}))
 
 
             const data_create = {
@@ -87,7 +87,7 @@ console.log(data)
             throw error;
         }
 
-        const date_now:any = new Date().getTime()
+        const date_now:any = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Dushanbe"})).getTime()
         const date_end:any = new Date(dataValues.date_end).getTime()
 
         console.log(date_end-date_now)
