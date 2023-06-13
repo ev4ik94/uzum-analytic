@@ -88,10 +88,11 @@ export  default class PermissionsService{
             const {dataValues} = user
 
             if(dataValues.status===Statuses.NO_ACTIVE) {
-                const error = new Error("Подписка истекла")
-                //@ts-ignore
-                error.code = "SUBSCRIPTION_NO_ACTIVE"
-                throw error;
+                this.state.setIsActivate({
+                    status: false,
+                    message:'Подписка истекла'
+                })
+                return false
             }
 
             const date_now:any = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Dushanbe"})).getTime()
@@ -158,10 +159,10 @@ export  default class PermissionsService{
 //@ts-ignore
             await Users.update({status: Statuses.NO_ACTIVE}, {where: {userId:userId}})
 
-            const error = new Error("Подписка истекла в доступе отказано")
-            //@ts-ignore
-            error.code = "SUBSCRIPTION_NO_ACTIVE"
-            throw error;
+            this.state.setIsActivate({
+                status: false,
+                message:'Подписка истекла'
+            })
 
         }catch(err:any){
             throw new Error(err)

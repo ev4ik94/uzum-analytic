@@ -39,7 +39,7 @@ class Bot{
     commands: Command[] = []
     user_auth: any = {}
     notify:boolean = stateManagers.getIsNotified()
-    user_is_active:any
+    user_is_active:any = stateManagers.getIsActivate()
     constructor() {
         console.log('БОТ запущен')
         this.bot = new Telegraf<IBotContext>(process.env.TOKEN!);
@@ -49,12 +49,12 @@ class Bot{
 
         this.bot.use(async(ctx, next)=>{
 
-            this.user_is_active = stateManagers.getIsActivate()
 
-console.log(this.user_is_active)
+
+
 // console.log(this.user_is_active)
 
-            if(ctx.session.token&&(this.user_is_active&&this.user_is_active?.status)){
+            if(ctx.session.token&&this.user_is_active?.status){
                 await AuthService.checkToken(ctx)
 
 
@@ -81,7 +81,7 @@ console.log(this.user_is_active)
 
                 //@ts-ignore
                 if(ctx?.message&&ctx?.message?.from){
-                    UpdateService.onSubsriptionsEvents('check_subscribe', ctx)
+                    await UpdateService.onSubsriptionsEvents('check_subscribe', ctx)
 
                     if(!this.notify){
                         stateManagers.setIsNotified(true)
@@ -91,6 +91,11 @@ console.log(this.user_is_active)
                     }
                 }
 
+                this.user_is_active = stateManagers.getIsActivate()
+                console.log(this.user_is_active)
+                if(!this.user_is_active.status){
+                    return await ctx.reply(this.user_is_active.message)
+                }
 
 
             }else{
@@ -215,16 +220,6 @@ console.log(this.user_is_active)
 
 
         this.bot.catch((err:any) => {
-            console.log('CODE')
-            console.log(err?.code)
-            if(err?.code&&err?.code==='SUBSCRIPTION_NO_ACTIVE'){
-
-                stateManagers.setIsActivate({
-                    status: false,
-                    message: 'Ваша подписка истекла handler'
-                })
-            }
-
             console.log(err)
 
 
