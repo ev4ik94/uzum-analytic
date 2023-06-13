@@ -54,7 +54,7 @@ class Bot{
 
 // console.log(this.user_is_active)
 
-            if(ctx.session.token&&this.user_is_active?.status){
+            if(ctx.session.token){
                 await AuthService.checkToken(ctx)
 
 
@@ -78,7 +78,6 @@ class Bot{
                 }
 
 
-
                 //@ts-ignore
                 if(ctx?.message&&ctx?.message?.from){
                     UpdateService.onSubsriptionsEvents('check_subscribe', ctx)
@@ -93,6 +92,10 @@ class Bot{
 
                 this.user_is_active = stateManagers.getIsActivate()
 
+
+
+
+
                 console.log(this.user_is_active)
 
                 if(!this.user_is_active.status){
@@ -104,26 +107,22 @@ class Bot{
 
             }else{
 
-                if(!this.user_is_active.status){
-                    return await ctx.reply(this.user_is_active.message)
+                if(this.user_auth?.token&&this.user_auth?.refresh_token){
+                    ctx.session.token = this.user_auth.token
+                    ctx.session.refresh_token = this.user_auth.refresh_token
+                    this.user_auth = {}
+
+                    await ctx.reply('Добро пожаловать в бот!')
                 }else{
-                    if(this.user_auth?.token&&this.user_auth?.refresh_token){
-                        ctx.session.token = this.user_auth.token
-                        ctx.session.refresh_token = this.user_auth.refresh_token
-                        this.user_auth = {}
+                    //@ts-ignore
+                    if(ctx.update&&ctx.update.message){
 
-                        await ctx.reply('Добро пожаловать в бот!')
-                    }else{
                         //@ts-ignore
-                        if(ctx.update&&ctx.update.message){
+                        const text = ctx.update.message.text
+                        if(text!=='/start') return await ctx.reply('Вы не авторизованы')
 
-                            //@ts-ignore
-                            const text = ctx.update.message.text
-                            if(text!=='/start') return await ctx.reply('Вы не авторизованы')
-
-                        }else{
-                            return await ctx.reply('Вы не авторизованы')
-                        }
+                    }else{
+                        return await ctx.reply('Вы не авторизованы')
                     }
                 }
 
