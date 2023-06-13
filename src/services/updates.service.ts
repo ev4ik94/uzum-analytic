@@ -1,3 +1,5 @@
+import {IStateManager} from "../config/config.interface";
+
 const fetch = require('node-fetch')
 import {Users, Statuses} from "../models";
 import {IBotContext} from "../context/context.interface";
@@ -13,22 +15,26 @@ import PermissionService from "./permissions.service";
 
 const ReviewService = new ReviewsService()
 const OrdersServices = new OrdersService()
-const PermissionServiceData = new PermissionService()
+
 
 export  default class UpdatesService{
 
     private intervalCheckSubscribe:any
     private intervalPushNotify:any
+    private stateManager:IStateManager
 
-    constructor() {
+
+    constructor(private readonly stateManager:IStateManager) {
+        this.stateManager = stateManager
+
     }
 
 
-    onSubsriptionsEvents(event:string, ctx:any, data:any=null){
+    onSubsriptionsEvents(event:string, ctx:any){
 
 
         if(event==='check_subscribe'){
-            if(data) this.onCheckSubscribe(ctx, data)
+            this.onCheckSubscribe(ctx)
         }
         if(event==='check_push_notify'){
             this.onPushNotify(ctx)
@@ -47,8 +53,9 @@ export  default class UpdatesService{
         }
     }
 
-    private async onCheckSubscribe(ctx:any, data:any){
-        return await PermissionServiceData.checkSubscribe(ctx.message.from.id, data)
+    private async onCheckSubscribe(ctx:any){
+        const PermissionServiceData = new PermissionService(this.stateManager)
+        return await PermissionServiceData.checkSubscribe(ctx.message.from.id)
     }
 
     private onPushNotify(ctx:any){

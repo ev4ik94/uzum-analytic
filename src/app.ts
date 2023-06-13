@@ -16,12 +16,16 @@ import ReviewsService from "./services/reviews.service";
 import UpdatesService from "./services/updates.service";
 import PermissionService from "./services/permissions.service";
 import dotenv from "dotenv"
+import {StateManager} from "./state";
 
 const AuthService = new AuthenticatedService()
 const ReviewService = new ReviewsService()
 const OrdersServices = new OrdersService()
-const UpdateService = new UpdatesService()
-const PermissionServiceData = new PermissionService()
+
+const stateManagers = new StateManager()
+
+const UpdateService = new UpdatesService(stateManagers)
+const PermissionServiceData = new PermissionService(stateManagers)
 
 
 const app:Express = express()
@@ -34,11 +38,8 @@ class Bot{
     bot: Telegraf<IBotContext>
     commands: Command[] = []
     user_auth: any = {}
-    notify:boolean = false
-    user_is_active:any = {
-        status:true,
-        message:''
-    }
+    notify:boolean = stateManagers.getIsNotified()
+    user_is_active:any
     constructor() {
         console.log('БОТ запущен')
         this.bot = new Telegraf<IBotContext>(process.env.TOKEN!);
@@ -48,9 +49,12 @@ class Bot{
 
         this.bot.use(async(ctx, next)=>{
 
+            this.user_is_active = stateManagers.getIsActivate()
+
+
 // console.log(this.user_is_active)
 
-            if(ctx.session.token&&this.user_is_active.status){
+            if(ctx.session.token&&(this.user_is_active&&this.user_is_active?.status)){
                 await AuthService.checkToken(ctx)
 
 
@@ -77,10 +81,11 @@ class Bot{
 
                 //@ts-ignore
                 if(ctx?.message&&ctx?.message?.from){
-                    await UpdateService.onSubsriptionsEvents('check_subscribe', ctx, this.user_is_active)
+                    UpdateService.onSubsriptionsEvents('check_subscribe', ctx)
 
                     if(!this.notify){
-                        this.notify = true
+                        stateManagers.setIsNotified(true)
+                        this.notify = stateManagers.getIsNotified()
                         console.log('notify online')
                         UpdateService.onSubsriptionsEvents('check_push_notify', ctx)
                     }
@@ -213,10 +218,11 @@ class Bot{
             console.log('CODE')
             console.log(err?.code)
             if(err?.code&&err?.code==='SUBSCRIPTION_NO_ACTIVE'){
-                this.user_is_active = {
-                    active: false,
-                    message: 'Ваша подписка истекла'
-                }
+
+                stateManagers.setIsActivate({
+                    status: false,
+                    message: 'Ваша подписка истекла handler'
+                })
             }
 
             console.log(err)

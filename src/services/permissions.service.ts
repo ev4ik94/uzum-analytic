@@ -1,3 +1,5 @@
+import {IStateManager} from "../config/config.interface";
+
 const fetch = require('node-fetch')
 import {Users, Statuses} from "../models";
 import {IBotContext} from "../context/context.interface";
@@ -7,8 +9,9 @@ import moment from "moment";
 
 
 export  default class PermissionsService{
-
-    constructor() {
+    private stateManager:IStateManager
+    constructor(private stateManager:IStateManager) {
+        this.stateManager = stateManager
         //@ts-ignore
         Date.prototype.addDays = function(days:number){
             var date_r = new Date(this.valueOf());
@@ -64,13 +67,18 @@ export  default class PermissionsService{
 
            await Users.create(data_create)
 
+            this.stateManager.setIsActivate({
+                status: true,
+                message:''
+            })
+
 
         }catch (err:any){
             throw new Error(err)
         }
     }
 
-    async checkSubscribe(userId:number, save_activate:any){
+    async checkSubscribe(userId:number){
 
         try{
             const user = await Users.findOne({where:{userId:userId}})
@@ -95,19 +103,13 @@ export  default class PermissionsService{
                 return await this.deletePermission(userId)
             }
 
-            console.log('activate SUBSCRIBE')
-            save_activate = {
+            this.stateManager.setIsActivate({
                 status: true,
-                message: ''
-            }
+                message:''
+            })
+
+
         }catch (err:any){
-            console.log(err.code)
-            if(err?.code==='SUBSCRIPTION_NO_ACTIVE'){
-                save_activate = {
-                    status: false,
-                    message: 'Подписка истекла'
-                }
-            }
             throw new Error(err)
         }
 
@@ -135,10 +137,10 @@ export  default class PermissionsService{
             await Users.update(data_edit, {where: {id: data.userId}})
 
 
-            data.save_activate = {
+            this.stateManager.setIsActivate({
                 status: true,
-                message: ''
-            }
+                message:''
+            })
 
 
         }catch (err:any){
