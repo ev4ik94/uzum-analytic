@@ -6,7 +6,7 @@ interface IActivateData  {
 
 export class StateManager{
     public is_activate:IActivateData = {
-        status: false,
+        status: true,
         message: ''
     }
     public is_notified: boolean = false
