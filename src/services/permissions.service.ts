@@ -95,7 +95,7 @@ export  default class PermissionsService{
             return await this.deletePermission(userId)
         }
 
-
+console.log('activate SUBSCRIBE')
         save_activate = {
             status: true,
             message: ''
