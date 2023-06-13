@@ -134,6 +134,17 @@ class Bot{
             const user = await PermissionServiceData.getUser(+id)
             res.status(200).json(user)
         })
+        app.put(`/users/:id`, async(req:Request, res:Response)=>{
+            const {id} = req.params
+            const {body} = req
+            await PermissionServiceData.userUpdate(+id, JSON.parse(body))
+            res.status(200).json({status:'ok'})
+        })
+        app.delete(`/users/:id`, async(req:Request, res:Response)=>{
+            const {id} = req.params
+            await PermissionServiceData.userDelete(+id)
+            res.status(200).json({status:'ok'})
+        })
         app.post('/web-data', async(req:Request, res:Response)=>{
             const {query_id, token, refresh_token, tg_data} = req.body
             const data_parse = JSON.parse(tg_data)

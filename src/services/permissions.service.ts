@@ -59,7 +59,11 @@ console.log(data)
                 status:Statuses.TRIAL
             }
 
-           const user_response = await Users.create(data_create)
+            const user_find = await Users.findOne({where:{userId:data.userId}})
+
+            if(user_find) throw new Error('Такой пользователь уже зарегистрирован')
+
+           await Users.create(data_create)
 
 
         }catch (err:any){
@@ -107,7 +111,7 @@ console.log(data)
                 date_end: new Date().addDays(deefDays),
                 status: Statuses.ACTIVE
             }
-
+            //@ts-ignore
             await Users.update(data_edit, {where: {id: data.userId}})
 
 
@@ -125,7 +129,7 @@ console.log(data)
             const find_user = await Users.findOne({where: {userId:userId}})
 
             if(!find_user) return false
-
+//@ts-ignore
             await Users.update({status: Statuses.NO_ACTIVE}, {where: {userId:userId}})
 
             return true
@@ -133,6 +137,32 @@ console.log(data)
         }catch(err:any){
             throw new Error(err)
         }
+    }
+
+
+    async userDelete(id:number){
+       try{
+           const user = await Users.findOne({where:{id}})
+
+           if(!user) throw new Error('Пользователь не найден')
+
+           await Users.destroy({where:{id}})
+       }catch(err:any){
+           throw new Error(err)
+       }
+    }
+
+
+    async userUpdate(id:number, data:any){
+        try{
+            const user = await Users.findOne({where:{id}})
+            if(!user) throw new Error('Такого пользователя не существует')
+            //@ts-ignore
+            await Users.update(data, {where: {id}})
+        }catch(err:any){
+            throw new Error(err)
+        }
+
     }
 
 
