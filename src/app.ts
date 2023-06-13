@@ -208,9 +208,9 @@ class Bot{
 
         this.bot.catch((err:any) => {
             console.log(err.response)
-            if(err.response.code==='SUBSCRIPTION_NO_ACTIVE'){
-                this.user_is_active = false
-            }
+            // if(err.response.code==='SUBSCRIPTION_NO_ACTIVE'){
+            //     this.user_is_active = false
+            // }
 
 
         })
