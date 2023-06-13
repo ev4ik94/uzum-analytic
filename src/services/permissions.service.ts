@@ -72,13 +72,20 @@ console.log(data)
     }
 
     async checkSubscribe(userId:number){
+
+
         const user = await Users.findOne({where:{userId:userId}})
 
-        if(!user) return false
+        if(!user) throw new Error('Пользователь не найден')
 
         const {dataValues} = user
 
-        if(dataValues.status===Statuses.NO_ACTIVE) return false
+        if(dataValues.status===Statuses.NO_ACTIVE) {
+            const error = new Error("message")
+            //@ts-ignore
+            error.code = "SUBSCRIPTION_NO_ACTIVE"
+            throw error;
+        }
 
         const date_now:any = new Date().getTime()
         const date_end:any = new Date(dataValues.date_end).getTime()
@@ -100,7 +107,7 @@ console.log(data)
         try {
             const {userId, date_to} = data
             const find_user = await Users.findOne({where: {id:userId}})
-            if(!find_user) return null
+            if(!find_user) throw new Error('Пользователь не найден')
 
             const date_start:any = new Date()
             const date_end:any = new Date(date_to)
@@ -131,11 +138,14 @@ console.log(data)
         try{
             const find_user = await Users.findOne({where: {userId:userId}})
 
-            if(!find_user) return false
+            if(!find_user) throw new Error('Пользователь не найден')
 //@ts-ignore
             await Users.update({status: Statuses.NO_ACTIVE}, {where: {userId:userId}})
 
-            return true
+            const error = new Error("message")
+            //@ts-ignore
+            error.code = "SUBSCRIPTION_NO_ACTIVE"
+            throw error;
 
         }catch(err:any){
             throw new Error(err)

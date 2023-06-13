@@ -47,10 +47,11 @@ export  default class UpdatesService{
         }
     }
 
-    private onCheckSubscribe(ctx:any){
-        this.intervalCheckSubscribe = setInterval(async()=>{
-            await PermissionServiceData.checkSubscribe(ctx.message.from.id)
-        }, 60000)
+    private async onCheckSubscribe(ctx:any){
+        return await PermissionServiceData.checkSubscribe(ctx.message.from.id)
+        // this.intervalCheckSubscribe = setInterval(async()=>{
+        //
+        // }, 60000)
     }
 
     private onPushNotify(ctx:any){
