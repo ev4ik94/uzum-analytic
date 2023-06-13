@@ -211,21 +211,12 @@ class Bot{
 
         this.bot.catch((err:any) => {
 
-            if(this.user_is_active.status){
-                if(err?.code&&err?.code==='SUBSCRIPTION_NO_ACTIVE'){
-                    this.user_is_active = {
-                        active: false,
-                        message: 'Ваша подписка истекла'
-                    }
-                }else if(err?.code&&err?.code==='SUBSCRIPTION_TRIAL_IS_FINISHED'){
-                    this.user_is_active = {
-                        active: false,
-                        message: 'Ваш пробный период истек, если хотите продолжить, приобретите подписку на услуги'
-                    }
+            if(err?.code&&err?.code==='SUBSCRIPTION_NO_ACTIVE'){
+                this.user_is_active = {
+                    active: false,
+                    message: 'Ваша подписка истекла'
                 }
             }
-
-
 
             console.log(err)
 
