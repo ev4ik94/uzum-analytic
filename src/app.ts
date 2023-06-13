@@ -80,13 +80,13 @@ class Bot{
 
                 //@ts-ignore
                 if(ctx?.message&&ctx?.message?.from){
-                    UpdateService.onSubsriptionsEvents('check_subscribe', ctx)
+                    await UpdateService.onSubsriptionsEvents('check_subscribe', ctx)
 
                     if(!this.notify){
                         stateManagers.setIsNotified(true)
                         this.notify = stateManagers.getIsNotified()
                         console.log('notify online')
-                        UpdateService.onSubsriptionsEvents('check_push_notify', ctx)
+                        await UpdateService.onSubsriptionsEvents('check_push_notify', ctx)
                     }
                 }
 

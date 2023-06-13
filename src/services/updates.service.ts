@@ -30,11 +30,11 @@ export  default class UpdatesService{
     }
 
 
-    onSubsriptionsEvents(event:string, ctx:any){
+    async onSubsriptionsEvents(event:string, ctx:any){
 
 
         if(event==='check_subscribe'){
-            this.onCheckSubscribe(ctx)
+            await this.onCheckSubscribe(ctx)
         }
         if(event==='check_push_notify'){
             this.onPushNotify(ctx)
