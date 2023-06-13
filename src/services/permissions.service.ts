@@ -83,7 +83,7 @@ export  default class PermissionsService{
             const error = new Error("message")
             //@ts-ignore
             error.code = "SUBSCRIPTION_NO_ACTIVE"
-            throw error;
+            return throw error;
         }
 
         const date_now:any = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Dushanbe"})).getTime()
