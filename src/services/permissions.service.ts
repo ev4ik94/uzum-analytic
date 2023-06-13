@@ -138,12 +138,16 @@ export  default class PermissionsService{
             const find_user = await Users.findOne({where: {userId:userId}})
 
             if(!find_user) throw new Error('Пользователь не найден')
+
+            const {dataValues} = find_user
+
 //@ts-ignore
             await Users.update({status: Statuses.NO_ACTIVE}, {where: {userId:userId}})
 
-            const error = new Error("message")
+            const error = new Error("Подписка истекла в доступе отказано")
+
             //@ts-ignore
-            error.code = "SUBSCRIPTION_NO_ACTIVE"
+            error.code = dataValues.status===Statuses.TRIAL?"SUBSCRIPTION_TRIAL_IS_FINISHED":"SUBSCRIPTION_NO_ACTIVE"
             throw error;
 
         }catch(err:any){
