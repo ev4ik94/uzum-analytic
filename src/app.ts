@@ -51,7 +51,7 @@ class Bot{
 
             this.user_is_active = stateManagers.getIsActivate()
 
-
+console.log(this.user_is_active)
 // console.log(this.user_is_active)
 
             if(ctx.session.token&&(this.user_is_active&&this.user_is_active?.status)){
