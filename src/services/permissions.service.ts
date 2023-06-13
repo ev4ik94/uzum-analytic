@@ -155,13 +155,13 @@ console.log(data)
 
     async userUpdate(id:number, data:any){
         try{
-            console.log(id)
-            console.log(data)
+
             const user = await Users.findOne({where:{id}})
-            console.log(user)
+
             if(!user) throw new Error('Такого пользователя не существует')
+            const {dataValues} = user
             //@ts-ignore
-            await Users.update(data, {where: {id}})
+            await Users.update({...dataValues, ...data}, {where: {id}})
         }catch(err:any){
             throw new Error(err)
         }
