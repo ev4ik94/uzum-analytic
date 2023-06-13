@@ -6,7 +6,7 @@ import UpdatesService from "../services/updates.service";
 
 
 
-const UpdateService = new UpdatesService()
+// const UpdateService = new UpdatesService()
 
 
 
@@ -37,8 +37,8 @@ export class StartCommand extends Command{
 
             }
 
-            UpdateService.onSubsriptionsEvents('check_push_notify', ctx)
-            UpdateService.onSubsriptionsEvents('check_subscribe', ctx)
+            // UpdateService.onSubsriptionsEvents('check_push_notify', ctx)
+            // UpdateService.onSubsriptionsEvents('check_subscribe', ctx)
 
 
 
