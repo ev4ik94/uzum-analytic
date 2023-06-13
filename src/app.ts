@@ -210,7 +210,7 @@ console.log(this.user_is_active)
 
 
         this.bot.catch((err:any) => {
-
+            console.log(err?.code)
             if(err?.code&&err?.code==='SUBSCRIPTION_NO_ACTIVE'){
                 this.user_is_active = {
                     active: false,
