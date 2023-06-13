@@ -35,6 +35,7 @@ class Bot{
     commands: Command[] = []
     user_auth: any = {}
     notify:boolean = false
+    user_is_active:boolean = true
     constructor() {
         console.log('БОТ запущен')
         this.bot = new Telegraf<IBotContext>(process.env.TOKEN!);
@@ -46,7 +47,7 @@ class Bot{
 
 
 
-            if(ctx.session.token){
+            if(ctx.session.token&&this.user_is_active){
                 await AuthService.checkToken(ctx)
 
 
@@ -86,25 +87,28 @@ class Bot{
 
             }else{
 
-                if(this.user_auth?.token&&this.user_auth?.refresh_token){
-                    ctx.session.token = this.user_auth.token
-                    ctx.session.refresh_token = this.user_auth.refresh_token
-                    this.user_auth = {}
-
-                    await ctx.reply('Добро пожаловать в бот!')
+                if(!this.user_is_active){
+                    return await ctx.reply('Ваша подписка окончена идите и платите быстро')
                 }else{
-                    //@ts-ignore
-                    if(ctx.update&&ctx.update.message){
+                    if(this.user_auth?.token&&this.user_auth?.refresh_token){
+                        ctx.session.token = this.user_auth.token
+                        ctx.session.refresh_token = this.user_auth.refresh_token
+                        this.user_auth = {}
 
-                        //@ts-ignore
-                        const text = ctx.update.message.text
-                        if(text!=='/start') return await ctx.reply('Вы не авторизованы')
-
+                        await ctx.reply('Добро пожаловать в бот!')
                     }else{
-                        return await ctx.reply('Вы не авторизованы')
+                        //@ts-ignore
+                        if(ctx.update&&ctx.update.message){
+
+                            //@ts-ignore
+                            const text = ctx.update.message.text
+                            if(text!=='/start') return await ctx.reply('Вы не авторизованы')
+
+                        }else{
+                            return await ctx.reply('Вы не авторизованы')
+                        }
                     }
                 }
-
 
             }
 
@@ -203,7 +207,12 @@ class Bot{
 
 
         this.bot.catch((err:any) => {
-            console.log(err)
+
+            if(err.response.code==='SUBSCRIPTION_NO_ACTIVE'){
+                this.user_is_active = false
+            }
+
+            console.log(err.response)
         })
         await this.bot.launch()
 

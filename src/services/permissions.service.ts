@@ -43,7 +43,6 @@ export  default class PermissionsService{
     async addUser(data:{userId:number, chatId:number, username:string}){
 
 
-console.log(data)
         try {
 
             const date = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Dushanbe"}))
@@ -90,7 +89,7 @@ console.log(data)
         const date_now:any = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Dushanbe"})).getTime()
         const date_end:any = new Date(dataValues.date_end).getTime()
 
-        console.log(date_end-date_now)
+
 
         if(!(date_end-date_now>0)){
             await this.deletePermission(userId)
