@@ -70,17 +70,19 @@ class Bot{
                 }
 
 
-                if(!this.notify) {
-                    //@ts-ignore
-                    if(ctx?.message&&ctx?.message?.from){
+
+                //@ts-ignore
+                if(ctx?.message&&ctx?.message?.from){
+                    await UpdateService.onSubsriptionsEvents('check_subscribe', ctx)
+
+                    if(!this.notify){
                         this.notify = true
                         console.log('notify online')
                         UpdateService.onSubsriptionsEvents('check_push_notify', ctx)
-                        const is_active = await UpdateService.onSubsriptionsEvents('check_subscribe', ctx)
-                        console.log(is_active)
                     }
-
                 }
+
+
 
             }else{
 
