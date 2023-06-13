@@ -24,11 +24,11 @@ export  default class UpdatesService{
     }
 
 
-    onSubsriptionsEvents(event:string, ctx:any){
+    onSubsriptionsEvents(event:string, ctx:any, data:any=null){
 
 
         if(event==='check_subscribe'){
-            return this.onCheckSubscribe(ctx)
+            if(data) this.onCheckSubscribe(ctx, data)
         }
         if(event==='check_push_notify'){
             this.onPushNotify(ctx)
@@ -47,11 +47,8 @@ export  default class UpdatesService{
         }
     }
 
-    private async onCheckSubscribe(ctx:any){
-        return await PermissionServiceData.checkSubscribe(ctx.message.from.id)
-        // this.intervalCheckSubscribe = setInterval(async()=>{
-        //
-        // }, 60000)
+    private async onCheckSubscribe(ctx:any, data:any){
+        return await PermissionServiceData.checkSubscribe(ctx.message.from.id, data)
     }
 
     private onPushNotify(ctx:any){

@@ -70,7 +70,7 @@ export  default class PermissionsService{
         }
     }
 
-    async checkSubscribe(userId:number){
+    async checkSubscribe(userId:number, save_activate:any){
 
 
         const user = await Users.findOne({where:{userId:userId}})
@@ -96,13 +96,16 @@ export  default class PermissionsService{
         }
 
 
-        return true
+        save_activate = {
+            status: true,
+            message: ''
+        }
 
 
 
     }
 
-    async userActivate(data:{userId:number, date_to: string}){
+    async userActivate(data:{userId:number, date_to: string, save_activate:any}){
         try {
             const {userId, date_to} = data
             const find_user = await Users.findOne({where: {id:userId}})
@@ -124,7 +127,10 @@ export  default class PermissionsService{
             await Users.update(data_edit, {where: {id: data.userId}})
 
 
-            return true
+            data.save_activate = {
+                status: true,
+                message: ''
+            }
 
 
         }catch (err:any){

@@ -48,7 +48,7 @@ class Bot{
 
         this.bot.use(async(ctx, next)=>{
 
-
+console.log(this.user_is_active)
 
             if(ctx.session.token&&this.user_is_active.status){
                 await AuthService.checkToken(ctx)
@@ -77,7 +77,7 @@ class Bot{
 
                 //@ts-ignore
                 if(ctx?.message&&ctx?.message?.from){
-                    await UpdateService.onSubsriptionsEvents('check_subscribe', ctx)
+                    await UpdateService.onSubsriptionsEvents('check_subscribe', ctx, this.user_is_active)
 
                     if(!this.notify){
                         this.notify = true
