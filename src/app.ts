@@ -76,7 +76,8 @@ class Bot{
                         this.notify = true
                         console.log('notify online')
                         UpdateService.onSubsriptionsEvents('check_push_notify', ctx)
-                        UpdateService.onSubsriptionsEvents('check_subscribe', ctx)
+                        const is_active = await UpdateService.onSubsriptionsEvents('check_subscribe', ctx)
+                        console.log(is_active)
                     }
 
                 }

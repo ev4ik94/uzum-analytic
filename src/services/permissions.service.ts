@@ -83,9 +83,12 @@ console.log(data)
         const date_now:any = new Date().getTime()
         const date_end:any = new Date(dataValues.date_end).getTime()
 
+        console.log(date_end-date_now)
+
         if(!(date_end-date_now>0)){
             await this.deletePermission(userId)
         }
+
 
         return true
 
