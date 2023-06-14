@@ -19,8 +19,6 @@ import dotenv from "dotenv"
 import {StateManager} from "./state";
 
 const AuthService = new AuthenticatedService()
-const ReviewService = new ReviewsService()
-const OrdersServices = new OrdersService()
 
 const stateManagers = new StateManager()
 
