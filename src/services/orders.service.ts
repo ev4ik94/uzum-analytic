@@ -77,7 +77,7 @@ console.log('Enter')
             let notify_data:any = []
 
             console.log(orders_uzum)
-            console.log(orders.find(item=>item.id===7480486))
+            console.log(orders.find((item:any)=>item.id===7480486))
 
             if(orders&&(orders.length&&orderItems.length)){
 
