@@ -58,8 +58,10 @@ export  default class UpdatesService{
         return await PermissionServiceData.checkSubscribe(ctx.message.from.id)
     }
 
-    private onPushNotify(ctx:any){
+    private async onPushNotify(ctx:any){
         const OrdersServices = new OrdersService(this.state)
+        await OrdersServices.initData(ctx)
+
         this.intervalPushNotify = setInterval(async()=>{
             const notified_data = await OrdersServices.notificationOrdersNew(ctx)
             const new_reviews = await ReviewService.getReviews({shopId: ctx.session.current_shop, token: ctx.session.token, status: 'NEW'})
@@ -98,7 +100,7 @@ export  default class UpdatesService{
                     await ctx.reply('Новый отзыв 🙋‍♀️',  Markup.inlineKeyboard([Markup.button.callback('Просмотреть', `reviewId${new_reviews[i].reviewId}`)]))
                 }
             }
-        }, 30000)
+        }, 180000)
     }
 
     private deleteCheckSubscribe(){

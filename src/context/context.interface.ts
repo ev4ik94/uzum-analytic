@@ -32,6 +32,7 @@ export interface IOrders {
     productTitle: string
     sellPrice: string
     orderId: number
+    id: number
     sellerProfit: string
 
 }

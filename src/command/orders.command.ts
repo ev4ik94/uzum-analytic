@@ -21,7 +21,6 @@ export class OrdersCommand extends Command{
 
         const action_orders_regexp = new RegExp(/^orderstatus/)
         const action_orders_view_regexp = new RegExp(/^orderView/)
-        const action_orders_pagination = new RegExp(/^orderpage/)
         const action_orders_get = new RegExp(/^(orderpage)|(orderstatus)/)
 
         const buttons_orders = [
@@ -44,11 +43,11 @@ export class OrdersCommand extends Command{
             const data = update.callback_query.data
             const orderId = data.replace('orderView', '')
 
-            const elem:any = ctx.session.orders.find((item:IOrders)=>+item.orderId===+orderId)
+            const elem:any = this.state.getOrders().find((item:IOrders)=>+item.orderId===+orderId)
 
             if(elem){
-                const date:Date = new Date(elem.date)
-                const dateFormater:string = `${date.getDate()} ${month[date.getMonth()]} ${date.getFullYear()} года, ${date.getHours()}:${date.getMinutes()}`
+                const date:string = DateFormatter(new Date(elem.date))
+
 
                 let dateIssue:string='';
 
@@ -66,8 +65,8 @@ export class OrdersCommand extends Command{
                         `/bТовар:/b ${elem.productTitle}/n`,
                         `/bЦена:/b ${NumReplace(elem.sellPrice)} сум/n`,
                         `/bСумма к выводу:/b ${NumReplace(elem.sellerProfit)} сум/n/n`,
-                        `/bДата заказа:/b ${dateFormater}/n`,
-                        `/Дата Отказа:/b ${dateIssue}/n/n`,
+                        `/bДата заказа:/b ${date}/n`,
+                        `/bДата Отказа:/b ${dateIssue}/n/n`,
                     ])
 
                 }else if(elem.dateIssued){
@@ -76,8 +75,8 @@ export class OrdersCommand extends Command{
                         `/bТовар:/b ${elem.productTitle}/n`,
                         `/bЦена:/b ${NumReplace(elem.sellPrice)} сум/n`,
                         `/bСумма к выводу:/b ${NumReplace(elem.sellerProfit)} сум/n/n`,
-                        `/bДата заказа:/b ${dateFormater}/n`,
-                        `/Дата Получения:/b ${dateIssue}/n/n`,
+                        `/bДата заказа:/b ${date}/n`,
+                        `/bДата Получения:/b ${dateIssue}/n/n`,
                     ])
                 }else{
                     message+=HTMLFormatter([
@@ -85,8 +84,8 @@ export class OrdersCommand extends Command{
                         `/bТовар:/b ${elem.productTitle}/n`,
                         `/bЦена:/b ${NumReplace(elem.sellPrice)} сум/n`,
                         `/bСумма к выводу:/b ${NumReplace(elem.sellerProfit)} сум/n/n`,
-                        `/bДата заказа:/b ${dateFormater}/n`,
-                        `/Дата Получения:/b --- /n/n`,
+                        `/bДата заказа:/b ${date}/n`,
+                        `/bДата Получения:/b --- /n/n`,
                     ])
 
                 }
@@ -97,6 +96,8 @@ export class OrdersCommand extends Command{
                 })
 
 
+            }else{
+                return ctx.reply('Заказ не найден, попробуйте снова')
             }
         })
 

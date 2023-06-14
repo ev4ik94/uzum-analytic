@@ -10,6 +10,19 @@ export  default class OrdersService{
        this.state = stateManager
     }
 
+
+    async initData(ctx:any){
+        try{
+            const {token, current_shop} = ctx.session
+            const orders_uzum = await this.getOrders({status: 'ALL', ctx, shopId: current_shop, token, page:'1', size: 200})
+            const {orderItems} = orders_uzum
+            this.state.setOrders(orderItems)
+
+        }catch(err:any){
+            throw new Error(err)
+        }
+    }
+
     async getOrders(data:{shopId:number, token:string, status:string, ctx:any, page?:string, size?:number}){
         try{
 
@@ -71,28 +84,27 @@ export  default class OrdersService{
         try{
             const {token, current_shop} = ctx.session
             const orders = this.state.getOrders()
-console.log('Enter')
+
 
 
             const orders_uzum = await this.getOrders({status: 'ALL', ctx, shopId: current_shop, token, page:'1', size: 200})
             let is_notified = false
 
-            const {orderItems} = orders_uzum
+
+           const {orderItems} = orders_uzum
 
             let notify_data:any = []
 
 
-            console.log(orders)
-
             if(orders&&(orders.length&&orderItems.length)){
 
-                const order_ids = orders.map((item:any)=>item.orderId)
-                const order_ids_uzum = orderItems.map((item:any)=>item.orderId)
+                const order_ids = orders.map((item:any)=>item.id)
+                const order_ids_uzum = orderItems.map((item:any)=>item.id)
 
                 for(let i=0; i<order_ids_uzum.length; i++){
                     const data_n:any = {}
                     if(!order_ids.includes(order_ids_uzum[i])){
-                        let newOrder = orderItems.find((order:IOrders)=>order.orderId===order_ids_uzum[i])
+                        let newOrder = orderItems.find((order:IOrders)=>order.id===order_ids_uzum[i])
                         this.state.setOrders([...orders, newOrder])
                         is_notified = true
                         data_n['type'] = 'new_order'
@@ -105,11 +117,12 @@ console.log('Enter')
 
                 for(let k=0; k<orders.length;k++){
                     const data_n:any = {}
-                    let elem = orderItems.find((item:IOrders)=>item.orderId===orders[k].orderId)
+                    let elem = orderItems.find((item:IOrders)=>item.id===orders[k].id)
 
                     if(elem){
+
+
                         if(elem.status!==orders[k].status){
-                            console.log('CHANGE status '+ new Date())
                             data_n['type'] = 'change_status'
                             data_n['order'] = elem
                             notify_data.push(data_n)
