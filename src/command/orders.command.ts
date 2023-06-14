@@ -4,16 +4,20 @@ import {IBotContext, IOrders, IResponseProduct} from "../context/context.interfa
 import OrdersService from "../services/orders.service";
 import {DateFormatter, HTMLFormatter, month, NumReplace} from "../utils";
 import AuthenticatedService from "../services/authenticated.service";
+import {IStateManager} from "../config/config.interface";
 
-const ordersService = new OrdersService()
+
 
 
 export class OrdersCommand extends Command{
-    constructor(bot:Telegraf<IBotContext>) {
+    state:IStateManager
+    constructor(bot:Telegraf<IBotContext>, stateManager:IStateManager) {
         super(bot);
+        this.state = stateManager
     }
 
     handle() {
+        const ordersService = new OrdersService(this.state)
 
         const action_orders_regexp = new RegExp(/^orderstatus/)
         const action_orders_view_regexp = new RegExp(/^orderView/)
