@@ -66,7 +66,7 @@ export  default class OrdersService{
     async notificationOrdersNew(ctx:any){
         try{
             const {token, current_shop, orders} = ctx.session
-
+console.log('Enter')
 
 
             const orders_uzum = await this.getOrders({status: 'ALL', ctx, shopId: current_shop, token})
@@ -76,7 +76,8 @@ export  default class OrdersService{
 
             let notify_data:any = []
 
-
+            console.log(orders_uzum)
+            console.log(orders)
 
             if(orders&&(orders.length&&orderItems.length)){
 
