@@ -17,6 +17,8 @@ export interface IAuth {
 export interface IStateManager {
     setIsActivate: (data:IActivateData)=>void
     getIsActivate:()=>IActivateData
+    setOrders: (data:any[])=>void
+    getOrders:()=>any[]
     setIsNotified: (notified:boolean)=>void
     getIsNotified:()=>boolean
 }

@@ -1,9 +1,13 @@
+import {IStateManager} from "../config/config.interface";
+
 const fetch = require('node-fetch')
 import {IOrders} from '../context/context.interface'
 
 
 export  default class OrdersService{
-    constructor() {
+    state:IStateManager
+    constructor(stateManager:IStateManager) {
+       this.state = stateManager
     }
 
     async getOrders(data:{shopId:number, token:string, status:string, ctx:any, page?:string, size?:number}){
@@ -65,19 +69,20 @@ export  default class OrdersService{
 
     async notificationOrdersNew(ctx:any){
         try{
-            const {token, current_shop, orders} = ctx.session
+            const {token, current_shop} = ctx.session
+            const orders = this.state.getOrders()
 console.log('Enter')
 
 
-            const orders_uzum = await this.getOrders({status: 'ALL', ctx, shopId: current_shop, token, page:'1', size: 100})
+            const orders_uzum = await this.getOrders({status: 'ALL', ctx, shopId: current_shop, token, page:'1', size: 200})
             let is_notified = false
 
             const {orderItems} = orders_uzum
 
             let notify_data:any = []
 
-            console.log(orders_uzum)
-            console.log(orders.find((item:any)=>item.id===7480486))
+
+            console.log(orders)
 
             if(orders&&(orders.length&&orderItems.length)){
 
@@ -88,7 +93,7 @@ console.log('Enter')
                     const data_n:any = {}
                     if(!order_ids.includes(order_ids_uzum[i])){
                         let newOrder = orderItems.find((order:IOrders)=>order.orderId===order_ids_uzum[i])
-                        ctx.session.orders = [...orders, newOrder]
+                        this.state.setOrders([...orders, newOrder])
                         is_notified = true
                         data_n['type'] = 'new_order'
                         data_n['order'] = newOrder
@@ -110,7 +115,7 @@ console.log('Enter')
                             notify_data.push(data_n)
                             is_notified = true
 
-                            ctx.session.orders = ctx.session.orders.map((item:IOrders)=>{
+                            this.state.setOrders(this.state.getOrders().map((item:IOrders)=>{
                                 if(item.orderId===elem.orderId){
                                     if(elem.status==='CANCELED'){
                                         return {
@@ -131,14 +136,16 @@ console.log('Enter')
                                 }
 
                                 return {...item}
-                            })
+                            }))
+
+
                         }else if(elem.status!=='CANCELED'&&+elem.dateIssued!==+orders[k].dateIssued){
                             data_n['type'] = 'change_date'
                             data_n['order'] = elem
                             notify_data.push(data_n)
                             is_notified = true
 
-                            ctx.session.orders = ctx.session.orders.map((item:IOrders)=>{
+                            this.state.setOrders(this.state.getOrders().map((item:IOrders)=>{
                                 if(item.orderId===elem.orderId){
                                     return {
                                         ...item,
@@ -147,14 +154,14 @@ console.log('Enter')
                                 }
 
                                 return {...item}
-                            })
+                            }))
                         }
                     }
                 }
 
 
             }else {
-                ctx.session.orders = orderItems
+                this.state.setOrders(orderItems)
             }
 
             if(is_notified) return notify_data

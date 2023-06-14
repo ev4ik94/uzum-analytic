@@ -10,6 +10,8 @@ export class StateManager{
         message: ''
     }
     public is_notified: boolean = false
+    public orders: any[] = []
+
     constructor() {
     }
 
@@ -20,6 +22,14 @@ export class StateManager{
 
     getIsActivate(){
         return this.is_activate
+    }
+
+    setOrders(data:any[]){
+        this.orders = data
+    }
+
+    getOrders(){
+        return this.orders
     }
 
     setIsNotified(notified:boolean){

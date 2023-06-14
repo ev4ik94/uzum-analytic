@@ -14,7 +14,7 @@ import PermissionService from "./permissions.service";
 
 
 const ReviewService = new ReviewsService()
-const OrdersServices = new OrdersService()
+
 
 
 export  default class UpdatesService{
@@ -59,6 +59,7 @@ export  default class UpdatesService{
     }
 
     private onPushNotify(ctx:any){
+        const OrdersServices = new OrdersService(this.state)
         this.intervalPushNotify = setInterval(async()=>{
             const notified_data = await OrdersServices.notificationOrdersNew(ctx)
             const new_reviews = await ReviewService.getReviews({shopId: ctx.session.current_shop, token: ctx.session.token, status: 'NEW'})
