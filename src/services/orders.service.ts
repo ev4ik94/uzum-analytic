@@ -6,13 +6,13 @@ export  default class OrdersService{
     constructor() {
     }
 
-    async getOrders(data:{shopId:number, token:string, status:string, ctx:any, page?:string}){
+    async getOrders(data:{shopId:number, token:string, status:string, ctx:any, page?:string, size?:number}){
         try{
 
             let params:{group:boolean, statuses:string, size: number, page: number} = {
                 group: false,
                 statuses: data.status,
-                size: 5,
+                size: data?.size?data.size:5,
                 page: data?.page?+data.page-1:0
             }
 
@@ -69,7 +69,7 @@ export  default class OrdersService{
 console.log('Enter')
 
 
-            const orders_uzum = await this.getOrders({status: 'ALL', ctx, shopId: current_shop, token})
+            const orders_uzum = await this.getOrders({status: 'ALL', ctx, shopId: current_shop, token, page:'1', size: 100})
             let is_notified = false
 
             const {orderItems} = orders_uzum
