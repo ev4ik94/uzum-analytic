@@ -36,12 +36,12 @@ export class StateManager{
 
 
     setIsActivate(data:IActivateData, id:string){
-        let elem = this.session_data.find((item:any)=>item.id===id)
-
+        let elem = this.session_data.find((item:any)=>+item.id===+id)
+        console.log(this.session_data)
         if(elem){
             elem.data.is_activate = data
             this.session_data = this.session_data.map((item:any)=>{
-                if(item.id===id){
+                if(+item.id===+id){
                     return {
                         ...elem,
                     }
@@ -54,7 +54,7 @@ export class StateManager{
     }
 
     getIsActivate(id:string){
-        const orders_user = this.session_data.find((item:any)=>item.id===id)
+        const orders_user = this.session_data.find((item:any)=>+item.id===+id)
 
         if(orders_user){
             return orders_user.data.is_activate
@@ -66,12 +66,12 @@ export class StateManager{
     }
 
     setOrders(data:any[], id:string){
-        let elem = this.session_data.find((item:any)=>item.id===id)
+        let elem = this.session_data.find((item:any)=>+item.id===+id)
 
         if(elem){
             elem.data.orders = data
             this.session_data = this.session_data.map((item:any)=>{
-                if(item.id===id){
+                if(+item.id===+id){
                     return {
                         ...elem,
                     }
@@ -92,12 +92,12 @@ export class StateManager{
     }
 
     setIsNotified(notified:boolean, id:string){
-        let elem = this.session_data.find((item:any)=>item.id===id)
+        let elem = this.session_data.find((item:any)=>+item.id===+id)
 
         if(elem){
             elem.data.is_notified = notified
             this.session_data = this.session_data.map((item:any)=>{
-                if(item.id===id){
+                if(+item.id===+id){
                     return {
                         ...elem,
                     }
@@ -109,7 +109,7 @@ export class StateManager{
     }
 
     getIsNotified(id:string){
-        const data = this.session_data.find((item:any)=>item.id===id)
+        const data = this.session_data.find((item:any)=>+item.id===+id)
 
         if(data){
             return data.data.is_notified

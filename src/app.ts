@@ -90,8 +90,6 @@ class Bot{
 
                     if(!stateManagers.getIsNotified(ctx.session.userId)){
                         stateManagers.setIsNotified(true, ctx.session.userId)
-                        console.log('Notified Online')
-                       console.log(stateManagers.getIsNotified(ctx.session.userId))
                         await UpdateService.onSubsriptionsEvents('check_push_notify', ctx)
                     }
                 }

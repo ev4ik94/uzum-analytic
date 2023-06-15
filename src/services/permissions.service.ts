@@ -104,9 +104,8 @@ export  default class PermissionsService{
 
             if(!user) throw new Error('Пользователь не найден')
 
-            const {dataValues} = user
+            if(user.status===Statuses.NO_ACTIVE) {
 
-            if(dataValues.status===Statuses.NO_ACTIVE) {
                 this.state.setIsActivate({
                     status: false,
                     message:'Подписка истекла'
@@ -115,7 +114,7 @@ export  default class PermissionsService{
             }
 
             const date_now:any = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Dushanbe"})).getTime()
-            const date_end:any = new Date(dataValues.date_end).getTime()
+            const date_end:any = new Date(user.date_end).getTime()
 
 
 
@@ -175,14 +174,14 @@ export  default class PermissionsService{
 
             if(!find_user) throw new Error('Пользователь не найден')
 
-            const {dataValues} = find_user
+
 
             //@ts-ignore
             await Users.update({status: Statuses.NO_ACTIVE}, {where: {userId:userId}})
 
             this.state.setIsActivate({
                 status: false,
-                message:dataValues.status===Statuses.TRIAL?'Ваш пробный период окончен':'Подписка истекла'
+                message:find_user.status===Statuses.TRIAL?'Ваш пробный период окончен':'Подписка истекла'
             }, userId+'')
 
         }catch(err:any){
@@ -210,9 +209,9 @@ export  default class PermissionsService{
             const user = await Users.findOne({where:{id}})
 
             if(!user) throw new Error('Такого пользователя не существует')
-            const {dataValues} = user
+
             //@ts-ignore
-            await Users.update({...dataValues, ...data}, {where: {id}})
+            await Users.update({...user, ...data}, {where: {id}})
         }catch(err:any){
             throw new Error(err)
         }
@@ -226,9 +225,7 @@ export  default class PermissionsService{
 
             if(!find_user) return false
 
-            const {dataValues} = find_user
-
-            return dataValues.status===Statuses.ACTIVE
+            return find_user.status===Statuses.ACTIVE
         }catch (err:any){
             throw new Error(err)
         }
