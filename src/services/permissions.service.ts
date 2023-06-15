@@ -1,11 +1,8 @@
 import {IStateManager} from "../config/config.interface";
+import {Statuses, Users} from "../models";
+import {Op} from 'sequelize'
 
 const fetch = require('node-fetch')
-import {Users, Statuses} from "../models";
-import {IBotContext} from "../context/context.interface";
-import moment from "moment";
-
-
 
 
 export  default class PermissionsService{
@@ -22,7 +19,7 @@ export  default class PermissionsService{
 
     async getChatIds(){
         try{
-            let users = await this.getUsersAll()
+            let users = await this.getUsersAllActive()
             return users.map((item:any)=>item.chatId)
         }catch (err:any){
             throw new Error(err)
@@ -45,6 +42,19 @@ export  default class PermissionsService{
     async getUsersAll(){
         try{
             return await Users.findAll()
+        }catch(err:any){
+            throw new Error(err)
+        }
+    }
+
+    async getUsersAllActive(){
+        try{
+            return await Users.findAll({where: {
+                    [Op.or]: [
+                        { status: Statuses.ACTIVE },
+                        { status: Statuses.TRIAL }
+                    ]
+                }})
         }catch(err:any){
             throw new Error(err)
         }
