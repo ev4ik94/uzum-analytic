@@ -47,10 +47,10 @@ console.log(this.currentPage)
                 let stars:string = Array.from(Array(this.reviews[this.currentPage-1].rating)).map((item:any)=>'⭐️').join('')
 
                 const message  =HTMLFormatter([
-                    `/n/sТовар: ${this.reviews[this.currentPage-1].product.productTitle}/s/n/n`,
-                    `/bДата:/b ${date}/n`,
-                    `/bОценка:/b ${stars}/n`,
-                    `/bОтзыв:/b ${this.reviews[this.currentPage-1].content}.../n/n`
+                    `/nТовар: ${this.reviews[this.currentPage-1].product.productTitle}/n/n`,
+                    `Дата: ${date}/n`,
+                    `Оценка: ${stars}/n`,
+                    `Отзыв: ${this.reviews[this.currentPage-1].content}.../n/n`
                 ])
 
                 const buttons:any[] = []
@@ -67,7 +67,7 @@ console.log(this.currentPage)
                     buttons.push( Markup.button.callback('>>', `reviewId${this.currentPage+1}`))
                 }
 
-                await ctx.editMessageText(message)
+                await ctx.editMessageText(message, Markup.inlineKeyboard(buttons))
 
 
                 // if(review){
