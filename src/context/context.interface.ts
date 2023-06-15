@@ -9,6 +9,7 @@ interface IShop {
 export interface ISessionData{
     auth_email: string
     password: string
+    userId: string
     token: string
     refresh_token: string
     auth: boolean

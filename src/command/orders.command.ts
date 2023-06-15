@@ -39,11 +39,12 @@ export class OrdersCommand extends Command{
 
         this.bot.action(action_orders_view_regexp, async(ctx)=>{
             const {update} = ctx
+            const {userId} = ctx.session
             //@ts-ignore
             const data = update.callback_query.data
             const orderId = data.replace('orderView', '')
 
-            const elem:any = this.state.getOrders().find((item:IOrders)=>+item.orderId===+orderId)
+            const elem:any = this.state.getOrders(userId).find((item:IOrders)=>+item.orderId===+orderId)
 
             if(elem){
                 const date:string = DateFormatter(new Date(elem.date))

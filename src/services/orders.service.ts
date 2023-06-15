@@ -13,10 +13,10 @@ export  default class OrdersService{
 
     async initData(ctx:any){
         try{
-            const {token, current_shop} = ctx.session
+            const {token, current_shop, userId} = ctx.session
             const orders_uzum = await this.getOrders({status: 'ALL', ctx, shopId: current_shop, token, page:'1', size: 200})
             const {orderItems} = orders_uzum
-            this.state.setOrders(orderItems)
+            this.state.setOrders(orderItems, userId)
 
         }catch(err:any){
             throw new Error(err)
@@ -82,8 +82,8 @@ export  default class OrdersService{
 
     async notificationOrdersNew(ctx:any){
         try{
-            const {token, current_shop} = ctx.session
-            const orders = this.state.getOrders()
+            const {token, current_shop, userId} = ctx.session
+            const orders = this.state.getOrders(userId)
 
 
 
@@ -117,7 +117,7 @@ export  default class OrdersService{
                     const data_n:any = {}
                     if(!order_ids.includes(order_ids_uzum[i])){
                         let newOrder = orderItems.find((order:IOrders)=>order.id===order_ids_uzum[i])
-                        this.state.setOrders([...orders, newOrder])
+                        this.state.setOrders([...orders, newOrder], userId)
                         is_notified = true
                         data_n['type'] = 'new_order'
                         data_n['order'] = newOrder
@@ -140,7 +140,7 @@ export  default class OrdersService{
                             notify_data.push(data_n)
                             is_notified = true
 
-                            this.state.setOrders(this.state.getOrders().map((item:IOrders)=>{
+                            this.state.setOrders(this.state.getOrders(userId).map((item:IOrders)=>{
                                 if(item.orderId===elem.orderId){
                                     if(elem.status==='CANCELED'){
                                         return {
@@ -161,7 +161,7 @@ export  default class OrdersService{
                                 }
 
                                 return {...item}
-                            }))
+                            }), userId)
 
 
                         }else if(elem.status!=='CANCELED'&&+elem.dateIssued!==+orders[k].dateIssued){
@@ -170,7 +170,7 @@ export  default class OrdersService{
                             notify_data.push(data_n)
                             is_notified = true
 
-                            this.state.setOrders(this.state.getOrders().map((item:IOrders)=>{
+                            this.state.setOrders(this.state.getOrders(userId).map((item:IOrders)=>{
                                 if(item.orderId===elem.orderId){
                                     return {
                                         ...item,
@@ -179,14 +179,14 @@ export  default class OrdersService{
                                 }
 
                                 return {...item}
-                            }))
+                            }), userId)
                         }
                     }
                 }
 
 
             }else {
-                this.state.setOrders(orderItems)
+                this.state.setOrders(orderItems, userId)
             }
 
             if(is_notified) return notify_data

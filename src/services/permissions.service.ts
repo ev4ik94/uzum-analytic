@@ -70,7 +70,7 @@ export  default class PermissionsService{
             this.state.setIsActivate({
                 status: true,
                 message:''
-            })
+            }, data.userId+'')
 
 
         }catch (err:any){
@@ -91,7 +91,7 @@ export  default class PermissionsService{
                 this.state.setIsActivate({
                     status: false,
                     message:'Подписка истекла'
-                })
+                }, userId+'')
                 return false
             }
 
@@ -107,7 +107,7 @@ export  default class PermissionsService{
             this.state.setIsActivate({
                 status: true,
                 message:''
-            })
+            }, userId+'')
 
 
         }catch (err:any){
@@ -141,7 +141,7 @@ export  default class PermissionsService{
             this.state.setIsActivate({
                 status: true,
                 message:''
-            })
+            }, data.userId+'')
 
 
         }catch (err:any){
@@ -158,13 +158,13 @@ export  default class PermissionsService{
 
             const {dataValues} = find_user
 
-//@ts-ignore
+            //@ts-ignore
             await Users.update({status: Statuses.NO_ACTIVE}, {where: {userId:userId}})
 
             this.state.setIsActivate({
                 status: false,
                 message:dataValues.status===Statuses.TRIAL?'Ваш пробный период окончен':'Подписка истекла'
-            })
+            }, userId+'')
 
         }catch(err:any){
             throw new Error(err)

@@ -14,11 +14,22 @@ export interface IAuth {
     checkToken:(ctx:any)=>void
 }
 
+export abstract class AStateManager {
+    setIsActivate: (data:IActivateData, id:string)=>void
+    getIsActivate:(id:string)=>IActivateData
+    setOrders: (data:any[], id:string)=>void
+    getOrders:(id:string)=>any[]
+    setIsNotified: (notified:boolean, id:string)=>void
+    getIsNotified:(id:string)=>boolean
+    init:(id:string)=>void
+}
+
 export interface IStateManager {
-    setIsActivate: (data:IActivateData)=>void
-    getIsActivate:()=>IActivateData
-    setOrders: (data:any[])=>void
-    getOrders:()=>any[]
-    setIsNotified: (notified:boolean)=>void
-    getIsNotified:()=>boolean
+    setIsActivate: (data:IActivateData, id:string)=>void
+    getIsActivate:(id:string)=>IActivateData
+    setOrders: (data:any[], id:string)=>void
+    getOrders:(id:string)=>any[]
+    setIsNotified: (notified:boolean, id:string)=>void
+    getIsNotified:(id:string)=>boolean
+    init:(id:string)=>void
 }

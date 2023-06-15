@@ -1,42 +1,119 @@
+import {AStateManager, IStateManager} from "../config/config.interface";
 
 interface IActivateData  {
     status:boolean,
     message:string
 }
 
-export class StateManager{
-    public is_activate:IActivateData = {
-        status: true,
-        message: ''
+interface ISessionsData  {
+    id:string,
+    data:{
+        is_activate:IActivateData,
+        orders: any[],
+        is_notified:boolean
     }
-    public is_notified: boolean = false
-    public orders: any[] = []
+}
+
+export class StateManager{
+    public session_data:ISessionsData[] = []
 
     constructor() {
     }
 
-
-    setIsActivate(data:IActivateData){
-        this.is_activate = data
+    init(id:string){
+        this.session_data.push({
+            id,
+            data: {
+                is_activate: {
+                    status: true,
+                    message: ''
+                },
+                orders: [],
+                is_notified: false
+            }
+        })
     }
 
-    getIsActivate(){
-        return this.is_activate
+
+    setIsActivate(data:IActivateData, id:string){
+        let elem = this.session_data.find((item:any)=>item.id===id)
+
+        if(elem){
+            elem.data.is_activate = data
+            this.session_data = this.session_data.map((item:any)=>{
+                if(item.id===id){
+                    return {
+                        ...elem,
+                    }
+                }
+
+                return item
+            })
+        }
+
     }
 
-    setOrders(data:any[]){
-        this.orders = data
+    getIsActivate(id:string){
+        const orders_user = this.session_data.find((item:any)=>item.id===id)
+
+        if(orders_user){
+            return orders_user.data.is_activate
+        }
+        return {
+            status: false,
+            message: 'Не найден пользователь'
+        }
     }
 
-    getOrders(){
-        return this.orders
+    setOrders(data:any[], id:string){
+        let elem = this.session_data.find((item:any)=>item.id===id)
+
+        if(elem){
+            elem.data.orders = data
+            this.session_data = this.session_data.map((item:any)=>{
+                if(item.id===id){
+                    return {
+                        ...elem,
+                    }
+                }
+
+                return item
+            })
+        }
     }
 
-    setIsNotified(notified:boolean){
-        this.is_notified = notified
+    getOrders(id:string){
+        const orders_user = this.session_data.find((item:any)=>item.id===id)
+
+        if(orders_user){
+            return orders_user.data.orders
+        }
+        return []
     }
 
-    getIsNotified(){
-        return this.is_notified
+    setIsNotified(notified:boolean, id:string){
+        let elem = this.session_data.find((item:any)=>item.id===id)
+
+        if(elem){
+            elem.data.is_notified = notified
+            this.session_data = this.session_data.map((item:any)=>{
+                if(item.id===id){
+                    return {
+                        ...elem,
+                    }
+                }
+
+                return item
+            })
+        }
+    }
+
+    getIsNotified(id:string){
+        const data = this.session_data.find((item:any)=>item.id===id)
+
+        if(data){
+            return data.data.is_notified
+        }
+        return false
     }
 }

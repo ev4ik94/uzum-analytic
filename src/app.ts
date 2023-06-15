@@ -17,6 +17,7 @@ import UpdatesService from "./services/updates.service";
 import PermissionService from "./services/permissions.service";
 import dotenv from "dotenv"
 import {StateManager} from "./state";
+import {IStateManager} from "./config/config.interface";
 
 const AuthService = new AuthenticatedService()
 
@@ -36,8 +37,6 @@ class Bot{
     bot: Telegraf<IBotContext>
     commands: Command[] = []
     user_auth: any = {}
-    notify:boolean = stateManagers.getIsNotified()
-    user_is_active:any = stateManagers.getIsActivate()
     constructor() {
         console.log('БОТ запущен')
         this.bot = new Telegraf<IBotContext>(process.env.TOKEN!);
@@ -54,6 +53,17 @@ class Bot{
 
             if(ctx.session.token){
                 await AuthService.checkToken(ctx)
+
+
+                if(ctx.session&&!ctx.session?.userId){
+                    //@ts-ignore
+                    if(ctx.message&&ctx.message.from){
+                        //@ts-ignore
+                        ctx.session.userId = ctx.message.from.id
+                        stateManagers.init(ctx.session.userId)
+                    }
+
+                }
 
 
 
@@ -77,24 +87,23 @@ class Bot{
 
 
                 //@ts-ignore
-                if(ctx?.message&&ctx?.message?.from){
+                if(ctx?.message&&ctx?.message?.from&&ctx.session.userId){
                     await UpdateService.onSubsriptionsEvents('check_subscribe', ctx)
 
-                    if(!this.notify){
-                        stateManagers.setIsNotified(true)
-                        this.notify = stateManagers.getIsNotified()
+                    if(!stateManagers.getIsNotified(ctx.session.userId)){
+                        stateManagers.setIsNotified(true, ctx.session.userId)
                         console.log('Notified Online')
-                       console.log(this.notify)
+                       console.log(stateManagers.getIsNotified(ctx.session.userId))
                         await UpdateService.onSubsriptionsEvents('check_push_notify', ctx)
                     }
                 }
 
-                this.user_is_active = stateManagers.getIsActivate()
+                const is_activate = stateManagers.getIsActivate(ctx.session.userId)
 
 
 
-                if(!this.user_is_active.status){
-                    return await ctx.reply(this.user_is_active.message)
+                if(!is_activate?.status){
+                    return await ctx.reply(is_activate.message)
                 }
 
 
