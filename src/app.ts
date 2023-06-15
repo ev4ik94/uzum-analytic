@@ -218,6 +218,8 @@ class Bot{
         await this.serverStart()
         await this.routing()
 
+
+
         for(let chatId of chat_ids){
             await this.bot.telegram.sendMessage(chatId, '<strong>📢 Были добавлены обновления</strong>\nДля продолжения работы с ботом \nнеобходимо перезапустить его\n<strong><a href="https://t.me/uzum_statistic_bot?start=restart">Перезапуск</a></strong>', {parse_mode: 'HTML'})
         }
