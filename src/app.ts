@@ -97,8 +97,8 @@ class Bot{
                 }
 
                 const is_activate = stateManagers.getIsActivate(ctx.session.userId)
-
-
+console.log(ctx.session.userId)
+console.log(is_activate)
 
                 if(!is_activate?.status){
                     return await ctx.reply(is_activate.message)
