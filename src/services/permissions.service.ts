@@ -20,6 +20,15 @@ export  default class PermissionsService{
         }
     }
 
+    async getChatIds(){
+        try{
+            let users = await this.getUsersAll()
+            return users.map((item:any)=>item.chatId)
+        }catch (err:any){
+            throw new Error(err)
+        }
+    }
+
     async getUser(id:number){
         try{
             const user = await Users.findOne({where:{id}})

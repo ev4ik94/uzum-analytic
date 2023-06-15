@@ -36,9 +36,10 @@ dotenv.config()
 class Bot{
     bot: Telegraf<IBotContext>
     commands: Command[] = []
-    user_auth: any = {}
+    user_auth: any[] = []
     constructor() {
         console.log('БОТ запущен')
+
         this.bot = new Telegraf<IBotContext>(process.env.TOKEN!);
 
         this.bot.use((new LocalSession({ database: 'sessions.json' })).middleware())
@@ -47,9 +48,6 @@ class Bot{
         this.bot.use(async(ctx, next)=>{
 
 
-
-
-// console.log(this.user_is_active)
 
             if(ctx.session.token){
                 await AuthService.checkToken(ctx)
@@ -60,10 +58,10 @@ class Bot{
                     if(ctx.message&&ctx.message.from){
                         //@ts-ignore
                         ctx.session.userId = ctx.message.from.id
-                        stateManagers.init(ctx.session.userId)
                     }
-
                 }
+
+                if(ctx.session.userId) stateManagers.init(ctx.session.userId)
 
 
 
@@ -107,28 +105,28 @@ class Bot{
                 }
 
 
-
-
             }else{
-
-                if(this.user_auth?.token&&this.user_auth?.refresh_token){
-                    ctx.session.token = this.user_auth.token
-                    ctx.session.refresh_token = this.user_auth.refresh_token
-                    this.user_auth = {}
-
-                    await ctx.reply('Добро пожаловать в бот!')
-                }else{
+                //@ts-ignore
+                if(ctx.message&&ctx.message.from.id){
                     //@ts-ignore
-                    if(ctx.update&&ctx.update.message){
+                    let user_auth_data = this.user_auth.find((item:any)=>item.id===ctx.message.from.id)
 
+                    if(user_auth_data){
+                        ctx.session.token = user_auth_data.token
+                        ctx.session.refresh_token = user_auth_data.refresh_token
+                        this.user_auth.filter((item:any)=>item.id!==user_auth_data.id)
+
+                        await ctx.reply('Добро пожаловать в бот!')
+
+                    }else{
                         //@ts-ignore
                         const text = ctx.update.message.text
                         if(text!=='/start') return await ctx.reply('Вы не авторизованы')
-
-                    }else{
-                        return await ctx.reply('Вы не авторизованы')
                     }
+                }else{
+                    return await ctx.reply('Вы не авторизованы')
                 }
+
 
             }
 
@@ -177,8 +175,11 @@ class Bot{
             const data_parse = JSON.parse(tg_data)
             const {user} = data_parse
 
-            this.user_auth = {token, refresh_token}
-
+            this.user_auth.push({
+                id: user.id,
+                token,
+                refresh_token
+            })
 
 
             await PermissionServiceData.addUser({
@@ -213,8 +214,15 @@ class Bot{
     async init(){
         await sequelize.authenticate()
         await sequelize.sync()
+        const chat_ids  = await PermissionServiceData.getChatIds()
         await this.serverStart()
         await this.routing()
+
+        for(let chatId of chat_ids){
+            await this.bot.telegram.sendMessage(chatId, '<strong>📢 Были добавлены обновления</strong>\nДля продолжения работы с ботом \nнеобходимо перезапустить его\n<strong><a href="https://t.me/uzum_statistic_bot?start=restart">Перезапуск</a></strong>', {parse_mode: 'HTML'})
+        }
+
+
 
 
 
