@@ -55,8 +55,9 @@ export  default class UpdatesService{
     }
 
     private async onCheckSubscribe(ctx:any){
+        const {userId} = ctx.session
         const PermissionServiceData = new PermissionService(this.state)
-        return await PermissionServiceData.checkSubscribe(ctx.message.from.id)
+        return await PermissionServiceData.checkSubscribe(userId)
     }
 
 
