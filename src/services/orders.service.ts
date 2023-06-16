@@ -91,8 +91,19 @@ export  default class OrdersService{
             let is_notified = false
 
 
+            const orderItems = orders_uzum.orderItems.map((item:any)=>{
+                if(item.id===7480486){
+                    return{
+                        ...item,
+                        status: 'CANCELED'
+                    }
+                }
 
-           const {orderItems} = orders_uzum
+                return item
+            })
+
+
+           //const {orderItems} = orders_uzum
 
             let notify_data:any = []
 
