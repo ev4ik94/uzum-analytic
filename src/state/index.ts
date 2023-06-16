@@ -21,17 +21,20 @@ export class StateManager{
     }
 
     init(id:string){
-        this.session_data.push({
-            id,
-            data: {
-                is_activate: {
-                    status: true,
-                    message: ''
-                },
-                orders: [],
-                is_notified: false
-            }
-        })
+        if(!this.session_data.find((item:any)=>+item.id===+id)){
+            this.session_data.push({
+                id,
+                data: {
+                    is_activate: {
+                        status: true,
+                        message: ''
+                    },
+                    orders: [],
+                    is_notified: false
+                }
+            })
+        }
+
     }
 
 
