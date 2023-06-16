@@ -82,8 +82,7 @@ class Bot{
                         ctx.session.current_shop = ctx.session.shops[0].id
                     }
                 }
-//@ts-ignore
-console.log(ctx.qal)
+
                 //@ts-ignore
                 if(ctx.session.userId){
                     await UpdateService.onSubsriptionsEvents('check_subscribe', ctx)
