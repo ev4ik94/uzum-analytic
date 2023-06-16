@@ -88,14 +88,14 @@ class Bot{
                 if(ctx?.message&&ctx?.message?.from&&ctx.session.userId){
                     await UpdateService.onSubsriptionsEvents('check_subscribe', ctx)
 
-                    if(!stateManagers.getIsNotified(ctx.session.userId)){
+                    if(!stateManagers.getIsNotified(ctx.session.userId)&&stateManagers.getIsActivate(ctx.session.userId).status){
                         stateManagers.setIsNotified(true, ctx.session.userId)
                         await UpdateService.onSubsriptionsEvents('check_push_notify', ctx)
                     }
                 }
 
                 const is_activate = stateManagers.getIsActivate(ctx.session.userId)
-
+console.log(is_activate?.status)
 
                 if(!is_activate?.status){
                     console.log('Delete notify')
