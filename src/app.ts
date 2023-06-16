@@ -98,6 +98,7 @@ class Bot{
 
 
                 if(!is_activate?.status){
+                    console.log('Delete notify')
                     await UpdateService.offSubscriptionsEvents('check_push_notify')
                     return await ctx.reply(is_activate.message)
                 }

@@ -49,6 +49,7 @@ export  default class UpdatesService{
         }
 
         if(event==='check_push_notify'){
+            console.log('Enter')
             this.deletePushNotify()
         }
     }
@@ -105,12 +106,13 @@ export  default class UpdatesService{
     }
 
     private deleteCheckSubscribe(){
-        console.log(this.intervalCheckSubscribe)
+
         clearInterval(this.intervalCheckSubscribe())
     }
 
 
     private deletePushNotify(){
+        console.log(this.intervalPushNotify)
         clearInterval(this.intervalPushNotify)
     }
 
