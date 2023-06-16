@@ -112,8 +112,8 @@ export  default class UpdatesService{
 
 
     private deletePushNotify(){
-        console.log(this.intervalPushNotify)
-        clearInterval(this.intervalPushNotify)
+        if(this.intervalPushNotify!==undefined) clearInterval(this.intervalPushNotify)
+
     }
 
 
