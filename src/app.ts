@@ -83,9 +83,9 @@ class Bot{
                     }
                 }
 //@ts-ignore
-console.log(ctx.update)
+console.log(ctx.qal)
                 //@ts-ignore
-                if(ctx?.update?.message&&ctx?.update?.message?.from&&ctx.session.userId){
+                if(ctx.session.userId){
                     await UpdateService.onSubsriptionsEvents('check_subscribe', ctx)
 
                     if(!stateManagers.getIsNotified(ctx.session.userId)&&stateManagers.getIsActivate(ctx.session.userId).status){
