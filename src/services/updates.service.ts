@@ -58,6 +58,7 @@ export  default class UpdatesService{
         return await PermissionServiceData.checkSubscribe(ctx.message.from.id)
     }
 
+
     private async onPushNotify(ctx:any){
         const OrdersServices = new OrdersService(this.state)
         await OrdersServices.initData(ctx)
@@ -104,7 +105,8 @@ export  default class UpdatesService{
     }
 
     private deleteCheckSubscribe(){
-        clearInterval(this.intervalCheckSubscribe)
+        console.log(this.intervalCheckSubscribe)
+        clearInterval(this.intervalCheckSubscribe())
     }
 
 
