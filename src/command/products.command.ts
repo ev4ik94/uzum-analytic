@@ -135,19 +135,19 @@ export class ProductsCommand extends Command{
 
 
                 message  =HTMLFormatter([
-                    `/n${this.products[this.currentPage].title}/n/n`,
-                    `В продаже: ${this.products[this.currentPage].quantityActive}/n`,
-                    `В Фотостудии: ${this.products[this.currentPage].quantityOnPhotoStudio}/n`,
-                    `К отправке: ${this.products[this.currentPage].quantityCreated}/n`,
-                    `Просмотры: ${this.products[this.currentPage].viewers||0}/n`,
-                    `ROI: ${this.products[this.currentPage].roi}%/n`,
-                    `Рейтинг: ${this.products[this.currentPage].rating}/n`,
-                    `Продано: ${this.products[this.currentPage].quantitySold}/n`,
-                    `Вернули: ${this.products[this.currentPage].quantityReturned}/n`,
-                    `Брак: ${this.products[this.currentPage].quantityDefected}/n`,
-                    `Статус: ${this.products[this.currentPage].status.title}/n`,
-                    `Модерация: ${this.products[this.currentPage].moderationStatus.title}/n`,
-                    `Цена: ${NumReplace(this.products[this.currentPage].price+'')} сум/n`,
+                    `/n${this.products[this.currentPage-1].title}/n/n`,
+                    `В продаже: ${this.products[this.currentPage-1].quantityActive}/n`,
+                    `В Фотостудии: ${this.products[this.currentPage-1].quantityOnPhotoStudio}/n`,
+                    `К отправке: ${this.products[this.currentPage-1].quantityCreated}/n`,
+                    `Просмотры: ${this.products[this.currentPage-1].viewers||0}/n`,
+                    `ROI: ${this.products[this.currentPage-1].roi}%/n`,
+                    `Рейтинг: ${this.products[this.currentPage-1].rating}/n`,
+                    `Продано: ${this.products[this.currentPage-1].quantitySold}/n`,
+                    `Вернули: ${this.products[this.currentPage-1].quantityReturned}/n`,
+                    `Брак: ${this.products[this.currentPage-1].quantityDefected}/n`,
+                    `Статус: ${this.products[this.currentPage-1].status.title}/n`,
+                    `Модерация: ${this.products[this.currentPage-1].moderationStatus.title}/n`,
+                    `Цена: ${NumReplace(this.products[this.currentPage-1].price+'')} сум/n`,
                 ])
 
                 const buttons:any[] = []
