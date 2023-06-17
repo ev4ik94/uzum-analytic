@@ -38,11 +38,11 @@ export  default class OrdersService{
             let response_orders:any;
 
             if(data.status==='ALL'){
-                response_orders = await fetch(`${process.env.API}/seller/finance/orders?group=false&size=${params.size}&page=${params.page}`, {
+                response_orders = await fetch(`${process.env.API}/seller/finance/orders?group=false&size=${params.size}&page=${params.page}&shopId=${data.shopId}`, {
                     headers: {'Authorization': `Bearer ${data.token}`, 'accept-language': 'ru-RU'}
                 });
             }else{
-                response_orders = await fetch(`${process.env.API}/seller/finance/orders?group=false&size=${params.size}&page=${params.page}&statuses=${params.statuses}`, {
+                response_orders = await fetch(`${process.env.API}/seller/finance/orders?group=false&size=${params.size}&page=${params.page}&statuses=${params.statuses}&shopId=${data.shopId}`, {
                     headers: {'Authorization': `Bearer ${data.token}`, 'accept-language': 'ru-RU'}
                 });
             }
@@ -91,19 +91,19 @@ export  default class OrdersService{
             let is_notified = false
 
 
-            const orderItems = orders_uzum.orderItems.map((item:any)=>{
-                if(item.id===7480486){
-                    return{
-                        ...item,
-                        status: 'CANCELED'
-                    }
-                }
+            // const orderItems = orders_uzum.orderItems.map((item:any)=>{
+            //     if(item.id===7480486){
+            //         return{
+            //             ...item,
+            //             status: 'CANCELED'
+            //         }
+            //     }
+            //
+            //     return item
+            // })
 
-                return item
-            })
 
-
-           //const {orderItems} = orders_uzum
+           const {orderItems} = orders_uzum
 
             let notify_data:any = []
 

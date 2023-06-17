@@ -49,7 +49,7 @@ export  default class UpdatesService{
         }
 
         if(event==='check_push_notify'){
-            console.log('Enter')
+
             this.deletePushNotify()
         }
     }

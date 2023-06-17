@@ -12,7 +12,7 @@ export  default class ProductsService{
     async getProducts(data:{shopId:number, token:string, page:number, ctx:any}){
         try{
 
-            const response_products = await fetch(`${process.env.API}/seller/shop/${data.shopId}/product/getProducts?searchQuery=&filter=active&sortBy=id&order=descending&size=30&page=${data.page}`, {
+            const response_products = await fetch(`${process.env.API}/seller/shop/${data.shopId}/product/getProducts?searchQuery=&filter=active&sortBy=id&order=descending&size=150&page=${data.page}`, {
                 method: 'GET',
                 headers: {'Authorization': `Bearer ${data.token}`, 'accept-language': 'ru-RU'}
             });
@@ -22,31 +22,31 @@ export  default class ProductsService{
             const body:any = await response_products.json();
 
 
-            const buttons = body.productList.map((item:any)=>{
-                return Markup.button.callback(item.title, `productId${item.productId}`)
-            })
+            // const buttons = body.productList.map((item:any)=>{
+            //     return Markup.button.callback(item.title, `productId${item.productId}`)
+            // })
+            //
+            //
+            //
+            // let arr = [],
+            //     arr1 = [];
+            //
+            // for(let i=0; i<buttons.length; i++){
+            //
+            //     arr1.push(buttons[i])
+            //
+            //     if(!(i%3)&&i!==0){
+            //         arr.push(arr1)
+            //         arr1= []
+            //     }else if(i===(buttons.length-1)){
+            //         arr.push(arr1)
+            //         arr1= []
+            //     }
+            // }
 
 
 
-            let arr = [],
-                arr1 = [];
-
-            for(let i=0; i<buttons.length; i++){
-
-                arr1.push(buttons[i])
-
-                if(!(i%3)&&i!==0){
-                    arr.push(arr1)
-                    arr1= []
-                }else if(i===(buttons.length-1)){
-                    arr.push(arr1)
-                    arr1= []
-                }
-            }
-
-
-
-            return arr
+            return body.productList
 
 
         }catch (err:any){
@@ -66,7 +66,7 @@ export  default class ProductsService{
 
             for(let i=0; i<total_pages; i++){
 
-                const response_products = await fetch(`${process.env.API}/seller/shop/${shopId}/product/getProducts?searchQuery=&filter=active&sortBy=id&order=descending&size=30&page=${page}`, {
+                const response_products = await fetch(`${process.env.API}/seller/shop/${shopId}/product/getProducts?searchQuery=&filter=active&sortBy=id&order=descending&size=150&page=${page}`, {
                     method: 'GET',
                     headers: {'Authorization': `Bearer ${token}`, 'accept-language': 'ru-RU'}
                 });

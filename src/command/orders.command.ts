@@ -93,7 +93,7 @@ export class OrdersCommand extends Command{
 
                 return await ctx.sendPhoto(elem.productImage.photo['480'].high, {
                     caption: message,
-                    parse_mode: 'HTML'
+                    parse_mode: 'HTML',
                 })
 
 

@@ -1,13 +1,19 @@
 import {Command} from "./command.class";
 import {Markup, Telegraf} from "telegraf";
-import {IBotContext, IResponseProduct} from "../context/context.interface";
+import {IBotContext, IResponseProduct, IReview} from "../context/context.interface";
 import ProductsService from "../services/products.service";
 import AuthenticatedService from "../services/authenticated.service";
+import {DateFormatter, HTMLFormatter, NumReplace} from "../utils";
 
-const productsService = new ProductsService(new AuthenticatedService())
+const authService = new AuthenticatedService()
+
+const productsService = new ProductsService(authService)
 
 
 export class ProductsCommand extends Command{
+    currentPage:number = 1
+    products:any[] = []
+
     constructor(bot:Telegraf<IBotContext>) {
         super(bot);
     }
@@ -16,12 +22,19 @@ export class ProductsCommand extends Command{
 
 
         const action_productId_regexp = new RegExp(/^productId/)
+        const action_shopId_regexp = new RegExp(/^shopId/)
 
         this.bot.hears('/shops', async (ctx)=>{
-            if(ctx.session.shops){
-                const buttons_shop = ctx.session.shops.map((item:any)=>{
-                    return Markup.button.callback(item.shopTitle, `shop-${item.id}`)
+
+
+            if(ctx.session.token){
+                const shops = await authService.getUserShops(ctx.session.token)
+                ctx.session.shops = shops
+                const buttons_shop = shops.map((item:any)=>{
+                    return Markup.button.callback(item.shopTitle, `shopId${item.id}`)
                 })
+
+
 
                 await ctx.reply(`На данный момент вы находитесь в магазине ${ctx.session.shops[0].shopTitle}`)
 
@@ -32,31 +45,70 @@ export class ProductsCommand extends Command{
 
         })
 
-        this.bot.hears(/^'shop-'/g, async (ctx)=>{
+        this.bot.action(action_shopId_regexp, async (ctx)=>{
             const {update} = ctx
             //@ts-ignore
-            const shop_id = update.message.text.replace('shop-', '')
+            const data = update.callback_query.data
+            const shop_id = data.replace('shopId', '')
 
 
-            ctx.session.current_shop = +shop_id;
-           if(ctx.session.shops){
-               const shop_info = ctx.session.shops.find((item:any)=>item.id===+shop_id)
-               if(shop_info){
-                   await ctx.reply(`Вы переключились на магазин ${shop_info?.shopTitle}`)
-               }else{
-                   await ctx.reply(`Что-то пошло не так, такой магазин не найден`)
-               }
-           }
+            const shop_info = ctx.session.shops.find((item:any)=>item.id===+shop_id)
+            if(shop_info){
+                ctx.session.current_shop = +shop_id;
+                await ctx.reply(`Вы переключились на магазин ${shop_info?.shopTitle}`)
+            }else{
+                await ctx.reply(`Что-то пошло не так, такой магазин не найден`)
+            }
 
         })
 
 
         this.bot.hears('/products', async (ctx)=>{
-            console.log(ctx.session)
-            if(ctx.session.current_shop&&ctx.session.token){
-               const data_products = await productsService.getProducts({shopId: ctx.session.current_shop, token: ctx.session.token, page:0, ctx})
 
-                await ctx.reply(`Выберите товар`, Markup.inlineKeyboard(data_products))
+            if(ctx.session.current_shop&&ctx.session.token){
+              this.products = await productsService.getProducts({shopId: ctx.session.current_shop, token: ctx.session.token, page:0, ctx})
+                let message:string = ''
+
+
+                message  =HTMLFormatter([
+                    `/n${this.products[this.currentPage].title}/n/n`,
+                    `В продаже: ${this.products[this.currentPage].quantityActive}/n`,
+                    `В Фотостудии: ${this.products[this.currentPage].quantityOnPhotoStudio}/n`,
+                    `К отправке: ${this.products[this.currentPage].quantityCreated}/n`,
+                    `Просмотры: ${this.products[this.currentPage].viewers||0}/n`,
+                    `ROI: ${this.products[this.currentPage].roi}%/n`,
+                    `Рейтинг: ${this.products[this.currentPage].rating}/n`,
+                    `Продано: ${this.products[this.currentPage].quantitySold}/n`,
+                    `Вернули: ${this.products[this.currentPage].quantityReturned}/n`,
+                    `Брак: ${this.products[this.currentPage].quantityDefected}/n`,
+                    `Статус: ${this.products[this.currentPage].status.title}/n`,
+                    `Модерация: ${this.products[this.currentPage].moderationStatus.title}/n`,
+                    `Цена: ${NumReplace(this.products[this.currentPage].price+'')} сум/n`,
+                ])
+
+                const buttons:any[] = []
+
+                if(this.currentPage-1>0){
+                    buttons.push( Markup.button.callback('⬅️ Назад', `productId${this.currentPage-1}`))
+                }
+
+                buttons.push( Markup.button.callback(`${this.currentPage}/${this.products.length}`, `no-action`))
+
+
+
+                if(this.currentPage-1<this.products.length-1){
+                    buttons.push( Markup.button.callback('Вперед ➡️', `productId${this.currentPage+1}`))
+                }
+
+
+
+               if(buttons.length) {
+                   return  await ctx.reply(message, Markup.inlineKeyboard(buttons))
+               }
+
+
+                return  await ctx.reply(message)
+
 
 
             }
@@ -72,45 +124,45 @@ export class ProductsCommand extends Command{
 
             if(data.match('productId')){
 
-                const productId = data.replace('productId', '')
-                const productInfo = await productsService.getProductStatistic({productId: +productId, shopId: ctx.session.current_shop, token: ctx.session.token, ctx })
-                const data_keys = ['rating', 'reviewsAmount', 'ordersAmount', 'viewers', 'roi', 'quantitySold', 'image', 'title', 'totalAvailableAmount']
+                this.currentPage = +data.replace('productId', '')
+
+                let message:string = ''
 
 
-                const responseData:IResponseProduct|any = {};
+                message  =HTMLFormatter([
+                    `/n${this.products[this.currentPage].title}/n/n`,
+                    `В продаже: ${this.products[this.currentPage].quantityActive}/n`,
+                    `В Фотостудии: ${this.products[this.currentPage].quantityOnPhotoStudio}/n`,
+                    `К отправке: ${this.products[this.currentPage].quantityCreated}/n`,
+                    `Просмотры: ${this.products[this.currentPage].viewers||0}/n`,
+                    `ROI: ${this.products[this.currentPage].roi}%/n`,
+                    `Рейтинг: ${this.products[this.currentPage].rating}/n`,
+                    `Продано: ${this.products[this.currentPage].quantitySold}/n`,
+                    `Вернули: ${this.products[this.currentPage].quantityReturned}/n`,
+                    `Брак: ${this.products[this.currentPage].quantityDefected}/n`,
+                    `Статус: ${this.products[this.currentPage].status.title}/n`,
+                    `Модерация: ${this.products[this.currentPage].moderationStatus.title}/n`,
+                    `Цена: ${NumReplace(this.products[this.currentPage].price+'')} сум/n`,
+                ])
 
-                let message = ''
+                const buttons:any[] = []
 
-                for(let key in productInfo){
-                    if(data_keys.includes(key)){
-                        responseData[key] = productInfo[key]
-                    }
-                    if(key==='actions'){
-                        responseData[key] = productInfo[key].map((item:any)=>item.text)
-                    }
-
-                    if(key==='status'){
-                        responseData[key] = productInfo[key]?.title
-                    }
-
-                    if(key==='moderationStatus'){
-                        responseData[key] = productInfo[key]?.title
-                    }
+                if(this.currentPage-1>0){
+                    buttons.push( Markup.button.callback('⬅️Назад', `productId${this.currentPage-1}`))
                 }
 
-                if(Object.keys(responseData).length===0){
-                    return
+                buttons.push( Markup.button.callback(`${this.currentPage}/${this.products.length}`, `no-action`))
+
+
+                if(this.currentPage-1<this.products.length-1){
+                    buttons.push( Markup.button.callback('Вперед ➡️', `productId${this.currentPage+1}`))
                 }
 
-                const data_products = await productsService.getProducts({shopId: ctx.session.current_shop, token: ctx.session.token, page:0, ctx})
+                if(buttons.length) return  await ctx.editMessageText(message, Markup.inlineKeyboard(buttons))
+
+                return  await ctx.editMessageText(message)
 
 
-
-                message = `<strong>${responseData['title']}</strong> \n--------------------\n<b>В продаже:</b> ${responseData.totalAvailableAmount}\n<b>Просмотры:</b> ${responseData.viewers||0}\n<b>ROI:</b> ${responseData.roi}%\n<b>Рейтинг:</b> ${responseData.rating}\n<b>Заказы:</b> ${responseData.ordersAmount}\n<b>Продано:</b> ${responseData.quantitySold}\n<b>Отзывы:</b> ${responseData.reviewsAmount}\n<b>Статус:</b> ${responseData.status}\n<b>Модерация:</b> ${responseData.moderationStatus}\n<b>Действия:</b> ${responseData.actions.length?responseData.actions.join(', \n'):'Нет действий'}`
-                await ctx.sendPhoto(responseData['image'], {protect_content:true})
-                //@ts-ignore
-                await ctx.reply( message, {protect_content:true, parse_mode:'HTML'})
-                await ctx.reply(`Выберите товар`, Markup.inlineKeyboard(data_products))
             }
 
 
