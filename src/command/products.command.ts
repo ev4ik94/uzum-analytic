@@ -69,22 +69,27 @@ export class ProductsCommand extends Command{
               this.products = await productsService.getProducts({shopId: ctx.session.current_shop, token: ctx.session.token, page:0, ctx})
                 let message:string = ''
 
+                if(this.products.length){
+                    message  =HTMLFormatter([
+                        `/n${this.products[this.currentPage].title}/n/n`,
+                        `В продаже: ${this.products[this.currentPage].quantityActive}/n`,
+                        `В Фотостудии: ${this.products[this.currentPage].quantityOnPhotoStudio}/n`,
+                        `К отправке: ${this.products[this.currentPage].quantityCreated}/n`,
+                        `Просмотры: ${this.products[this.currentPage].viewers||0}/n`,
+                        `ROI: ${this.products[this.currentPage].roi}%/n`,
+                        `Рейтинг: ${this.products[this.currentPage].rating}/n`,
+                        `Продано: ${this.products[this.currentPage].quantitySold}/n`,
+                        `Вернули: ${this.products[this.currentPage].quantityReturned}/n`,
+                        `Брак: ${this.products[this.currentPage].quantityDefected}/n`,
+                        `Статус: ${this.products[this.currentPage].status.title}/n`,
+                        `Модерация: ${this.products[this.currentPage].moderationStatus.title}/n`,
+                        `Цена: ${NumReplace(this.products[this.currentPage].price+'')} сум/n`,
+                    ])
 
-                message  =HTMLFormatter([
-                    `/n${this.products[this.currentPage].title}/n/n`,
-                    `В продаже: ${this.products[this.currentPage].quantityActive}/n`,
-                    `В Фотостудии: ${this.products[this.currentPage].quantityOnPhotoStudio}/n`,
-                    `К отправке: ${this.products[this.currentPage].quantityCreated}/n`,
-                    `Просмотры: ${this.products[this.currentPage].viewers||0}/n`,
-                    `ROI: ${this.products[this.currentPage].roi}%/n`,
-                    `Рейтинг: ${this.products[this.currentPage].rating}/n`,
-                    `Продано: ${this.products[this.currentPage].quantitySold}/n`,
-                    `Вернули: ${this.products[this.currentPage].quantityReturned}/n`,
-                    `Брак: ${this.products[this.currentPage].quantityDefected}/n`,
-                    `Статус: ${this.products[this.currentPage].status.title}/n`,
-                    `Модерация: ${this.products[this.currentPage].moderationStatus.title}/n`,
-                    `Цена: ${NumReplace(this.products[this.currentPage].price+'')} сум/n`,
-                ])
+
+                }else{
+                    message+='Список пуст'
+                }
 
                 const buttons:any[] = []
 
@@ -102,9 +107,9 @@ export class ProductsCommand extends Command{
 
 
 
-               if(buttons.length) {
-                   return  await ctx.reply(message, Markup.inlineKeyboard(buttons))
-               }
+                if(buttons.length) {
+                    return  await ctx.reply(message, Markup.inlineKeyboard(buttons))
+                }
 
 
                 return  await ctx.reply(message)
