@@ -149,7 +149,7 @@ export class ProductsCommand extends Command{
                     `Модерация: ${this.products[this.currentPage].moderationStatus.title}/n`,
                     `Цена: ${NumReplace(this.products[this.currentPage].price+'')} сум/n`,
                 ])
-console.log()
+
                 const buttons:any[] = []
 
                 if(this.currentPage-1>0){
@@ -160,7 +160,7 @@ console.log()
 
 
                 if(this.currentPage-1<this.products.length-1){
-                    buttons.push( Markup.button.callback('Вперед ➡️', `productId${this.currentPage-1}`))
+                    buttons.push( Markup.button.callback('Вперед ➡️', `productId${this.currentPage+1}`))
                 }
 
                 if(buttons.length) return  await ctx.editMessageText(message, Markup.inlineKeyboard(buttons))
