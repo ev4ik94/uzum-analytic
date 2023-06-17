@@ -97,11 +97,11 @@ export class ProductsCommand extends Command{
                     buttons.push( Markup.button.callback('⬅️ Назад', `productId${this.currentPage-1}`))
                 }
 
-                if(this.products.length) buttons.push( Markup.button.callback(`${this.currentPage}/${this.products.length}`, `no-action`))
+                if(this.products.length) buttons.push( Markup.button.callback(`${this.currentPage}/${this.products.length+1}`, `no-action`))
 
 
 
-                if(this.currentPage-1<this.products.length-1){
+                if(this.currentPage-1<this.products.length){
                     buttons.push( Markup.button.callback('Вперед ➡️', `productId${this.currentPage+1}`))
                 }
 
@@ -156,10 +156,10 @@ export class ProductsCommand extends Command{
                     buttons.push( Markup.button.callback('⬅️Назад', `productId${this.currentPage-1}`))
                 }
 
-                if(this.products.length) buttons.push( Markup.button.callback(`${this.currentPage}/${this.products.length}`, `no-action`))
+                if(this.products.length) buttons.push( Markup.button.callback(`${this.currentPage}/${this.products.length+1}`, `no-action`))
 
 
-                if(this.currentPage-1<this.products.length-1){
+                if(this.currentPage-1<this.products.length){
                     buttons.push( Markup.button.callback('Вперед ➡️', `productId${this.currentPage+1}`))
                 }
 
