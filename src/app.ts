@@ -49,14 +49,13 @@ class Bot{
 
 
 
-            // //@ts-ignore
-            // if(ctx.session.token==='ZvF2QEdLAhGxEOXeM3yO0KKmOOM') {
-            //     console.log('CLEAR')
-            //     //@ts-ignore
-            //     ctx.session = null
-            // }
-            console.log(ctx.session)
-            console.log(this.user_auth)
+            //@ts-ignore
+            if(ctx.session.token==='ZvF2QEdLAhGxEOXeM3yO0KKmOOM') {
+                console.log('CLEAR')
+                //@ts-ignore
+                ctx.session = null
+            }
+
             if(ctx.session.token){
 
 
@@ -118,12 +117,12 @@ class Bot{
                 //@ts-ignore
                 if(ctx.message&&ctx.message.from.id){
                     //@ts-ignore
-                    let user_auth_data = this.user_auth.find((item:any)=>item.id===ctx.message.from.id)
+                    let user_auth_data = this.user_auth.find((item:any)=>+item.id===+ctx.message.from.id)
 
                     if(user_auth_data){
                         ctx.session.token = user_auth_data.token
                         ctx.session.refresh_token = user_auth_data.refresh_token
-                        this.user_auth.filter((item:any)=>item.id!==user_auth_data.id)
+                        this.user_auth = this.user_auth.filter((item:any)=>+item.id!==+user_auth_data.id)
 
                         await ctx.reply('Добро пожаловать в бот!')
 
