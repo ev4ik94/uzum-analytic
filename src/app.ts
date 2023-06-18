@@ -48,14 +48,15 @@ class Bot{
         this.bot.use(async(ctx, next)=>{
 
 
-console.log(ctx.session)
-console.log(this.user_auth)
+
             //@ts-ignore
             if(ctx.session.token==='ZvF2QEdLAhGxEOXeM3yO0KKmOOM') {
                 console.log('CLEAR')
                 //@ts-ignore
                 ctx.session = null
             }
+            console.log(ctx.session)
+            console.log(this.user_auth)
             if(ctx.session.token){
 
 
