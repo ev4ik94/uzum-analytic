@@ -49,12 +49,6 @@ class Bot{
 
 
 
-            //@ts-ignore
-            if(ctx.session.token==='ZvF2QEdLAhGxEOXeM3yO0KKmOOM') {
-                console.log('CLEAR')
-                //@ts-ignore
-                ctx.session = null
-            }
 
             if(ctx.session.token){
 
