@@ -48,7 +48,8 @@ class Bot{
         this.bot.use(async(ctx, next)=>{
 
 
-
+console.log(ctx.session.token)
+console.log(this.user_auth)
             if(ctx.session.token){
                 await AuthService.checkToken(ctx)
 
@@ -219,12 +220,9 @@ class Bot{
 
 
 
-        for(let chatId of chat_ids){
-            await this.bot.telegram.sendMessage(chatId, '<strong>📢 Были добавлены обновления</strong>\nДля продолжения работы с ботом \nнеобходимо перезапустить его\n<strong><a href="https://t.me/businessUzumBot?start=restart">Перезапуск</a></strong>', {parse_mode: 'HTML'})
-        }
-
-
-
+        // for(let chatId of chat_ids){
+        //     await this.bot.telegram.sendMessage(chatId, '<strong>📢 Были добавлены обновления</strong>\nДля продолжения работы с ботом \nнеобходимо перезапустить его\n<strong><a href="https://t.me/businessUzumBot?start=restart">Перезапуск</a></strong>', {parse_mode: 'HTML'})
+        // }
 
 
 
