@@ -101,7 +101,13 @@ export  default class PermissionsService{
         try{
             const user = await Users.findOne({where:{userId:userId}})
 
-            if(!user) throw new Error('Пользователь не найден')
+            if(!user) {
+                return this.state.setIsActivate({
+                    status: false,
+                    message:'Вы не авторизованы'
+                }, userId+'')
+                // throw new Error('Пользователь не найден')
+            }
 
             if(user.status===Statuses.NO_ACTIVE) {
 
