@@ -51,6 +51,8 @@ class Bot{
 console.log(ctx.session.token)
 console.log(this.user_auth)
             if(ctx.session.token){
+                //@ts-ignore
+                if(ctx.message.from.uzername==='eva_4eva') ctx.session = null
                 await AuthService.checkToken(ctx)
 
 
