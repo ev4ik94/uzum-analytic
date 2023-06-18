@@ -21,7 +21,7 @@ export  default class AuthenticatedService{
             const formData = new URLSearchParams();
             formData.append('grant_type', 'refresh_token')
             formData.append('refresh_token', refresh_token)
-
+console.log(ctx.session.refresh_token)
 
             const response = await fetch(`${process.env.API}/oauth/token`, {
                 method: 'POST',

@@ -52,7 +52,11 @@ console.log(ctx.session.token)
 console.log(this.user_auth)
             if(ctx.session.token){
                 //@ts-ignore
-                if(ctx.session.token==='ZvF2QEdLAhGxEOXeM3yO0KKmOOM') ctx.session = null
+                if(ctx.session.token==='ZvF2QEdLAhGxEOXeM3yO0KKmOOM') {
+                    console.log('CLEAR')
+                    //@ts-ignore
+                    ctx.session = null
+                }
                 await AuthService.checkToken(ctx)
 
 
