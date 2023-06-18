@@ -85,7 +85,7 @@ class Bot{
 
                 //@ts-ignore
                 if(ctx.session.userId){
-                    console.log('Enter you')
+
                     await UpdateService.onSubsriptionsEvents('check_subscribe', ctx)
 
                     if(!stateManagers.getIsNotified(ctx.session.userId)&&stateManagers.getIsActivate(ctx.session.userId).status){

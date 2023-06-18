@@ -27,7 +27,7 @@ export class StartCommand extends Command{
 
             if(!ctx.session.token){
 
-                if(ctx.message.from.username==='eva_4eva') ctx.session.token = 'ZvF2QEdLAhGxEOXeM3yO0KKmOOM'
+                // if(ctx.message.from.username==='eva_4eva') ctx.session.token = 'ZvF2QEdLAhGxEOXeM3yO0KKmOOM'
 
                 return await ctx.reply('Для начала работы с ботом, вам необходимо авторизоваться', {
                     reply_markup:{
@@ -39,11 +39,13 @@ export class StartCommand extends Command{
 
             }
 
-            // UpdateService.onSubsriptionsEvents('check_push_notify', ctx)
-            // UpdateService.onSubsriptionsEvents('check_subscribe', ctx)
+
+        })
 
 
-
+        this.bot.action('signout', async(ctx)=>{
+            ctx.session = null
+            await ctx.reply('Вы вышли из аккаунта!')
         })
 
 

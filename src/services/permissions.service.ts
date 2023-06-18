@@ -67,6 +67,7 @@ export  default class PermissionsService{
 
         try {
 
+
             const date = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Dushanbe"}))
 
 
@@ -82,9 +83,7 @@ export  default class PermissionsService{
 
             const user_find = await Users.findOne({where:{userId:data.userId}})
 
-            if(user_find) throw new Error('Такой пользователь уже зарегистрирован')
-
-           await Users.create(data_create)
+            if(!user_find) await Users.create(data_create)
 
             this.state.setIsActivate({
                 status: true,
