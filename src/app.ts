@@ -76,7 +76,7 @@ class Bot{
                     if(ctx.session.shops.length>1){
 
                         const buttons_shop = ctx.session.shops.map((item:any)=>{
-                            return Markup.button.callback(item.shopTitle, `shop-${item.id}`)
+                            return Markup.button.callback(item.shopTitle, `shopId${item.id}`)
                         })
 
                         return await ctx.reply("Выберите магазин для дальнейшей работы с ботом", Markup.inlineKeyboard(buttons_shop))
@@ -222,9 +222,9 @@ class Bot{
 
 
 
-        // for(let chatId of chat_ids){
-        //     await this.bot.telegram.sendMessage(chatId, '<strong>📢 Были добавлены обновления</strong>\nДля продолжения работы с ботом \nнеобходимо перезапустить его\n<strong><a href="https://t.me/businessUzumBot?start=restart">Перезапуск</a></strong>', {parse_mode: 'HTML'})
-        // }
+        for(let chatId of chat_ids){
+            await this.bot.telegram.sendMessage(chatId, '<strong>📢 Были добавлены обновления</strong>\nДля продолжения работы с ботом \nнеобходимо перезапустить его\n<strong><a href="https://t.me/businessUzumBot?start=restart">Перезапуск</a></strong>', {parse_mode: 'HTML'})
+        }
 
 
 

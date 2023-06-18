@@ -89,43 +89,10 @@ export  default class OrdersService{
 
             const orders_uzum = await this.getOrders({status: 'ALL', ctx, shopId: current_shop, token, page:'1', size: 200})
             let is_notified = false
-            let orderItems = []
 
 
-            if(+current_shop===11921){
-                orderItems = [...orders_uzum.orderItems, {
-                    amount: 1,
-                amountReturns: 0,
-                cancelled: null,
-                comment: null,
-                commission: 17280,
-                date: 1687094882798,
-                dateIssued: null,
-                id: 7899492,
-                orderId: 3698678,
-                productId: 457915,
-                productImage: {
-                    photo: {
-                            540: {
-                            high: "https://images.uzum.uz/chusfcdenntd8rfaq500/t_product_540_high.jpg",
-                            low: "https://images.uzum.uz/chusfcdenntd8rfaq500/t_product_540_low.jpg"}
-                    }
-                },
-                productTitle:"Пижама атласная, с шортами",
-                purchasePrice:75000,
-                returnCause:null,
-                sellPrice:144000,
-                sellerProfit:126720,
-                shopId:11921,
-                skuTitle:"REDFOXY-RFPIJAM-M-СИНМЕЛ",
-                status:"PROCESSING",
-                withdrawnProfit:0
-                }]
-            }else{
-                orderItems = orders_uzum.orderItems
-            }
 
-
+            const {orderItems} = orders_uzum
 
 
 
