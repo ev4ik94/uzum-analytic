@@ -105,6 +105,9 @@ export  default class OrdersService{
 
            const {orderItems} = orders_uzum
 
+            console.log(orders)
+            console.log(orderItems)
+
             let notify_data:any = []
 
 

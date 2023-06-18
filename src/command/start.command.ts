@@ -19,9 +19,6 @@ export class StartCommand extends Command{
 
     handle() {
 
-
-
-
         this.bot.start(async(ctx)=>{
 
 
@@ -43,7 +40,8 @@ export class StartCommand extends Command{
         })
 
 
-        this.bot.action('signout', async(ctx)=>{
+        this.bot.hears('/signout', async(ctx)=>{
+            //@ts-ignore
             ctx.session = null
             await ctx.reply('Вы вышли из аккаунта!')
         })
