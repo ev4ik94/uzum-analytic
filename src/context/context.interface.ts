@@ -40,6 +40,10 @@ export interface ISessionData{
 export interface IOrders {
     dateIssued: string
     date: string
+    shop: {
+        id:number
+        title:string
+    }
     status: string
     comment: string
     returnCause: string

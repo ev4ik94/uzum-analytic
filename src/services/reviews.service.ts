@@ -6,7 +6,7 @@ export  default class ReviewsService{
     constructor() {
     }
 
-    async getReviews(data:{shopId:number, token:string, status:string}){
+    async getReviews(data:{shopId?:number, token:string, status:string}){
         try{
 
 
@@ -15,11 +15,11 @@ export  default class ReviewsService{
 
             if(data.status==='NEW'){
 
-                response_reviews = await fetch(`${process.env.API}/seller/product-reviews?page=0&filter=NEW&shopIds=${data.shopId}&size=20`, {
+                response_reviews = await fetch(`${process.env.API}/seller/product-reviews?page=0&filter=NEW${data.shopId?`&shopIds=${data.shopId}`:''}&size=20`, {
                     headers: {'Authorization': `Bearer ${data.token}`, 'accept-language': 'ru-RU'}
                 });
             }else{
-                response_reviews = await fetch(`${process.env.API}/seller/product-reviews?page=0&filter=${data.status}&shopIds=${data.shopId}&size=20`, {
+                response_reviews = await fetch(`${process.env.API}/seller/product-reviews?page=0&filter=${data.status}${data.shopId?`&shopIds=${data.shopId}`:''}&size=20`, {
                     headers: {'Authorization': `Bearer ${data.token}`, 'accept-language': 'ru-RU'}
                 });
             }

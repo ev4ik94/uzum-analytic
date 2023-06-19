@@ -26,7 +26,7 @@ export  default class FinanceSevice {
     async requestHistory(ctx:any):Promise<{inProcessingCount:number, withdrawList:any[]}|undefined>{
         try{
             const {current_shop, token} = ctx.session
-            const request_history_response = await fetch(`${process.env.API}/seller/withdraws/latest-short?shopId=${current_shop}&count=5`, {
+            const request_history_response = await fetch(`${process.env.API}/seller/withdraws/latest-short?shopId=${current_shop}&count=10`, {
                 headers: {'Authorization': `Bearer ${token}`, 'accept-language': 'ru-RU'}
             })
 

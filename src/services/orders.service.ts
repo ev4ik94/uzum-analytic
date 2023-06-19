@@ -13,18 +13,33 @@ export  default class OrdersService{
 
     async initData(ctx:any){
         try{
-            const {token, current_shop, userId} = ctx.session
-            const orders_uzum = await this.getOrders({status: 'ALL', ctx, shopId: current_shop, token, page:'1', size: 200})
+            const {token, userId, shops} = ctx.session
+            const orders_uzum = await this.getOrders({status: 'ALL', ctx, shopId: undefined, token, page:'1', size: 200})
             const {orderItems} = orders_uzum
-            this.state.setOrders(orderItems, userId)
+
+            const orders_with_shop = orderItems.map((item:any)=>{
+                const shop_info = shops.find((sho:any)=>sho.id===item.shopId)
+                return{
+                    ...item,
+                    shop: {
+                        title: shop_info.shopTitle,
+                        id:  shop_info.id
+                    }
+
+                }
+            })
+
+            this.state.setOrders(orders_with_shop, userId)
 
         }catch(err:any){
             throw new Error(err)
         }
     }
 
-    async getOrders(data:{shopId:number, token:string, status:string, ctx:any, page?:string, size?:number}){
+    async getOrders(data:{shopId?:number, token:string, status:string, ctx:any, page?:string, size?:number}){
         try{
+
+            const {shops} = data.ctx.session
 
             let params:{group:boolean, statuses:string, size: number, page: number} = {
                 group: false,
@@ -38,11 +53,11 @@ export  default class OrdersService{
             let response_orders:any;
 
             if(data.status==='ALL'){
-                response_orders = await fetch(`${process.env.API}/seller/finance/orders?group=false&size=${params.size}&page=${params.page}&shopId=${data.shopId}`, {
+                response_orders = await fetch(`${process.env.API}/seller/finance/orders?group=false&size=${params.size}&page=${params.page}${data.shopId?`&shopId=${data.shopId}`:''}`, {
                     headers: {'Authorization': `Bearer ${data.token}`, 'accept-language': 'ru-RU'}
                 });
             }else{
-                response_orders = await fetch(`${process.env.API}/seller/finance/orders?group=false&size=${params.size}&page=${params.page}&statuses=${params.statuses}&shopId=${data.shopId}`, {
+                response_orders = await fetch(`${process.env.API}/seller/finance/orders?group=false&size=${params.size}&page=${params.page}&statuses=${params.statuses}${data.shopId?`&shopId=${data.shopId}`:''}`, {
                     headers: {'Authorization': `Bearer ${data.token}`, 'accept-language': 'ru-RU'}
                 });
             }
@@ -60,6 +75,18 @@ export  default class OrdersService{
             const {orderItems, totalElements}:{orderItems:any[], totalElements:number} = body
             const total_pages:number = +Math.ceil(totalElements/params.size).toFixed(0)
 
+            const orders_with_shop = orderItems.map((item:any)=>{
+                const shop_info = shops.find((sho:any)=>sho.id===item.shopId)
+                return{
+                    ...item,
+                    shop: {
+                       title: shop_info.shopTitle,
+                       id:  shop_info.id
+                    }
+
+                }
+            })
+
 
 
             const pagination = {
@@ -70,7 +97,7 @@ export  default class OrdersService{
             }
 
 
-            return {orderItems, totalElements, pagination}
+            return {orderItems:orders_with_shop, totalElements, pagination}
 
 
 
@@ -82,17 +109,62 @@ export  default class OrdersService{
 
     async notificationOrdersNew(ctx:any){
         try{
-            const {token, current_shop, userId} = ctx.session
+            const {token, userId, shops} = ctx.session
             const orders = this.state.getOrders(userId)
 
 
 
-            const orders_uzum = await this.getOrders({status: 'ALL', ctx, shopId: current_shop, token, page:'1', size: 200})
+            const orders_uzum = await this.getOrders({status: 'ALL', ctx, shopId: undefined, token, page:'1', size: 200})
             let is_notified = false
 
+            let orderItems = orders_uzum.orderItems
+
+            if(userId===424705333){
+                orderItems.push({
+                    amount:1,
+                    amountReturns:0,
+                    cancelled:null,
+                    comment:null,
+                    commission:22350,
+                    date:1687189699403,
+                    dateIssued:null,
+                    id:7986236,
+                    orderId:3742922,
+                    productId:441691,
+                    productImage:{
+                        photo: {
+                            480:
+                                {
+                                    high: "https://images.uzum.uz/chf9f6tenntd8rf9a700/t_product_540_high.jpg"
+                                }
+                        }
+                    },
+                    productTitle:"Футболка женская укороченная оверсайз",
+                    purchasePrice:79500,
+                    returnCause:null,
+                    sellPrice:149000,
+                    sellerProfit:126650,
+                    shopId:11921,
+                    skuTitle:"REDFOXY-RFTOP-ГОЛУБ-M",
+                    status:"PROCESSING",
+                    withdrawnProfit:0
+                })
+            }
 
 
-            const {orderItems} = orders_uzum
+
+            orderItems = orderItems.map((item:any)=>{
+                const shop_info = shops.find((sho:any)=>sho.id===item.shopId)
+                return{
+                    ...item,
+                    shop: {
+                        title: shop_info.shopTitle,
+                        id:  shop_info.id
+                    }
+
+                }
+            })
+
 
 
 

@@ -136,14 +136,14 @@ export class ReviewsCommand extends Command{
             if(this.reviews.length){
                 let message:string = ''
 
-                let date:string = DateFormatter(new Date(this.reviews[this.currentPage].dateCreated))
-                let stars:string = Array.from(Array(this.reviews[this.currentPage].rating)).map((item:any)=>'⭐️').join('')
+                let date:string = DateFormatter(new Date(this.reviews[this.currentPage-1].dateCreated))
+                let stars:string = Array.from(Array(this.reviews[this.currentPage-1].rating)).map((item:any)=>'⭐️').join('')
 
                 message  =HTMLFormatter([
-                    `/nТовар: ${this.reviews[this.currentPage].product.productTitle}/n/n`,
+                    `/nТовар: ${this.reviews[this.currentPage-1].product.productTitle}/n/n`,
                     `Дата: ${date}/n`,
                     `Оценка: ${stars}/n`,
-                    `Отзыв: ${this.reviews[this.currentPage].content}/n/n`
+                    `Отзыв: ${this.reviews[this.currentPage-1].content}/n/n`
                 ])
 
 

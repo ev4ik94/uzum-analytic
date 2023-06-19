@@ -61,6 +61,7 @@ export class OrdersCommand extends Command{
                 if(elem.status==='CANCELED'){
 
                     message+=HTMLFormatter([
+                        `/n/sМагазин: ${elem.shop.title}/s/n`,
                         `/n/sПричина отказа: ${elem.returnCause || 'Причина не указана'}/s/n/n`,
                         `/bSKU:/b${elem.skuTitle}/n`,
                         `/bТовар:/b ${elem.productTitle}/n`,
@@ -72,6 +73,7 @@ export class OrdersCommand extends Command{
 
                 }else if(elem.dateIssued){
                     message+=HTMLFormatter([
+                        `/n/sМагазин: ${elem.shop.title}/s/n`,
                         `/bSKU:/b${elem.skuTitle}/n`,
                         `/bТовар:/b ${elem.productTitle}/n`,
                         `/bЦена:/b ${NumReplace(elem.sellPrice)} сум/n`,
@@ -81,6 +83,7 @@ export class OrdersCommand extends Command{
                     ])
                 }else{
                     message+=HTMLFormatter([
+                        `/n/sМагазин: ${elem.shop.title}/s/n`,
                         `/bSKU:/b${elem.skuTitle}/n`,
                         `/bТовар:/b ${elem.productTitle}/n`,
                         `/bЦена:/b ${NumReplace(elem.sellPrice)} сум/n`,
@@ -151,6 +154,7 @@ export class OrdersCommand extends Command{
 
                             message+=HTMLFormatter([
                                 `/n№:${num}`,
+                                `/n/sМагазин : ${item.shop.title}/s/n`,
                                 `${item.status==='CANCELED'?`/n/sВернули Заказ ❌/nпо причине: ${item.returnCause}/s`:item.dateIssued?`/n/sПолучили ✅/s`:''}/n`,
                                 `${(item.comment||'').replace(/\./g, '')?`/bКоментарий клиента:/b ${item.comment}/n`:''}`,
                                 `/bКол-во товара:/b ${item.status==='CANCELED'?item.amountReturns:item.amount}/n`,
