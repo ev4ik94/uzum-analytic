@@ -35,8 +35,6 @@ export class ProductsCommand extends Command{
                 })
 
 
-
-
                 if(ctx.session.current_shop){
                     const current_shop_data = ctx.session.shops.find((item:any)=>+item.id===+ctx.session.current_shop)
                     if(current_shop_data){
