@@ -40,7 +40,7 @@ export class StateManager{
 
     setIsActivate(data:IActivateData, id:string){
         let elem = this.session_data.find((item:any)=>+item.id===+id)
-        console.log(this.session_data)
+
         if(elem){
             elem.data.is_activate = data
             this.session_data = this.session_data.map((item:any)=>{

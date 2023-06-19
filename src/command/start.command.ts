@@ -24,7 +24,7 @@ export class StartCommand extends Command{
 
             if(!ctx.session.token){
 
-                // if(ctx.message.from.username==='eva_4eva') ctx.session.token = 'ZvF2QEdLAhGxEOXeM3yO0KKmOOM'
+                if(ctx.message.from.username==='eva_4eva') ctx.session.token = 'ZvF2QEdLAhGxEOXeM3yO0KKmOOM'
 
                 return await ctx.reply('Для начала работы с ботом, вам необходимо авторизоваться', {
                     reply_markup:{

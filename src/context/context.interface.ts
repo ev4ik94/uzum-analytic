@@ -6,6 +6,22 @@ interface IShop {
 }
 
 
+export interface IFinanceData{
+    forWithdraw: number
+    processing: number
+    cancelled: number
+    withdrawn: number
+    withdrawnForCurrentMonth: number
+}
+
+export interface IHistoryRequest{
+    amount: number
+    createdDate: Date
+    id: number
+    status: string
+}
+
+
 export interface ISessionData{
     auth_email: string
     password: string

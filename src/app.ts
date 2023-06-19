@@ -18,6 +18,7 @@ import PermissionService from "./services/permissions.service";
 import dotenv from "dotenv"
 import {StateManager} from "./state";
 import {IStateManager} from "./config/config.interface";
+import {FinanceCommand} from "./command/finance.command";
 
 const AuthService = new AuthenticatedService()
 
@@ -223,13 +224,13 @@ class Bot{
 
 
         for(let chatId of chat_ids){
-            await this.bot.telegram.sendMessage(chatId, '<strong>📢 Были добавлены обновления</strong>\nДля продолжения работы с ботом \nнеобходимо перезапустить его\n<strong><a href="https://t.me/businessUzumBot?start=restart">Перезапуск</a></strong>', {parse_mode: 'HTML'})
+            await this.bot.telegram.sendMessage(chatId, '<strong>📢 Были добавлены обновления:</strong>\n\n  - Раздел финансы, где можно наблюдать операции по доходам и выводам средств\n\nДля продолжения работы с ботом \nнеобходимо перезапустить его\n<strong><a href="https://t.me/businessUzumBot?start=restart">Перезапуск</a></strong>', {parse_mode: 'HTML'})
         }
 
 
 
 
-        this.commands = [ new StartCommand(this.bot), new ProductsCommand(this.bot), new OrdersCommand(this.bot, stateManagers), new ReviewsCommand(this.bot)]
+        this.commands = [ new StartCommand(this.bot), new FinanceCommand(this.bot), new ProductsCommand(this.bot), new OrdersCommand(this.bot, stateManagers), new ReviewsCommand(this.bot)]
         for(const command of this.commands){
             command.handle()
         }

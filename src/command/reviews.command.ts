@@ -55,7 +55,7 @@ export class ReviewsCommand extends Command{
                 const buttons:any[] = []
 
                 if(this.currentPage-1>0){
-                    buttons.push( Markup.button.callback('<<', `reviewId${this.currentPage-1}`))
+                    buttons.push( Markup.button.callback('⬅️ Назад', `reviewId${this.currentPage-1}`))
                 }
 
                 if(this.reviews[this.currentPage-1]?.reply){
@@ -65,7 +65,7 @@ export class ReviewsCommand extends Command{
 
 
                 if(this.currentPage-1<this.reviews.length-1){
-                    buttons.push( Markup.button.callback('>>', `reviewId${this.currentPage+1}`))
+                    buttons.push( Markup.button.callback('Вперед ➡️', `reviewId${this.currentPage+1}`))
                 }
 
                 await ctx.editMessageText(message, Markup.inlineKeyboard(buttons))
@@ -150,7 +150,7 @@ export class ReviewsCommand extends Command{
                 const buttons:any[] = []
 
                 if(this.currentPage-1>1){
-                    buttons.push( Markup.button.callback('<<', `reviewId${this.currentPage-1}`))
+                    buttons.push( Markup.button.callback('⬅️ Назад', `reviewId${this.currentPage-1}`))
                 }
 
                 if(this.reviews[this.currentPage-1]?.reply){
@@ -158,7 +158,7 @@ export class ReviewsCommand extends Command{
                 }
 
                 if(this.currentPage-1<this.reviews.length-1){
-                    buttons.push( Markup.button.callback('>>', `reviewId${this.currentPage+1}`))
+                    buttons.push( Markup.button.callback('Вперед ➡️', `reviewId${this.currentPage+1}`))
                 }
 
                 if(buttons.length) return  await ctx.replyWithHTML(message, Markup.inlineKeyboard(buttons))
