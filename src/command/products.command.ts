@@ -39,7 +39,12 @@ export class ProductsCommand extends Command{
 
                 if(ctx.session.current_shop){
                     const current_shop_data = ctx.session.shops.find((item:any)=>+item.id===+ctx.session.current_shop)
-                    await ctx.reply(`На данный момент вы находитесь в магазине ${current_shop_data.shopTitle}`)
+                    if(current_shop_data){
+                        await ctx.reply(`На данный момент вы находитесь в магазине ${current_shop_data.shopTitle}`)
+                    }else{
+                        await ctx.reply(`На данный момент вы находитесь в магазине ${ctx.session.shops[0].shopTitle}`)
+                    }
+
                 }else{
                     await ctx.reply(`На данный момент вы находитесь в магазине ${ctx.session.shops[0].shopTitle}`)
                 }
