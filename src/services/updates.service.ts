@@ -103,7 +103,7 @@ export  default class UpdatesService{
                     await ctx.reply('Новый отзыв 🙋‍♀️',  Markup.inlineKeyboard([Markup.button.callback('Просмотреть', `reviewId${new_reviews[i].reviewId}`)]))
                 }
             }
-        }, 180000)
+        }, 60000)
     }
 
     private deleteCheckSubscribe(){
