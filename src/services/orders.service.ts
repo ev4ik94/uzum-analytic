@@ -128,8 +128,67 @@ export  default class OrdersService{
             //         commission:22350,
             //         date:1687189699403,
             //         dateIssued:null,
-            //         id:7986236,
-            //         orderId:3742922,
+            //         id:8039703,
+            //         orderId:3769471,
+            //         productId:441691,
+            //         productImage:{
+            //             photo: {
+            //                 480:
+            //                     {
+            //                         high: "https://images.uzum.uz/chf9f6tenntd8rf9a700/t_product_540_high.jpg"
+            //                     }
+            //             }
+            //         },
+            //         productTitle:"Футболка женская укороченная оверсайз",
+            //         purchasePrice:79500,
+            //         returnCause:null,
+            //         sellPrice:149000,
+            //         sellerProfit:126650,
+            //         shopId:11921,
+            //         skuTitle:"REDFOXY-RFTOP-ГОЛУБ-M",
+            //         status:"PROCESSING",
+            //         withdrawnProfit:0
+            //     })
+            //     orderItems.push({
+            //         amount:1,
+            //         amountReturns:0,
+            //         cancelled:null,
+            //         comment:null,
+            //         commission:22350,
+            //         date:1687189699403,
+            //         dateIssued:null,
+            //         id:8039702,
+            //         orderId:3769471,
+            //         productId:424094,
+            //         productImage:{
+            //             photo: {
+            //                 480:
+            //                     {
+            //                         high: "https://images.uzum.uz/chek4vcvutv6po2iic8g/t_product_540_high.jpg"
+            //
+            //                     }
+            //             }
+            //         },
+            //         productTitle:"Женские лосины утягивающие в рубчик",
+            //         purchasePrice:79500,
+            //         returnCause:null,
+            //         sellPrice:149000,
+            //         sellerProfit:126650,
+            //         shopId:11921,
+            //         skuTitle:"REDFOXY-RFLSBLA-СЕРЫЙ-M",
+            //         status:"PROCESSING",
+            //         withdrawnProfit:0
+            //     })
+            //     orderItems.push({
+            //         amount:1,
+            //         amountReturns:0,
+            //         cancelled:null,
+            //         comment:null,
+            //         commission:22350,
+            //         date:1687189699403,
+            //         dateIssued:null,
+            //         id:8039701,
+            //         orderId:3769471,
             //         productId:441691,
             //         productImage:{
             //             photo: {
@@ -180,7 +239,8 @@ export  default class OrdersService{
                     const data_n:any = {}
                     if(!order_ids.includes(order_ids_uzum[i])){
                         let newOrder = orderItems.find((order:IOrders)=>order.id===order_ids_uzum[i])
-                        this.state.setOrders([...orders, newOrder], userId)
+
+                        this.state.setOrders([...this.state.getOrders(userId), newOrder], userId)
                         is_notified = true
                         data_n['type'] = 'new_order'
                         data_n['order'] = newOrder

@@ -72,6 +72,7 @@ export class StateManager{
         let elem = this.session_data.find((item:any)=>+item.id===+id)
 
         if(elem){
+
             elem.data.orders = data
             this.session_data = this.session_data.map((item:any)=>{
                 if(+item.id===+id){

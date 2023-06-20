@@ -44,7 +44,7 @@ export class OrdersCommand extends Command{
             const data = update.callback_query.data
             const orderId = data.replace('orderView', '')
 
-            const elem:any = this.state.getOrders(userId).find((item:IOrders)=>+item.orderId===+orderId)
+            const elem:any = this.state.getOrders(userId).find((item:IOrders)=>+item.id===+orderId)
 
             if(elem){
                 const date:string = DateFormatter(new Date(elem.date))

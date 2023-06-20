@@ -74,23 +74,23 @@ export  default class UpdatesService{
 
                 for(let k=0; k<notified_data.length;k++){
                     if(notified_data[k].type==='new_order'){
-                        await ctx.reply('Новый заказ ❗️❗️❗️',  Markup.inlineKeyboard([Markup.button.callback('Просмотреть', `orderView${notified_data[k].order.orderId}`)]))
+                        await ctx.reply('Новый заказ ❗️❗️❗️',  Markup.inlineKeyboard([Markup.button.callback('Просмотреть', `orderView${notified_data[k].order.id}`)]))
                     }else if(notified_data[k].type==='change_status'){
                         const status = notified_data[k].order?.status
 
                         if(status==='CANCELED'){
-                            await ctx.reply('Заказ отменен ❌',  Markup.inlineKeyboard([Markup.button.callback('Просмотреть', `orderView${notified_data[k].order.orderId}`)]))
+                            await ctx.reply('Заказ отменен ❌',  Markup.inlineKeyboard([Markup.button.callback('Просмотреть', `orderView${notified_data[k].order.id}`)]))
                         }
 
                         if(status==='TO_WITHDRAW'){
-                            await ctx.reply('Заказ одобрен',  Markup.inlineKeyboard([Markup.button.callback('Просмотреть', `orderView${notified_data[k].order.orderId}`)]))
+                            await ctx.reply('Заказ одобрен',  Markup.inlineKeyboard([Markup.button.callback('Просмотреть', `orderView${notified_data[k].order.id}`)]))
                         }
 
                         // await ctx.reply('Заказ изменен',  Markup.inlineKeyboard([Markup.button.callback('Просмотреть', `orderView${notified_data[k].order.orderId}`)]))
 
                     }else if(notified_data[k].type==='change_date'){
                         if(notified_data[k].order.dateIssued){
-                            await ctx.reply('Заказ получен ✅',  Markup.inlineKeyboard([Markup.button.callback('Просмотреть', `orderView${notified_data[k].order.orderId}`)]))
+                            await ctx.reply('Заказ получен ✅',  Markup.inlineKeyboard([Markup.button.callback('Просмотреть', `orderView${notified_data[k].order.id}`)]))
                         }
 
                     }
