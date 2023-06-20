@@ -202,7 +202,7 @@ export class ReviewsCommand extends Command{
                     buttons.push( Markup.button.callback('⬅️ Назад', `reviewId${get_current_page.page-1}`))
                 }
 
-                if(reviews[get_current_page.page-1]?.reply){
+                if(status==='NO_REPLY'&&reviews.length){
                     buttons.push( Markup.button.callback('Ответить', `reviewAnswer${reviews[get_current_page.page-1].reviewId}`))
                 }
 

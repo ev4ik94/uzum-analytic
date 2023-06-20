@@ -66,8 +66,6 @@ export  default class OrdersService{
             if(!response_orders.ok) throw new Error(`URL: ${response_orders.url} STATUS: ${response_orders.status} TEXT: ${response_orders.statusText}`)
 
 
-
-
             const body = await response_orders.json()
 
 

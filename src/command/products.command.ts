@@ -34,6 +34,23 @@ export class ProductsCommand extends Command{
                     return Markup.button.callback(item.shopTitle, `shopId${item.id}`)
                 })
 
+                let arr = [],
+                    arr1 = [];
+
+
+                for(let i=0; i<buttons_shop.length; i++){
+
+                    arr1.push(buttons_shop[i])
+
+                    if(!(i%3)&&i!==0){
+                        arr.push(arr1)
+                        arr1= []
+                    }else if(i===(buttons_shop.length-1)){
+                        arr.push(arr1)
+                        arr1= []
+                    }
+                }
+
 
                 if(ctx.session.current_shop){
                     const current_shop_data = ctx.session.shops.find((item:any)=>+item.id===+ctx.session.current_shop)
@@ -50,7 +67,7 @@ export class ProductsCommand extends Command{
 
 
                 if(buttons_shop.length>1){
-                    await ctx.reply("Выберите магазин для дальнейшей работы с ботом", Markup.inlineKeyboard(buttons_shop))
+                    await ctx.reply("Выберите магазин для дальнейшей работы с ботом", Markup.inlineKeyboard(arr))
                 }
             }
 
