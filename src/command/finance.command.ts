@@ -52,7 +52,7 @@ export class FinanceCommand extends Command{
                 withdrawList.forEach((item:IHistoryRequest)=>{
                     message_history+=HTMLFormatter([
                         `/bСумма вывода:                      ${NumReplace(item.amount+'')} сум/b/n`,
-                        `/b${DateFormatter(new Date(item.createdDate))}    ${item.status==='APPROVED'?'✅ Исполнен':item.status==='PROCESSING'?'🕘 В обработке':'❌ Отменен'}/b/n/n`,
+                        `/b${DateFormatter(new Date(item.createdDate))}    ${item.status==='APPROVED'?'✅ Исполнен':item.status==='CREATED'?'🕘 В обработке':'❌ Отменен'}/b/n/n`,
                     ])
                 })
                 await ctx.replyWithHTML(message)

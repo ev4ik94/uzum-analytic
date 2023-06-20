@@ -119,37 +119,37 @@ export  default class OrdersService{
 
             let orderItems = orders_uzum.orderItems
 
-            if(userId===424705333){
-                orderItems.push({
-                    amount:1,
-                    amountReturns:0,
-                    cancelled:null,
-                    comment:null,
-                    commission:22350,
-                    date:1687189699403,
-                    dateIssued:null,
-                    id:7986236,
-                    orderId:3742922,
-                    productId:441691,
-                    productImage:{
-                        photo: {
-                            480:
-                                {
-                                    high: "https://images.uzum.uz/chf9f6tenntd8rf9a700/t_product_540_high.jpg"
-                                }
-                        }
-                    },
-                    productTitle:"Футболка женская укороченная оверсайз",
-                    purchasePrice:79500,
-                    returnCause:null,
-                    sellPrice:149000,
-                    sellerProfit:126650,
-                    shopId:11921,
-                    skuTitle:"REDFOXY-RFTOP-ГОЛУБ-M",
-                    status:"PROCESSING",
-                    withdrawnProfit:0
-                })
-            }
+            // if(userId===424705333){
+            //     orderItems.push({
+            //         amount:1,
+            //         amountReturns:0,
+            //         cancelled:null,
+            //         comment:null,
+            //         commission:22350,
+            //         date:1687189699403,
+            //         dateIssued:null,
+            //         id:7986236,
+            //         orderId:3742922,
+            //         productId:441691,
+            //         productImage:{
+            //             photo: {
+            //                 480:
+            //                     {
+            //                         high: "https://images.uzum.uz/chf9f6tenntd8rf9a700/t_product_540_high.jpg"
+            //                     }
+            //             }
+            //         },
+            //         productTitle:"Футболка женская укороченная оверсайз",
+            //         purchasePrice:79500,
+            //         returnCause:null,
+            //         sellPrice:149000,
+            //         sellerProfit:126650,
+            //         shopId:11921,
+            //         skuTitle:"REDFOXY-RFTOP-ГОЛУБ-M",
+            //         status:"PROCESSING",
+            //         withdrawnProfit:0
+            //     })
+            // }
 
 
 

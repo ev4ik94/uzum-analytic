@@ -131,7 +131,7 @@ export class ReviewsCommand extends Command{
             const status = data.replace('reviewStatus', '')
 
             this.reviews = await reviewsService.getReviews({shopId: ctx.session.current_shop, token: ctx.session.token, status})
-
+console.log(this.reviews)
 
             if(this.reviews.length){
                 let message:string = ''
