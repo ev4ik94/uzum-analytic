@@ -3,10 +3,11 @@ import {Command} from "./command.class";
 import {Markup, Telegraf} from "telegraf";
 import {IBotContext} from "../context/context.interface";
 import UpdatesService from "../services/updates.service";
-
+import PermissionsService from "../services/permissions.service";
 
 
 // const UpdateService = new UpdatesService()
+
 
 
 
@@ -24,7 +25,10 @@ export class StartCommand extends Command{
 
             if(!ctx.session.token){
 
-                if(ctx.message.from.username==='eva_4eva') ctx.session.token = 'ZvF2QEdLAhGxEOXeM3yO0KKmOOM'
+                // if(ctx.message.from.username==='eva_4eva'||ctx.message.from.username==='Akhadov') {
+                //     ctx.session.token = 'ZvF2QEdLAhGxEOXeM3yO0KKmOOM'
+                //
+                // }
 
                 return await ctx.reply('Для начала работы с ботом, вам необходимо авторизоваться', {
                     reply_markup:{

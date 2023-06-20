@@ -49,8 +49,6 @@ class Bot{
         this.bot.use(async(ctx, next)=>{
 
 
-
-
             if(ctx.session.token){
 
 
@@ -223,9 +221,9 @@ class Bot{
 
 
 
-        // for(let chatId of chat_ids){
-        //     await this.bot.telegram.sendMessage(chatId, '<strong>📢 Были добавлены обновления:</strong>\n\n  ‼️ Исправлены баги: \n<strong>Отзывы</strong>\n<strong>Оповещения заказов</strong>\n\nДля продолжения работы с ботом \nнеобходимо перезапустить его\n<strong><a href="https://t.me/businessUzumBot?start=restart">Перезапуск</a></strong>', {parse_mode: 'HTML'})
-        // }
+        for(let chatId of chat_ids){
+            await this.bot.telegram.sendMessage(chatId, '<strong>📢 Были добавлены обновления:</strong>\n\n  ‼️ Исправлены баги: \n<strong>Отзывы</strong>\n\nДля продолжения работы с ботом \nнеобходимо перезапустить его\n<strong><a href="https://t.me/businessUzumBot?start=restart">Перезапуск</a></strong>', {parse_mode: 'HTML'})
+        }
 
 
 

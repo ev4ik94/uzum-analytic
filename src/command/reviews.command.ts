@@ -9,8 +9,7 @@ const reviewsService = new ReviewsService()
 
 
 export class ReviewsCommand extends Command{
-    currentPage:number = 1
-    reviews:IReview[] = []
+    currentPage:any[] = []
     constructor(bot:Telegraf<IBotContext>) {
         super(bot);
     }
@@ -23,7 +22,14 @@ export class ReviewsCommand extends Command{
 
 
         this.bot.hears('/reviews', async (ctx)=>{
+            const {userId} = ctx.session
             if(ctx.session.current_shop){
+                if(!this.currentPage.find((item:any)=>item.id===userId)){
+                    this.currentPage.push({
+                        id: userId,
+                        page:1
+                    })
+                }
                 await ctx.reply(`Отзывы`, Markup.inlineKeyboard([
                     Markup.button.callback('Отзывы без ответа', `reviewStatusNO_REPLY`),
                         Markup.button.callback('Отзывы с ответом', `reviewStatusWITH_REPLY`)])
@@ -36,36 +42,59 @@ export class ReviewsCommand extends Command{
         this.bot.action(action_reviews_regexp, async(ctx)=>{
             try{
                 const {update} = ctx
+                const {userId, reviews} = ctx.session
                 //@ts-ignore
                 const data = update.callback_query.data
 
-                this.currentPage = +data.replace('reviewId', '')
+                const get_page = +data.replace('reviewId', '')
 
 
-                let date:string = DateFormatter(new Date(this.reviews[this.currentPage-1].dateCreated))
-                let stars:string = Array.from(Array(this.reviews[this.currentPage-1].rating)).map((item:any)=>'⭐️').join('')
+                if(!this.currentPage.find((item:any)=>item.id===userId)){
+                    this.currentPage.push({
+                        id: userId,
+                        page:get_page
+                    })
+                }else{
+                    this.currentPage = this.currentPage.map((item:any)=>{
+                        if(item.id===userId){
+                            return{
+                                ...item,
+                                page: get_page
+                            }
+
+                        }
+                        return item
+                    })
+
+                }
+
+                const get_current_page = this.currentPage.find((item:any)=>item.id===userId)
+
+
+                let date:string = DateFormatter(new Date(reviews[get_current_page.page-1].dateCreated))
+                let stars:string = Array.from(Array(reviews[get_current_page.page-1].rating)).map((item:any)=>'⭐️').join('')
 
                 const message  =HTMLFormatter([
-                    `/nТовар: ${this.reviews[this.currentPage-1].product.productTitle}/n/n`,
+                    `/nТовар: ${reviews[get_current_page.page-1].product.productTitle}/n/n`,
                     `Дата: ${date}/n`,
                     `Оценка: ${stars}/n`,
-                    `Отзыв: ${this.reviews[this.currentPage-1].content}/n/n`
+                    `Отзыв: ${reviews[get_current_page.page-1].content}/n/n`
                 ])
 
                 const buttons:any[] = []
 
-                if(this.currentPage-1>0){
-                    buttons.push( Markup.button.callback('⬅️ Назад', `reviewId${this.currentPage-1}`))
+                if(get_current_page.page-1>0){
+                    buttons.push( Markup.button.callback('⬅️ Назад', `reviewId${get_current_page.page-1}`))
                 }
 
-                if(this.reviews[this.currentPage-1]?.reply){
-                    buttons.push( Markup.button.callback('Ответить', `reviewAnswer${this.reviews[this.currentPage-1].reviewId}`))
+                if(reviews[get_current_page.page-1]?.reply){
+                    buttons.push( Markup.button.callback('Ответить', `reviewAnswer${reviews[get_current_page.page-1].reviewId}`))
                 }
 
 
 
-                if(this.currentPage-1<this.reviews.length-1){
-                    buttons.push( Markup.button.callback('Вперед ➡️', `reviewId${this.currentPage+1}`))
+                if(get_current_page.page-1<reviews.length-1){
+                    buttons.push( Markup.button.callback('Вперед ➡️', `reviewId${get_current_page.page+1}`))
                 }
 
                 await ctx.editMessageText(message, Markup.inlineKeyboard(buttons))
@@ -125,40 +154,60 @@ export class ReviewsCommand extends Command{
 
         this.bot.action(action_reviews_status, async (ctx)=>{
             const {update} = ctx
+            const {userId} = ctx.session
             //@ts-ignore
             const data = update.callback_query.data
 
             const status = data.replace('reviewStatus', '')
+            if(!this.currentPage.find((item:any)=>item.id===userId)){
+                this.currentPage.push({
+                    id: userId,
+                    page:1
+                })
+            }else{
+                this.currentPage = this.currentPage.map((item:any)=>{
+                    if(item.id===userId){
+                        return{
+                            ...item,
+                            page: 1
+                        }
+                    }
 
-            this.reviews = await reviewsService.getReviews({shopId: ctx.session.current_shop, token: ctx.session.token, status})
-console.log(this.reviews)
+                    return item
+                })
+            }
 
-            if(this.reviews.length){
+            const get_current_page = this.currentPage.find((item:any)=>item.id===userId)
+
+            ctx.session.reviews = await reviewsService.getReviews({shopId: ctx.session.current_shop, token: ctx.session.token, status})
+            const {reviews} = ctx.session
+
+            if(reviews.length){
                 let message:string = ''
 
-                let date:string = DateFormatter(new Date(this.reviews[this.currentPage-1].dateCreated))
-                let stars:string = Array.from(Array(this.reviews[this.currentPage-1].rating)).map((item:any)=>'⭐️').join('')
+                let date:string = DateFormatter(new Date(reviews[get_current_page.page-1].dateCreated))
+                let stars:string = Array.from(Array(reviews[get_current_page.page-1].rating)).map((item:any)=>'⭐️').join('')
 
                 message  =HTMLFormatter([
-                    `/nТовар: ${this.reviews[this.currentPage-1].product.productTitle}/n/n`,
+                    `/nТовар: ${reviews[get_current_page.page-1].product.productTitle}/n/n`,
                     `Дата: ${date}/n`,
                     `Оценка: ${stars}/n`,
-                    `Отзыв: ${this.reviews[this.currentPage-1].content}/n/n`
+                    `Отзыв: ${reviews[get_current_page.page-1].content}/n/n`
                 ])
 
 
                 const buttons:any[] = []
 
-                if(this.currentPage-1>1){
-                    buttons.push( Markup.button.callback('⬅️ Назад', `reviewId${this.currentPage-1}`))
+                if(get_current_page.page-1>1){
+                    buttons.push( Markup.button.callback('⬅️ Назад', `reviewId${get_current_page.page-1}`))
                 }
 
-                if(this.reviews[this.currentPage-1]?.reply){
-                    buttons.push( Markup.button.callback('Ответить', `reviewAnswer${this.reviews[this.currentPage-1].reviewId}`))
+                if(reviews[get_current_page.page-1]?.reply){
+                    buttons.push( Markup.button.callback('Ответить', `reviewAnswer${reviews[get_current_page.page-1].reviewId}`))
                 }
 
-                if(this.currentPage-1<this.reviews.length-1){
-                    buttons.push( Markup.button.callback('Вперед ➡️', `reviewId${this.currentPage+1}`))
+                if(get_current_page.page-1<reviews.length-1){
+                    buttons.push( Markup.button.callback('Вперед ➡️', `reviewId${get_current_page.page+1}`))
                 }
 
                 if(buttons.length) return  await ctx.replyWithHTML(message, Markup.inlineKeyboard(buttons))
