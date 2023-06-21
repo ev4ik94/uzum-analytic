@@ -214,7 +214,7 @@ export class ReviewsCommand extends Command{
 
             const get_current_page = this.currentPage.find((item:any)=>item.id===userId)
 
-            ctx.session.reviews = await reviewsService.getReviews({shopId: ctx.session.current_shop, token: ctx.session.token, status})
+            ctx.session.reviews = await reviewsService.getReviews({shopId: ctx.session.current_shop, token: ctx.session.token, status, ctx})
             const {reviews} = ctx.session
 
             if(reviews.length){

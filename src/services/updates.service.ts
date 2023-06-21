@@ -67,7 +67,7 @@ export  default class UpdatesService{
 
         this.intervalPushNotify = setInterval(async()=>{
             const notified_data = await OrdersServices.notificationOrdersNew(ctx)
-            const new_reviews = await ReviewService.getReviews({shopId: undefined, token: ctx.session.token, status: 'NEW'})
+            const new_reviews = await ReviewService.getReviews({ctx, shopId: undefined, token: ctx.session.token, status: 'NEW'})
 
 
             if(notified_data){

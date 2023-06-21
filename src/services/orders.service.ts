@@ -2,6 +2,10 @@ import {IStateManager} from "../config/config.interface";
 
 const fetch = require('node-fetch')
 import {IOrders} from '../context/context.interface'
+import AuthenticatedService from "./authenticated.service";
+
+
+const AuthService = new AuthenticatedService()
 
 
 export  default class OrdersService{
@@ -63,7 +67,12 @@ export  default class OrdersService{
             }
 
 
-            if(!response_orders.ok) throw new Error(`URL: ${response_orders.url} STATUS: ${response_orders.status} TEXT: ${response_orders.statusText}`)
+            if(!response_orders.ok) {
+                if(response_orders.stat===401){
+                    await AuthService.refreshToken(data.ctx)
+                }
+                throw new Error(`URL: ${response_orders.url} STATUS: ${response_orders.status} TEXT: ${response_orders.statusText}`)
+            }
 
 
             const body = await response_orders.json()

@@ -1,12 +1,16 @@
+import AuthenticatedService from "./authenticated.service";
+
 const fetch = require('node-fetch')
 import {IReview} from "../context/context.interface";
+
+const AuthService = new AuthenticatedService()
 
 
 export  default class ReviewsService{
     constructor() {
     }
 
-    async getReviews(data:{shopId?:number, token:string, status:string}){
+    async getReviews(data:{shopId?:number, token:string, status:string, ctx:any}){
         try{
 
 
@@ -24,7 +28,12 @@ export  default class ReviewsService{
                 });
             }
 
-            if(!response_reviews.ok)  throw new Error(`URL: ${response_reviews.url} STATUS: ${response_reviews.status} TEXT: ${response_reviews.statusText}`)
+            if(!response_reviews.ok)  {
+                if(response_reviews.status===401){
+                    await AuthService.refreshToken(data.ctx)
+                }
+                throw new Error(`URL: ${response_reviews.url} STATUS: ${response_reviews.status} TEXT: ${response_reviews.statusText}`)
+            }
 
 
             const body = await response_reviews.json()
