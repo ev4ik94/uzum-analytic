@@ -17,6 +17,7 @@ export class ReviewsCommand extends Command{
     handle() {
 
         const action_reviews_regexp = new RegExp(/^reviewId/)
+        const action_reviews_view_regexp = new RegExp(/^reviewView/)
         const action_reviews_answer = new RegExp(/^reviewAnswer/)
         const action_reviews_status = new RegExp(/^reviewStatus/)
 
@@ -36,6 +37,40 @@ export class ReviewsCommand extends Command{
                 )
             }
 
+        })
+
+        this.bot.action(action_reviews_view_regexp, async(ctx)=>{
+            try{
+                const {update} = ctx
+                const {token} = ctx.session
+
+                //@ts-ignore
+                const data = update.callback_query.data
+
+                const id:number = +data.replace('reviewView', '')
+
+                const review = await reviewsService.getReviewById({token, reviewId:id+''})
+
+                if(review){
+                    let stars:string = Array.from(Array(review.rating)).map((item:any)=>'⭐️').join('')
+                    const message  =HTMLFormatter([
+                        `/n/sТовар: ${review.product.productTitle}/s/n/n`,
+                        `/n/sМагазин:/s ${review.shop.title}/n/n`,
+                        `/n/sДата покупки:/s ${DateFormatter(new Date(review.dateBought))}/n`,
+                        `/n/sОтзыв оставлен:/s ${DateFormatter(new Date(review.dateCreated))}/n`,
+                        `/n/sПокупатель:/s ${review.customerName}/n`,
+                        `/n/sОценка:/s ${stars}/n`,
+                        `/n/sSKU:/s ${review.characteristics.map((item:any)=>`${item.characteristic}, ${item.characteristicValue}`).join('\n')}/n`,
+                        `/n/sОтзыв:/s ${review.content}/n/n`
+                    ])
+
+
+                    await ctx.replyWithHTML(message, Markup.inlineKeyboard([Markup.button.callback('Ответить', `reviewAnswer${review.reviewId}`)]))
+                }
+                await ctx.replyWithHTML('Отзыв не найден')
+            }catch(err:any){
+                throw new Error(err)
+            }
         })
 
 
