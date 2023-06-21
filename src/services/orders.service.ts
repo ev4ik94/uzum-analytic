@@ -280,12 +280,14 @@ export  default class OrdersService{
                                             amountReturns: elem.amountReturns,
                                             comment: elem.comment,
                                             amount: elem.amount,
+                                            dateIssued: elem.dateIssued
                                         }
                                     }else{
                                         return {
                                             ...item,
                                             status: elem.status,
-                                            amount: elem.amount
+                                            amount: elem.amount,
+                                            dateIssued: elem.dateIssued
                                         }
                                     }
                                 }

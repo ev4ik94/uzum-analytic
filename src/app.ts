@@ -22,6 +22,7 @@ import {FinanceCommand} from "./command/finance.command";
 
 const AuthService = new AuthenticatedService()
 
+
 const stateManagers = new StateManager()
 
 const UpdateService = new UpdatesService(stateManagers)

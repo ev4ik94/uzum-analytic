@@ -1,5 +1,6 @@
 import {IStateManager} from "../config/config.interface";
 const fetch = require('node-fetch')
+import {ApiError} from "../utils/ErrorHandler";
 
 export  default class FinanceSevice {
 
@@ -30,7 +31,10 @@ export  default class FinanceSevice {
                 headers: {'Authorization': `Bearer ${token}`, 'accept-language': 'ru-RU'}
             })
 
-            if(!request_history_response.ok) throw new Error(`URL: ${request_history_response.url} STATUS: ${request_history_response.status} TEXT: ${request_history_response.statusText}`)
+            if(!request_history_response.ok) {
+
+                throw new Error(`URL: ${request_history_response.url} STATUS: ${request_history_response.status} TEXT: ${request_history_response.statusText}`)
+            }
 
             const {payload} = await request_history_response.json()
 
@@ -39,7 +43,7 @@ export  default class FinanceSevice {
             return {withdrawList, inProcessingCount}
 
         }catch (err:any){
-
+            throw new Error(err)
         }
     }
 }
