@@ -24,7 +24,8 @@ export class FinanceCommand extends Command{
         this.bot.hears('/finance', async(ctx)=>{
             const response_data:IFinanceData = await financeServices.getFinanceInfo(ctx)
             const history_data = await financeServices.requestHistory(ctx)
-
+console.log(history_data)
+console.log(response_data)
             if(history_data&&response_data){
                 const {inProcessingCount, withdrawList} = history_data
 
@@ -57,6 +58,8 @@ export class FinanceCommand extends Command{
                 })
                 await ctx.replyWithHTML(message)
                 await ctx.replyWithHTML(message_history)
+            }else{
+                await ctx.replyWithHTML('Что-то пошло не так, попробуйте снова!')
             }
 
 
