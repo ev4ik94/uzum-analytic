@@ -69,6 +69,7 @@ export class ReviewsCommand extends Command{
                 }
                 await ctx.replyWithHTML('Отзыв не найден')
             }catch(err:any){
+                ctx.reply('Произошла ошибка на стороне сервера или обратитесь пожалуйста в службу поддержки')
                 throw new Error(err)
             }
         })
@@ -136,6 +137,7 @@ export class ReviewsCommand extends Command{
 
 
             }catch(err:any){
+                ctx.reply('Произошла ошибка на стороне сервера, попробуйте снова')
                 throw new Error(err)
             }
         })
@@ -152,110 +154,116 @@ export class ReviewsCommand extends Command{
         })
 
         this.bot.on('text', async (ctx:IBotContext)=>{
-            const {update} = ctx
-            //@ts-ignore
-            const text = update.message.text
+            try{
+                const {update} = ctx
+                //@ts-ignore
+                const text = update.message.text
 
 
-            if(ctx.session.reviewAnswer){
-                const review = await reviewsService.reviewAnswer({token: ctx.session.token, reviewId:ctx.session.reviewAnswer, text})
+                if(ctx.session.reviewAnswer){
+                    const review = await reviewsService.reviewAnswer({token: ctx.session.token, reviewId:ctx.session.reviewAnswer, text})
 
-                if(review){
-                    let date:string = DateFormatter(review.dateCreated)
-                    let date_buy:string = DateFormatter(new Date(review.dateBought))
+                    if(review){
+                        let date:string = DateFormatter(review.dateCreated)
+                        let date_buy:string = DateFormatter(new Date(review.dateBought))
 
-                    let stars:string = Array.from(Array(review.rating)).map((item:any)=>'⭐️').join('')
-                    const characters = review.characteristics.map((item:any)=>item.characteristicValue).join(', ')
-
-
-                    const message =HTMLFormatter([
-                        `/n/s${review.product.productTitle}/s/n/n`,
-                        `/bКуплено:/b ${date_buy}/n`,
-                        `/bОтзыв оставлен:/b ${date}/n`,
-                        `/bОценка:/b ${stars}/n`,
-                        `/bSKU:/b ${characters}/n/n`,
-                        `/bПокупатель:/b ${review.customerName}/n/n`,
-                        `/bОтзыв:/b ${review?.content||''}/n/n`,
-                        `/bВаш ответ:/b ${review?.reply?review?.reply?.content:'---'}/n/n`,
-                    ])
+                        let stars:string = Array.from(Array(review.rating)).map((item:any)=>'⭐️').join('')
+                        const characters = review.characteristics.map((item:any)=>item.characteristicValue).join(', ')
 
 
-                    await ctx.replyWithHTML(message)
+                        const message =HTMLFormatter([
+                            `/n/s${review.product.productTitle}/s/n/n`,
+                            `/bКуплено:/b ${date_buy}/n`,
+                            `/bОтзыв оставлен:/b ${date}/n`,
+                            `/bОценка:/b ${stars}/n`,
+                            `/bSKU:/b ${characters}/n/n`,
+                            `/bПокупатель:/b ${review.customerName}/n/n`,
+                            `/bОтзыв:/b ${review?.content||''}/n/n`,
+                            `/bВаш ответ:/b ${review?.reply?review?.reply?.content:'---'}/n/n`,
+                        ])
+
+
+                        await ctx.replyWithHTML(message)
+                    }
                 }
+            }catch (err:any){
+                ctx.reply('Произошла ошибка на стороне сервера или обратитесь пожалуйста в службу поддержки')
+                throw new Error(err)
             }
 
         })
 
 
         this.bot.action(action_reviews_status, async (ctx)=>{
-            const {update} = ctx
-            const {userId} = ctx.session
-            //@ts-ignore
-            const data = update.callback_query.data
+            try{
+                const {update} = ctx
+                const {userId} = ctx.session
+                //@ts-ignore
+                const data = update.callback_query.data
 
-            const status = data.replace('reviewStatus', '')
-            if(!this.currentPage.find((item:any)=>item.id===userId)){
-                this.currentPage.push({
-                    id: userId,
-                    page:1
-                })
-            }else{
-                this.currentPage = this.currentPage.map((item:any)=>{
-                    if(item.id===userId){
-                        return{
-                            ...item,
-                            page: 1
+                const status = data.replace('reviewStatus', '')
+                if(!this.currentPage.find((item:any)=>item.id===userId)){
+                    this.currentPage.push({
+                        id: userId,
+                        page:1
+                    })
+                }else{
+                    this.currentPage = this.currentPage.map((item:any)=>{
+                        if(item.id===userId){
+                            return{
+                                ...item,
+                                page: 1
+                            }
                         }
+
+                        return item
+                    })
+                }
+
+                const get_current_page = this.currentPage.find((item:any)=>item.id===userId)
+
+                ctx.session.reviews = await reviewsService.getReviews({shopId: ctx.session.current_shop, token: ctx.session.token, status, ctx})
+                const {reviews} = ctx.session
+
+                if(reviews.length){
+                    let message:string = ''
+
+                    let date:string = DateFormatter(new Date(reviews[get_current_page.page-1].dateCreated))
+                    let stars:string = Array.from(Array(reviews[get_current_page.page-1].rating)).map((item:any)=>'⭐️').join('')
+
+                    message  =HTMLFormatter([
+                        `/nТовар: ${reviews[get_current_page.page-1].product.productTitle}/n/n`,
+                        `Дата: ${date}/n`,
+                        `Оценка: ${stars}/n`,
+                        `Отзыв: ${reviews[get_current_page.page-1].content}/n/n`
+                    ])
+
+
+                    const buttons:any[] = []
+
+                    if(get_current_page.page-1>1){
+                        buttons.push( Markup.button.callback('⬅️ Назад', `reviewId${get_current_page.page-1}`))
                     }
 
-                    return item
-                })
+                    if(status==='NO_REPLY'&&reviews.length){
+                        buttons.push( Markup.button.callback('Ответить', `reviewAnswer${reviews[get_current_page.page-1].reviewId}`))
+                    }
+
+                    if(get_current_page.page-1<reviews.length-1){
+                        buttons.push( Markup.button.callback('Вперед ➡️', `reviewId${get_current_page.page+1}`))
+                    }
+
+                    if(buttons.length) return  await ctx.replyWithHTML(message, Markup.inlineKeyboard(buttons))
+
+                    return  await ctx.reply(message)
+
+                }else{
+                    await ctx.reply('Список пуст ⭕️')
+                }
+            }catch (err:any){
+                ctx.reply('Произошла ошибка на стороне сервера или обратитесь пожалуйста в службу поддержки')
+                throw new Error(err)
             }
-
-            const get_current_page = this.currentPage.find((item:any)=>item.id===userId)
-
-            ctx.session.reviews = await reviewsService.getReviews({shopId: ctx.session.current_shop, token: ctx.session.token, status, ctx})
-            const {reviews} = ctx.session
-
-            if(reviews.length){
-                let message:string = ''
-
-                let date:string = DateFormatter(new Date(reviews[get_current_page.page-1].dateCreated))
-                let stars:string = Array.from(Array(reviews[get_current_page.page-1].rating)).map((item:any)=>'⭐️').join('')
-
-                message  =HTMLFormatter([
-                    `/nТовар: ${reviews[get_current_page.page-1].product.productTitle}/n/n`,
-                    `Дата: ${date}/n`,
-                    `Оценка: ${stars}/n`,
-                    `Отзыв: ${reviews[get_current_page.page-1].content}/n/n`
-                ])
-
-
-                const buttons:any[] = []
-
-                if(get_current_page.page-1>1){
-                    buttons.push( Markup.button.callback('⬅️ Назад', `reviewId${get_current_page.page-1}`))
-                }
-
-                if(status==='NO_REPLY'&&reviews.length){
-                    buttons.push( Markup.button.callback('Ответить', `reviewAnswer${reviews[get_current_page.page-1].reviewId}`))
-                }
-
-                if(get_current_page.page-1<reviews.length-1){
-                    buttons.push( Markup.button.callback('Вперед ➡️', `reviewId${get_current_page.page+1}`))
-                }
-
-                if(buttons.length) return  await ctx.replyWithHTML(message, Markup.inlineKeyboard(buttons))
-
-                return  await ctx.reply(message)
-
-            }else{
-                await ctx.reply('Список пуст ⭕️')
-            }
-
-
-
-
         })
 
     }

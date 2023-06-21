@@ -38,70 +38,75 @@ export class OrdersCommand extends Command{
 
 
         this.bot.action(action_orders_view_regexp, async(ctx)=>{
-            const {update} = ctx
-            const {userId} = ctx.session
-            //@ts-ignore
-            const data = update.callback_query.data
-            const orderId = data.replace('orderView', '')
+            try{
+                const {update} = ctx
+                const {userId} = ctx.session
+                //@ts-ignore
+                const data = update.callback_query.data
+                const orderId = data.replace('orderView', '')
 
-            const elem:any = this.state.getOrders(userId).find((item:IOrders)=>+item.id===+orderId)
+                const elem:any = this.state.getOrders(userId).find((item:IOrders)=>+item.id===+orderId)
 
-            if(elem){
-                const date:string = DateFormatter(new Date(elem.date))
+                if(elem){
+                    const date:string = DateFormatter(new Date(elem.date))
 
 
-                let dateIssue:string='';
+                    let dateIssue:string='';
 
-                if(elem.dateIssued){
-                    dateIssue = DateFormatter(new Date(elem.dateIssued))
-                }
+                    if(elem.dateIssued){
+                        dateIssue = DateFormatter(new Date(elem.dateIssued))
+                    }
 
-                let message:string = '';
+                    let message:string = '';
 
-                if(elem.status==='CANCELED'){
+                    if(elem.status==='CANCELED'){
 
-                    message+=HTMLFormatter([
-                        `/n/sМагазин: ${elem.shop.title}/s/n`,
-                        `/n/sПричина отказа: ${elem.returnCause || 'Причина не указана'}/s/n/n`,
-                        `/bSKU:/b${elem.skuTitle}/n`,
-                        `/bТовар:/b ${elem.productTitle}/n`,
-                        `/bЦена:/b ${NumReplace(elem.sellPrice)} сум/n`,
-                        `/bСумма к выводу:/b ${NumReplace(elem.sellerProfit)} сум/n/n`,
-                        `/bДата заказа:/b ${date}/n`,
-                        `/bДата Отказа:/b ${dateIssue}/n/n`,
-                    ])
+                        message+=HTMLFormatter([
+                            `/n/sМагазин: ${elem.shop.title}/s/n`,
+                            `/n/sПричина отказа: ${elem.returnCause || 'Причина не указана'}/s/n/n`,
+                            `/bSKU:/b${elem.skuTitle}/n`,
+                            `/bТовар:/b ${elem.productTitle}/n`,
+                            `/bЦена:/b ${NumReplace(elem.sellPrice)} сум/n`,
+                            `/bСумма к выводу:/b ${NumReplace(elem.sellerProfit)} сум/n/n`,
+                            `/bДата заказа:/b ${date}/n`,
+                            `/bДата Отказа:/b ${dateIssue}/n/n`,
+                        ])
 
-                }else if(elem.dateIssued){
-                    message+=HTMLFormatter([
-                        `/n/sМагазин: ${elem.shop.title}/s/n`,
-                        `/bSKU:/b${elem.skuTitle}/n`,
-                        `/bТовар:/b ${elem.productTitle}/n`,
-                        `/bЦена:/b ${NumReplace(elem.sellPrice)} сум/n`,
-                        `/bСумма к выводу:/b ${NumReplace(elem.sellerProfit)} сум/n/n`,
-                        `/bДата заказа:/b ${date}/n`,
-                        `/bДата Получения:/b ${dateIssue}/n/n`,
-                    ])
+                    }else if(elem.dateIssued){
+                        message+=HTMLFormatter([
+                            `/n/sМагазин: ${elem.shop.title}/s/n`,
+                            `/bSKU:/b${elem.skuTitle}/n`,
+                            `/bТовар:/b ${elem.productTitle}/n`,
+                            `/bЦена:/b ${NumReplace(elem.sellPrice)} сум/n`,
+                            `/bСумма к выводу:/b ${NumReplace(elem.sellerProfit)} сум/n/n`,
+                            `/bДата заказа:/b ${date}/n`,
+                            `/bДата Получения:/b ${dateIssue}/n/n`,
+                        ])
+                    }else{
+                        message+=HTMLFormatter([
+                            `/n/sМагазин: ${elem.shop.title}/s/n`,
+                            `/bSKU:/b${elem.skuTitle}/n`,
+                            `/bТовар:/b ${elem.productTitle}/n`,
+                            `/bЦена:/b ${NumReplace(elem.sellPrice)} сум/n`,
+                            `/bСумма к выводу:/b ${NumReplace(elem.sellerProfit)} сум/n/n`,
+                            `/bДата заказа:/b ${date}/n`,
+                            `/bДата Получения:/b --- /n/n`,
+                        ])
+
+                    }
+
+                    return await ctx.sendPhoto(elem.productImage.photo['480'].high, {
+                        caption: message,
+                        parse_mode: 'HTML',
+                    })
+
+
                 }else{
-                    message+=HTMLFormatter([
-                        `/n/sМагазин: ${elem.shop.title}/s/n`,
-                        `/bSKU:/b${elem.skuTitle}/n`,
-                        `/bТовар:/b ${elem.productTitle}/n`,
-                        `/bЦена:/b ${NumReplace(elem.sellPrice)} сум/n`,
-                        `/bСумма к выводу:/b ${NumReplace(elem.sellerProfit)} сум/n/n`,
-                        `/bДата заказа:/b ${date}/n`,
-                        `/bДата Получения:/b --- /n/n`,
-                    ])
-
+                    return ctx.reply('Заказ не найден, попробуйте снова')
                 }
-
-                return await ctx.sendPhoto(elem.productImage.photo['480'].high, {
-                    caption: message,
-                    parse_mode: 'HTML',
-                })
-
-
-            }else{
-                return ctx.reply('Заказ не найден, попробуйте снова')
+            }catch(err:any){
+                ctx.reply('Произошла ошибка на стороне сервера или обратитесь пожалуйста в службу поддержки')
+                throw new Error(err)
             }
         })
 
@@ -109,95 +114,100 @@ export class OrdersCommand extends Command{
 
 
         this.bot.action(action_orders_get, async (ctx)=>{
-            const {update} = ctx
-            //@ts-ignore
-            const data = update.callback_query.data
+            try{
+                const {update} = ctx
+                //@ts-ignore
+                const data = update.callback_query.data
 
 
 
-            if(data.match('order')) {
+                if(data.match('order')) {
 
-                const page = data.match(action_orders_regexp)?undefined:
-                    data.replace('orderpage', '').split('-')[1]
-                const status = data.match(action_orders_regexp)?
-                    data.replace('orderstatus', ''):
-                    data.replace('orderpage', '').split('-')[0]
+                    const page = data.match(action_orders_regexp)?undefined:
+                        data.replace('orderpage', '').split('-')[1]
+                    const status = data.match(action_orders_regexp)?
+                        data.replace('orderstatus', ''):
+                        data.replace('orderpage', '').split('-')[0]
 
-                const dataOrders:any = (await ordersService.getOrders({
-                    shopId: ctx.session.current_shop,
-                    token: ctx.session.token,
-                    status,
-                    ctx,
-                    page
-                }))
+                    const dataOrders:any = (await ordersService.getOrders({
+                        shopId: ctx.session.current_shop,
+                        token: ctx.session.token,
+                        status,
+                        ctx,
+                        page
+                    }))
 
-                const orders:IOrders[] = dataOrders?.orderItems
-                const total:number = dataOrders?.totalElements
-                const pagination:{currentPage:number, total_pages:number, size:number} = dataOrders?.pagination
-
-
-
-                let message = `\n<strong>Общее кол-во: ${total}</strong>\n`
-
-                if(Array.isArray(orders)){
-                    if(orders.length>0){
-                        orders.forEach((item:IOrders, index:number)=>{
-
-                            const dateFormater = DateFormatter(new Date(item.date))
-                            let dateFormaterIssue:string=item.dateIssued?DateFormatter(new Date(item.dateIssued)):'';
-
-                            let num = pagination.currentPage===1?index+1:
-                                (index+1)+(pagination.size*(pagination.currentPage-1))
+                    const orders:IOrders[] = dataOrders?.orderItems
+                    const total:number = dataOrders?.totalElements
+                    const pagination:{currentPage:number, total_pages:number, size:number} = dataOrders?.pagination
 
 
 
+                    let message = `\n<strong>Общее кол-во: ${total}</strong>\n`
 
-                            message+=HTMLFormatter([
-                                `/n№:${num}`,
-                                `/n/sМагазин : ${item.shop.title}/s/n`,
-                                `${item.status==='CANCELED'?`/n/sВернули Заказ ❌/nпо причине: ${item.returnCause}/s`:item.dateIssued?`/n/sПолучили ✅/s`:''}/n`,
-                                `${(item.comment||'').replace(/\./g, '')?`/bКоментарий клиента:/b ${item.comment}/n`:''}`,
-                                `/bКол-во товара:/b ${item.status==='CANCELED'?item.amountReturns:item.amount}/n`,
-                                `/bSKU:/b ${item.skuTitle}/n`,
-                                `/bТовар:/b ${item.productTitle}/n`,
-                                `/bЦена:/b ${NumReplace(item.sellPrice)} сум/n`,
-                                `/bСумма к выводу:/b ${NumReplace(item.sellerProfit)} сум/n`,
-                                `/bДата заказа:/b ${dateFormater}/n`,
-                                `/bДата Получения:/b ${dateFormaterIssue}/n`,
-                                `-------------------------------------`,
-                            ])
-                        })
+                    if(Array.isArray(orders)){
+                        if(orders.length>0){
+                            orders.forEach((item:IOrders, index:number)=>{
+
+                                const dateFormater = DateFormatter(new Date(item.date))
+                                let dateFormaterIssue:string=item.dateIssued?DateFormatter(new Date(item.dateIssued)):'';
+
+                                let num = pagination.currentPage===1?index+1:
+                                    (index+1)+(pagination.size*(pagination.currentPage-1))
+
+
+
+
+                                message+=HTMLFormatter([
+                                    `/n№:${num}`,
+                                    `/n/sМагазин : ${item.shop.title}/s/n`,
+                                    `${item.status==='CANCELED'?`/n/sВернули Заказ ❌/nпо причине: ${item.returnCause}/s`:item.dateIssued?`/n/sПолучили ✅/s`:''}/n`,
+                                    `${(item.comment||'').replace(/\./g, '')?`/bКоментарий клиента:/b ${item.comment}/n`:''}`,
+                                    `/bКол-во товара:/b ${item.status==='CANCELED'?item.amountReturns:item.amount}/n`,
+                                    `/bSKU:/b ${item.skuTitle}/n`,
+                                    `/bТовар:/b ${item.productTitle}/n`,
+                                    `/bЦена:/b ${NumReplace(item.sellPrice)} сум/n`,
+                                    `/bСумма к выводу:/b ${NumReplace(item.sellerProfit)} сум/n`,
+                                    `/bДата заказа:/b ${dateFormater}/n`,
+                                    `/bДата Получения:/b ${dateFormaterIssue}/n`,
+                                    `-------------------------------------`,
+                                ])
+                            })
+                        }else{
+                            message = 'Список пуст ⭕️'
+                        }
+
                     }else{
                         message = 'Список пуст ⭕️'
                     }
 
-                }else{
-                    message = 'Список пуст ⭕️'
+
+                    const pagination_buttons:any[] = []
+
+                    if(pagination.currentPage>1){
+                        pagination_buttons.push(Markup.button.callback(`⬅️ Назад`, `orderpage${status}-${pagination.currentPage-1}`))
+                    }
+
+                    pagination_buttons.push(Markup.button.callback(`${pagination.currentPage}/${pagination.total_pages}`, `actionNo`))
+
+                    if(pagination.currentPage<pagination.total_pages){
+                        pagination_buttons.push(Markup.button.callback(`Вперед ➡️`, `orderpage${status}-${pagination.currentPage+1}`))
+                    }
+
+                    if(pagination.total_pages>1){
+                        return await ctx.replyWithHTML(message, Markup.inlineKeyboard(pagination_buttons))
+                    }else{
+                        return await ctx.replyWithHTML(message, Markup.inlineKeyboard(buttons_orders))
+                    }
+
+
+
+
+
                 }
-
-
-                const pagination_buttons:any[] = []
-
-                if(pagination.currentPage>1){
-                    pagination_buttons.push(Markup.button.callback(`⬅️ Назад`, `orderpage${status}-${pagination.currentPage-1}`))
-                }
-
-                pagination_buttons.push(Markup.button.callback(`${pagination.currentPage}/${pagination.total_pages}`, `actionNo`))
-
-                if(pagination.currentPage<pagination.total_pages){
-                    pagination_buttons.push(Markup.button.callback(`Вперед ➡️`, `orderpage${status}-${pagination.currentPage+1}`))
-                }
-
-                if(pagination.total_pages>1){
-                    return await ctx.replyWithHTML(message, Markup.inlineKeyboard(pagination_buttons))
-                }else{
-                    return await ctx.replyWithHTML(message, Markup.inlineKeyboard(buttons_orders))
-                }
-
-
-
-
-
+            }catch(err:any){
+                ctx.reply('Произошла ошибка на стороне сервера или обратитесь пожалуйста в службу поддержки')
+                throw new Error(err)
             }
 
 
