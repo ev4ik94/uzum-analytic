@@ -36,11 +36,15 @@ console.log(response_data)
                 let month_current = date_now.getMonth()
 
                 message+=HTMLFormatter([
-                    `/n/s✅ Доступно к выводу:  ${NumReplace(response_data.forWithdraw+'')} сум/s/n/n`,
-                    `/b🕘 В обработке:  ${NumReplace(response_data.processing+'')} сум/b/n/n`,
-                    `/b❌ Возвраты:  ${NumReplace(response_data.cancelled+'')} сум/b/n/n`,
-                    `/b🗓 Выведено за ${month[month_current]}:  ${NumReplace(response_data.withdrawnForCurrentMonth+'')} сум/b/n/n`,
-                    `/b⏺ Выведено за все время:  ${NumReplace(response_data.withdrawn+'')} сум/b/n/n`
+                    `/n/s✅ Доступно к выводу:/n/n    ${NumReplace(response_data.forWithdraw+'')} сум/s/n`,
+                    `-----------------------------------------------/n`,
+                    `/b🕘 В обработке:/n/n    ${NumReplace(response_data.processing+'')} сум/b/n`,
+                    `-----------------------------------------------/n`,
+                    `/b❌ Возвраты:/n/n    ${NumReplace(response_data.cancelled+'')} сум/b/n`,
+                    `-----------------------------------------------/n`,
+                    `/b🗓 Выведено за ${month[month_current]}:/n/n    ${NumReplace(response_data.withdrawnForCurrentMonth+'')} сум/b/n`,
+                    `-----------------------------------------------/n`,
+                    `/b⏺ Выведено за все время:/n/n    ${NumReplace(response_data.withdrawn+'')} сум/b/n`
                 ])
 
                 message_history+=HTMLFormatter([
@@ -52,8 +56,9 @@ console.log(response_data)
 
                 withdrawList.forEach((item:IHistoryRequest)=>{
                     message_history+=HTMLFormatter([
-                        `/bСумма вывода:                      ${NumReplace(item.amount+'')} сум/b/n`,
-                        `/b${DateFormatter(new Date(item.createdDate))}    ${item.status==='APPROVED'?'✅ Исполнен':item.status==='CREATED'?'🕘 В обработке':'❌ Отменен'}/b/n/n`,
+                        `/bСумма вывода: ${NumReplace(item.amount+'')} сум/b/n`,
+                        `/b${DateFormatter(new Date(item.createdDate))}/n/n${item.status==='APPROVED'?'✅ Исполнен':item.status==='CREATED'?'🕘 В обработке':'❌ Отменен'}/b/n`,
+                        `-----------------------------------------------/n`,
                     ])
                 })
                 await ctx.replyWithHTML(message)
