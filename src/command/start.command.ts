@@ -1,12 +1,6 @@
 import {Command} from "./command.class";
-
-import {Markup, Telegraf} from "telegraf";
+import {Telegraf} from "telegraf";
 import {IBotContext} from "../context/context.interface";
-import UpdatesService from "../services/updates.service";
-import PermissionsService from "../services/permissions.service";
-
-
-// const UpdateService = new UpdatesService()
 
 
 
@@ -39,7 +33,8 @@ export class StartCommand extends Command{
                 })
 
             }else{
-                await ctx.replyWithHTML('В обновленной версии, были исправлены баги:\n-Просмотр отзыва\n-')
+                //await ctx.replyWithHTML('В обновленной версии, были исправлены баги:\n-Просмотр отзыва\n-')
+                await ctx.replyWithHTML('Бот снова готов работать!')
             }
 
 

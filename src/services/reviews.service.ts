@@ -13,9 +13,7 @@ export  default class ReviewsService{
     async getReviews(data:{shopId?:number, token:string, status:string, ctx:any}){
         try{
 
-
             let response_reviews:any;
-
 
             if(data.status==='NEW'){
 

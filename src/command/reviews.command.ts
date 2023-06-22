@@ -4,6 +4,7 @@ import {IBotContext, IOrders, IResponseProduct, IReview} from "../context/contex
 import OrdersService from "../services/orders.service";
 import {DateFormatter, HTMLFormatter, month, NumReplace} from "../utils";
 import ReviewsService from "../services/reviews.service";
+import {ApiError} from "../utils/ErrorHandler";
 
 const reviewsService = new ReviewsService()
 
@@ -69,6 +70,7 @@ export class ReviewsCommand extends Command{
                 }
                 await ctx.replyWithHTML('Отзыв не найден')
             }catch(err:any){
+                await ctx.telegram.sendMessage('@cacheErrorBot', ApiError.errorMessageFormatter(ctx, err))
                 ctx.reply('Произошла ошибка на стороне сервера или обратитесь пожалуйста в службу поддержки')
                 throw new Error(err)
             }
@@ -137,6 +139,7 @@ export class ReviewsCommand extends Command{
 
 
             }catch(err:any){
+                await ctx.telegram.sendMessage('@cacheErrorBot', ApiError.errorMessageFormatter(ctx, err))
                 ctx.reply('Произошла ошибка на стороне сервера, попробуйте снова')
                 throw new Error(err)
             }
@@ -187,6 +190,7 @@ export class ReviewsCommand extends Command{
                     }
                 }
             }catch (err:any){
+                await ctx.telegram.sendMessage('@cacheErrorBot', ApiError.errorMessageFormatter(ctx, err))
                 ctx.reply('Произошла ошибка на стороне сервера или обратитесь пожалуйста в службу поддержки')
                 throw new Error(err)
             }
@@ -261,6 +265,7 @@ export class ReviewsCommand extends Command{
                     await ctx.reply('Список пуст ⭕️')
                 }
             }catch (err:any){
+                await ctx.telegram.sendMessage('@cacheErrorBot', ApiError.errorMessageFormatter(ctx, err))
                 ctx.reply('Произошла ошибка на стороне сервера или обратитесь пожалуйста в службу поддержки')
                 throw new Error(err)
             }

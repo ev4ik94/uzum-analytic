@@ -1,3 +1,5 @@
+import {DateFormatter} from "./index";
+
 export class ApiError{
 
     static notFound(message?:string){
@@ -18,6 +20,16 @@ export class ApiError{
 
     static serverError(message?:string){
         return 'Произошла ошибка на стороне сервера, обратитесь пожалуйста в службу поддержки'
+    }
+
+    static errorMessageFormatter(ctx:any, error:any){
+        const {update} = ctx
+        const {userId} = ctx.session
+
+        const username = update.message.from.username
+        let date = DateFormatter(new Date())
+        let messageError = `ОШИБКА\n${date}\nКлиент username: ${username}\nКлиент ID: ${userId}\n\n--------------------------------\n${error}`
+        return messageError
     }
 }
 

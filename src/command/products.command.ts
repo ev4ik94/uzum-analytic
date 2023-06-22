@@ -4,6 +4,7 @@ import {IBotContext, IResponseProduct, IReview} from "../context/context.interfa
 import ProductsService from "../services/products.service";
 import AuthenticatedService from "../services/authenticated.service";
 import {DateFormatter, HTMLFormatter, NumReplace} from "../utils";
+import {ApiError} from "../utils/ErrorHandler";
 
 const authService = new AuthenticatedService()
 
@@ -70,24 +71,31 @@ export class ProductsCommand extends Command{
                     }
                 }
             }catch (err:any){
+                await ctx.telegram.sendMessage('@cacheErrorBot', ApiError.errorMessageFormatter(ctx, err))
                 ctx.reply('Произошла ошибка на стороне сервера или обратитесь пожалуйста в службу поддержки')
                 throw new Error(err)
             }
         })
 
         this.bot.action(action_shopId_regexp, async (ctx)=>{
-            const {update} = ctx
-            //@ts-ignore
-            const data = update.callback_query.data
-            const shop_id = data.replace('shopId', '')
+            try{
+                const {update} = ctx
+                //@ts-ignore
+                const data = update.callback_query.data
+                const shop_id = data.replace('shopId', '')
 
 
-            const shop_info = ctx.session.shops.find((item:any)=>item.id===+shop_id)
-            if(shop_info){
-                ctx.session.current_shop = +shop_id;
-                await ctx.reply(`Вы переключились на магазин ${shop_info?.shopTitle}`)
-            }else{
-                await ctx.reply(`Что-то пошло не так, такой магазин не найден`)
+                const shop_info = ctx.session.shops.find((item:any)=>item.id===+shop_id)
+                if(shop_info){
+                    ctx.session.current_shop = +shop_id;
+                    await ctx.reply(`Вы переключились на магазин ${shop_info?.shopTitle}`)
+                }else{
+                    await ctx.reply(`Что-то пошло не так, такой магазин не найден`)
+                }
+            }catch (err:any){
+                await ctx.telegram.sendMessage('@cacheErrorBot', ApiError.errorMessageFormatter(ctx, err))
+                ctx.reply('Произошла ошибка на стороне сервера или обратитесь пожалуйста в службу поддержки')
+                throw new Error(err)
             }
 
         })
@@ -145,6 +153,7 @@ export class ProductsCommand extends Command{
 
                 }
             }catch (err:any){
+                await ctx.telegram.sendMessage('@cacheErrorBot', ApiError.errorMessageFormatter(ctx, err))
                 ctx.reply('Произошла ошибка на стороне сервера или обратитесь пожалуйста в службу поддержки')
                 throw new Error(err)
             }
@@ -201,6 +210,7 @@ export class ProductsCommand extends Command{
 
                 }
             }catch (err:any){
+                await ctx.telegram.sendMessage('@cacheErrorBot', ApiError.errorMessageFormatter(ctx, err))
                 ctx.reply('Произошла ошибка на стороне сервера или обратитесь пожалуйста в службу поддержки')
                 throw new Error(err)
             }

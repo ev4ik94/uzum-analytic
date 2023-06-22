@@ -5,6 +5,7 @@ import OrdersService from "../services/orders.service";
 import {DateFormatter, HTMLFormatter, month, NumReplace} from "../utils";
 import AuthenticatedService from "../services/authenticated.service";
 import {IStateManager} from "../config/config.interface";
+import {ApiError} from "../utils/ErrorHandler";
 
 
 
@@ -106,7 +107,7 @@ export class OrdersCommand extends Command{
                 }
             }catch(err:any){
                 ctx.reply('Произошла ошибка на стороне сервера или обратитесь пожалуйста в службу поддержки')
-                // ctx.telegram.sendMessage('@cacheErrorBot', 'Тест')
+                await ctx.telegram.sendMessage('@cacheErrorBot', ApiError.errorMessageFormatter(ctx, err))
                 throw new Error(err)
             }
         })
@@ -207,6 +208,7 @@ export class OrdersCommand extends Command{
 
                 }
             }catch(err:any){
+                await ctx.telegram.sendMessage('@cacheErrorBot', ApiError.errorMessageFormatter(ctx, err))
                 ctx.reply('Произошла ошибка на стороне сервера или обратитесь пожалуйста в службу поддержки')
                 throw new Error(err)
             }
