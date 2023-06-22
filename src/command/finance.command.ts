@@ -79,7 +79,6 @@ export class FinanceCommand extends Command{
                     await ctx.replyWithHTML('Что-то пошло не так, попробуйте снова!')
                 }
             }catch (err:any){
-
                 await ctx.reply(ApiError.serverError())
                 await ctx.telegram.sendMessage('@cacheErrorBot', ApiError.errorMessageFormatter(ctx, err))
                 throw new Error(err)

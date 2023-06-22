@@ -61,7 +61,7 @@ export  default class OrdersService{
                     headers: {'Authorization': `Bearer ${data.token}`, 'accept-language': 'ru-RU'}
                 });
             }else{
-                response_orders = await fetch(`${process.env.API}/seller/finance/orders?group=false&size=${params.size}&page=${params.page}&statuses=${params.statuses}${data.shopId?`&shopId=${data.shopId}`:''}`, {
+                response_orders = await fetch(`${process.env.API}/seller/finance/orderss?group=false&size=${params.size}&page=${params.page}&statuses=${params.statuses}${data.shopId?`&shopId=${data.shopId}`:''}`, {
                     headers: {'Authorization': `Bearer ${data.token}`, 'accept-language': 'ru-RU'}
                 });
             }
