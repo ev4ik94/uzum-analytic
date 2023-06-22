@@ -55,8 +55,8 @@ export class ReviewsCommand extends Command{
                 if(review){
                     let stars:string = Array.from(Array(review.rating)).map((item:any)=>'⭐️').join('')
                     const message  =HTMLFormatter([
-                        `/n/sТовар: ${review.product.productTitle}/s/n/n`,
-                        `/n/sМагазин:/s ${review.shop.title}/n/n`,
+                        `/n/sТовар: ${review.product.productTitle}/s/n`,
+                        `/n/sМагазин:/s ${review.shop.title}/n`,
                         `/n/sДата покупки:/s ${DateFormatter(new Date(review.dateBought))}/n`,
                         `/n/sОтзыв оставлен:/s ${DateFormatter(new Date(review.dateCreated))}/n`,
                         `/n/sПокупатель:/s ${review.customerName}/n`,
@@ -67,8 +67,10 @@ export class ReviewsCommand extends Command{
 
 
                     await ctx.replyWithHTML(message, Markup.inlineKeyboard([Markup.button.callback('Ответить', `reviewAnswer${review.reviewId}`)]))
+                }else{
+                    await ctx.replyWithHTML('Отзыв не найден')
                 }
-                await ctx.replyWithHTML('Отзыв не найден')
+
             }catch(err:any){
                 await ctx.telegram.sendMessage('@cacheErrorBot', ApiError.errorMessageFormatter(ctx, err))
                 ctx.reply('Произошла ошибка на стороне сервера или обратитесь пожалуйста в службу поддержки')
@@ -164,30 +166,31 @@ export class ReviewsCommand extends Command{
 
 
                 if(ctx.session.reviewAnswer){
-                    const review = await reviewsService.reviewAnswer({token: ctx.session.token, reviewId:ctx.session.reviewAnswer, text})
-
-                    if(review){
-                        let date:string = DateFormatter(review.dateCreated)
-                        let date_buy:string = DateFormatter(new Date(review.dateBought))
-
-                        let stars:string = Array.from(Array(review.rating)).map((item:any)=>'⭐️').join('')
-                        const characters = review.characteristics.map((item:any)=>item.characteristicValue).join(', ')
-
-
-                        const message =HTMLFormatter([
-                            `/n/s${review.product.productTitle}/s/n/n`,
-                            `/bКуплено:/b ${date_buy}/n`,
-                            `/bОтзыв оставлен:/b ${date}/n`,
-                            `/bОценка:/b ${stars}/n`,
-                            `/bSKU:/b ${characters}/n/n`,
-                            `/bПокупатель:/b ${review.customerName}/n/n`,
-                            `/bОтзыв:/b ${review?.content||''}/n/n`,
-                            `/bВаш ответ:/b ${review?.reply?review?.reply?.content:'---'}/n/n`,
-                        ])
-
-
-                        await ctx.replyWithHTML(message)
-                    }
+                    console.log(text)
+                    // const review = await reviewsService.reviewAnswer({token: ctx.session.token, reviewId:ctx.session.reviewAnswer, text})
+                    //
+                    // if(review){
+                    //     let date:string = DateFormatter(review.dateCreated)
+                    //     let date_buy:string = DateFormatter(new Date(review.dateBought))
+                    //
+                    //     let stars:string = Array.from(Array(review.rating)).map((item:any)=>'⭐️').join('')
+                    //     const characters = review.characteristics.map((item:any)=>item.characteristicValue).join(', ')
+                    //
+                    //
+                    //     const message =HTMLFormatter([
+                    //         `/n/s${review.product.productTitle}/s/n/n`,
+                    //         `/bКуплено:/b ${date_buy}/n`,
+                    //         `/bОтзыв оставлен:/b ${date}/n`,
+                    //         `/bОценка:/b ${stars}/n`,
+                    //         `/bSKU:/b ${characters}/n/n`,
+                    //         `/bПокупатель:/b ${review.customerName}/n/n`,
+                    //         `/bОтзыв:/b ${review?.content||''}/n/n`,
+                    //         `/bВаш ответ:/b ${review?.reply?review?.reply?.content:'---'}/n/n`,
+                    //     ])
+                    //
+                    //
+                    //     await ctx.replyWithHTML(message)
+                    // }
                 }
             }catch (err:any){
                 await ctx.telegram.sendMessage('@cacheErrorBot', ApiError.errorMessageFormatter(ctx, err))
@@ -252,6 +255,7 @@ export class ReviewsCommand extends Command{
                     if(status==='NO_REPLY'&&reviews.length){
                         buttons.push( Markup.button.callback('Ответить', `reviewAnswer${reviews[get_current_page.page-1].reviewId}`))
                     }
+
 
                     if(get_current_page.page-1<reviews.length-1){
                         buttons.push( Markup.button.callback('Вперед ➡️', `reviewId${get_current_page.page+1}`))

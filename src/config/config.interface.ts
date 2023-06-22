@@ -31,5 +31,7 @@ export interface IStateManager {
     getOrders:(id:string)=>any[]
     setIsNotified: (notified:boolean, id:string)=>void
     getIsNotified:(id:string)=>boolean
+    setPayments: (data:any[], id:string)=>void
+    getPayments:(id:string)=>any[]
     init:(id:string)=>void
 }

@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc",
     "start-dev": "npm run build && node ./dist/app.js",
-    "start": "TOKEN=5651669787:AAE848F7Zqpwfgm_Ktdroxj2as3aMpUzKEg PORT_DB=25061 HOST=db-postgresql-fra1-61316-do-user-8159671-0.b.db.ondigitalocean.com USER=doadmin PASSWORD=AVNS_gnIGPYxfiipkwtkbrCQ DB_NAME=connection-pool API=https://api-seller.uzum.uz/api API_CLIENT=https://api.uzum.uz/api SECRET_KEY=b2b-front:clientSecret FRONT_URL=https://master--dapper-croquembouche-dce9fc.netlify.app/ node ./dist/app.js",
+    "start": "TOKEN=6249511986:AAE4PXt2tbNX-L-tnMpR7hCv_hVA4YN70dI PORT_DB=25061 HOST=db-postgresql-fra1-61316-do-user-8159671-0.b.db.ondigitalocean.com USER=doadmin PASSWORD=AVNS_gnIGPYxfiipkwtkbrCQ DB_NAME=connection-pool API=https://api-seller.uzum.uz/api API_CLIENT=https://api.uzum.uz/api SECRET_KEY=b2b-front:clientSecret FRONT_URL=https://master--dapper-croquembouche-dce9fc.netlify.app/ node ./dist/app.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "deploy": "git add . && git commit -m update && git push"
   },

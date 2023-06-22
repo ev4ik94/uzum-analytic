@@ -9,6 +9,8 @@ import AuthenticatedService from "./authenticated.service";
 import ReviewsService from "./reviews.service";
 import OrdersService from "./orders.service";
 import PermissionService from "./permissions.service";
+import FinanceSevice from "./finance.sevice";
+import {NumReplace} from "../utils";
 
 
 
@@ -63,11 +65,14 @@ export  default class UpdatesService{
 
     private async onPushNotify(ctx:any){
         const OrdersServices = new OrdersService(this.state)
+        const financeService = new FinanceSevice(this.state)
         await OrdersServices.initData(ctx)
+        await financeService.initData(ctx)
 
         this.intervalPushNotify = setInterval(async()=>{
             const notified_data = await OrdersServices.notificationOrdersNew(ctx)
             const new_reviews = await ReviewService.getReviews({ctx, shopId: undefined, token: ctx.session.token, status: 'NEW'})
+            const payment_history = await financeService.notifyRequestHistory(ctx)
 
 
             if(notified_data){
@@ -101,6 +106,14 @@ export  default class UpdatesService{
             if(new_reviews.length>0){
                 for(let i=0; i<new_reviews.length;i++){
                     await ctx.reply('Новый отзыв 🙋‍♀️',  Markup.inlineKeyboard([Markup.button.callback('Просмотреть', `reviewView${new_reviews[i].reviewId}`)]))
+                }
+            }
+
+            if(payment_history){
+                for(let k=0; k<payment_history.length; k++){
+                    if(payment_history[k].payments.status==='APPROVED'){
+                        await ctx.replyWithHTML(`<strong>Вывод средств одобрен 💸</strong>\nСумма: ${NumReplace(payment_history[k].payments.amount+'')} сум`)
+                    }
                 }
             }
         }, 60000)
