@@ -65,6 +65,7 @@ export class OrdersCommand extends Command{
                         message+=HTMLFormatter([
                             `/n/sМагазин: ${elem.shop.title}/s/n`,
                             `/n/sПричина отказа: ${elem.returnCause || 'Причина не указана'}/s/n/n`,
+                            `/n/sКоментарий клиента: ${elem.comment || '---'}/s/n/n`,
                             `/bSKU:/b${elem.skuTitle}/n`,
                             `/bТовар:/b ${elem.productTitle}/n`,
                             `/bЦена:/b ${NumReplace(elem.sellPrice)} сум/n`,

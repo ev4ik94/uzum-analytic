@@ -33,8 +33,8 @@ export class StartCommand extends Command{
                 })
 
             }else{
-                //await ctx.replyWithHTML('В обновленной версии, были исправлены баги:\n-Просмотр отзыва\n-')
-                await ctx.replyWithHTML('Бот снова готов работать!')
+                await ctx.replyWithHTML('В обновленной версии, были исправлены баги:\n-Просмотр отзыва\n-Заказ отменили (коментарий клиента)')
+                //await ctx.replyWithHTML('Бот снова готов работать!')
             }
 
 
