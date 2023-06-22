@@ -23,10 +23,10 @@ export class ApiError{
     }
 
     static errorMessageFormatter(ctx:any, error:any){
-        const {update} = ctx
+        const {message} = ctx
         const {userId} = ctx.session
 
-        const username = update.message.from.username
+        const username = message.from.username
         let date = DateFormatter(new Date())
         let messageError = `ОШИБКА\n${date}\nКлиент username: ${username}\nКлиент ID: ${userId}\n\n--------------------------------\n${error}`
         return messageError
