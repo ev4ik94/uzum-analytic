@@ -106,6 +106,7 @@ export class OrdersCommand extends Command{
                 }
             }catch(err:any){
                 ctx.reply('Произошла ошибка на стороне сервера или обратитесь пожалуйста в службу поддержки')
+                // ctx.telegram.sendMessage('@cacheErrorBot', 'Тест')
                 throw new Error(err)
             }
         })

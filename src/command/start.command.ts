@@ -38,6 +38,8 @@ export class StartCommand extends Command{
                     }
                 })
 
+            }else{
+                await ctx.replyWithHTML('В обновленной версии, были исправлены баги:\n-Просмотр отзыва\n-')
             }
 
 
