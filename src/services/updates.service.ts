@@ -100,7 +100,7 @@ export  default class UpdatesService{
 
             if(new_reviews.length>0){
                 for(let i=0; i<new_reviews.length;i++){
-                    await ctx.reply('Новый отзыв 🙋‍♀️',  Markup.inlineKeyboard([Markup.button.callback('Просмотреть', `reviewId${new_reviews[i].reviewId}`)]))
+                    await ctx.reply('Новый отзыв 🙋‍♀️',  Markup.inlineKeyboard([Markup.button.callback('Просмотреть', `reviewView${new_reviews[i].reviewId}`)]))
                 }
             }
         }, 60000)
