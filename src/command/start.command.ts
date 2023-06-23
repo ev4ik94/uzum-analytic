@@ -33,7 +33,7 @@ export class StartCommand extends Command{
                 })
 
             }else{
-                await ctx.replyWithHTML('В обновленной версии:\n-оповещения о смене статуса вывода средств')
+                await ctx.replyWithHTML('В обновленной версии были добавлены новые возможности:\n-Накладные\n-оповещения о смене статуса Накладной')
                 //await ctx.replyWithHTML('Бот снова готов работать!')
             }
 

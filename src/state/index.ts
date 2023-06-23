@@ -11,7 +11,8 @@ interface ISessionsData  {
         is_activate:IActivateData,
         orders: any[],
         is_notified:boolean,
-        payments_history: any[]
+        payments_history: any[],
+        invoice: any[]
     }
 }
 
@@ -32,7 +33,8 @@ export class StateManager{
                     },
                     orders: [],
                     is_notified: false,
-                    payments_history: []
+                    payments_history: [],
+                    invoice: [],
                 }
             })
         }
@@ -146,6 +148,33 @@ export class StateManager{
 
         if(orders_user){
             return orders_user.data.payments_history
+        }
+        return []
+    }
+
+    setInvoice(data:any[], id:string){
+        let elem = this.session_data.find((item:any)=>+item.id===+id)
+
+        if(elem){
+
+            elem.data.invoice = data
+            this.session_data = this.session_data.map((item:any)=>{
+                if(+item.id===+id){
+                    return {
+                        ...elem,
+                    }
+                }
+
+                return item
+            })
+        }
+    }
+
+    getInvoice(id:string){
+        const user_data = this.session_data.find((item:any)=>item.id===id)
+
+        if(user_data){
+            return user_data.data.invoice
         }
         return []
     }

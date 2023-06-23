@@ -14,14 +14,11 @@ export  default class FinanceSevice {
         try{
             const {userId} = ctx.session
             const payments_uzum = await FinanceSevice.requestHistory(ctx, true)
+            const invoice = await FinanceSevice.getInvoiceInfo(ctx)
 
 
-            this.state.setPayments([...payments_uzum?.withdrawList||[], {
-                amount: 15000000,
-            createdDate: 1687247728042,
-            id: 70618,
-            status: "PROCESSING"
-            }], userId)
+            this.state.setPayments(payments_uzum?.withdrawList||[], userId)
+            this.state.setInvoice(invoice||[], userId)
 
         }catch(err:any){
             throw new Error(err)
@@ -47,7 +44,7 @@ export  default class FinanceSevice {
     static async getInvoiceInfo(ctx:any){
         try{
             const {current_shop, token} = ctx.session
-            const invoice_response = await fetch(`${process.env.API}/seller/shop/${current_shop}/invoice?page=0&size=50`, {
+            const invoice_response = await fetch(`${process.env.API}/seller/shop/${current_shop}/invoice?page=0&size=20`, {
                 headers: {'Authorization': `Bearer ${token}`, 'accept-language': 'ru-RU'}
             })
 
@@ -59,6 +56,8 @@ export  default class FinanceSevice {
             throw new Error(err)
         }
     }
+
+
 
 
     static async requestHistory(ctx:any, all?:boolean):Promise<{inProcessingCount:number, withdrawList:any[]}|undefined>{
@@ -123,6 +122,69 @@ export  default class FinanceSevice {
 
 
                             this.state.setPayments(this.state.getPayments(userId).map((item:any)=>{
+                                if(item.id===elem.id){
+                                    return {...item, ...elem}
+                                }
+
+                                return {...item}
+                            }), userId)
+
+
+                        }
+                    }
+                }
+            }
+
+            if(is_notified) return notify_data
+
+            return false
+
+        }catch (err:any){
+            throw new Error(err)
+        }
+    }
+
+
+
+    async notifyInvoice(ctx:any){
+        try{
+            const {userId} = ctx.session
+            const invoice_request = await FinanceSevice.getInvoiceInfo(ctx)
+            const invoice = this.state.getInvoice(userId)
+            let is_notified = false
+
+            let notify_data:any = []
+
+
+
+            if(invoice_request&&invoice_request.length&&invoice.length){
+                const invoice_ids = invoice.map((item:any)=>item.id)
+                const invoice_ids_uzum = invoice_request.map((item:any)=>item.id)
+
+
+                for(let i=0; i<invoice_ids_uzum.length; i++){
+                    if(!invoice_ids.includes(invoice_ids_uzum[i])){
+                        let newOrder = invoice_request.find((payment:any)=>payment.id===invoice_ids_uzum[i])
+
+                        this.state.setInvoice([...this.state.getInvoice(userId), newOrder], userId)
+                    }
+                }
+
+                for(let k=0; k<invoice.length;k++){
+                    const data_n:any = {}
+                    let elem = invoice_request.find((item:any)=>item.id===invoice[k].id)
+
+                    if(elem){
+
+
+                        if(elem.invoiceStatus.value!==invoice[k].invoiceStatus.value){
+                            data_n['type'] = 'change_invoice'
+                            data_n['invoice'] = elem
+                            notify_data.push(data_n)
+                            is_notified = true
+
+
+                            this.state.setInvoice(this.state.getInvoice(userId).map((item:any)=>{
                                 if(item.id===elem.id){
                                     return {...item, ...elem}
                                 }

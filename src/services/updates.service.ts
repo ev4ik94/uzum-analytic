@@ -73,6 +73,7 @@ export  default class UpdatesService{
             const notified_data = await OrdersServices.notificationOrdersNew(ctx)
             const new_reviews = await ReviewService.getReviews({ctx, shopId: undefined, token: ctx.session.token, status: 'NEW'})
             const payment_history = await financeService.notifyRequestHistory(ctx)
+            const invoice = await financeService.notifyInvoice(ctx)
 
 
             if(notified_data){
@@ -114,6 +115,12 @@ export  default class UpdatesService{
                     if(payment_history[k].payments.status==='APPROVED'){
                         await ctx.replyWithHTML(`<strong>Вывод средств одобрен 💸</strong>\nСумма: ${NumReplace(payment_history[k].payments.amount+'')} сум`)
                     }
+                }
+            }
+
+            if(invoice){
+                for(let k=0; k<invoice.length; k++){
+                    await ctx.replyWithHTML(`<strong>Статус накладной изменен 🧾</strong>\nНомер накладной ${invoice[k].invoice.invoiceNumber}\nСтатус: ${invoice[k].invoice.status}`)
                 }
             }
         }, 60000)
