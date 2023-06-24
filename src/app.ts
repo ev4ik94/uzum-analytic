@@ -2,6 +2,7 @@ import express, { Express, Request, Response } from 'express';
 const cors = require('cors')
 import {Markup, Telegraf} from "telegraf";
 const TelegramApi = require('node-telegram-bot-api')
+const fileupload = require("express-fileupload")
 import {IBotContext} from "./context/context.interface";
 import {Command} from "./command/command.class";
 import {StartCommand} from "./command/start.command";
@@ -33,6 +34,7 @@ const PermissionServiceData = new PermissionService(stateManagers)
 const app:Express = express()
 app.use(express.json())
 app.use(cors())
+app.use(fileupload({}))
 dotenv.config()
 
 
@@ -91,7 +93,7 @@ class Bot{
                         await UpdateService.onCheckSubscribe(ctx)
                     if(!stateManagers.getIsNotified(ctx.session.userId)){
                         await UpdateService.onSubsriptionsEvents('check_subscribe', ctx)
-                        console.log(stateManagers.getIsActivate(ctx.session.userId).status)
+
                         if(stateManagers.getIsActivate(ctx.session.userId).status){
                             stateManagers.setIsNotified(true, ctx.session.userId)
                             await UpdateService.onSubsriptionsEvents('check_push_notify', ctx)
@@ -211,6 +213,14 @@ class Bot{
                 return res.status(500).json({})
             }
         })
+
+        app.post('/support-data', async(req:Request, res:Response)=>{
+            const {query_id, phone_number, content, tg_data} = req.body
+            const data_parse = JSON.parse(tg_data)
+            console.log(req)
+            //@ts-ignore
+            console.log(req.files)
+        })
     }
 
     async init(){
@@ -220,9 +230,9 @@ class Bot{
         await this.serverStart()
         await this.routing()
 
-        for(let chatId of chat_ids){
-            await this.bot.telegram.sendMessage(chatId, '<strong>📢 Были добавлены обновления:</strong>\n\n \nДля продолжения работы с ботом \nнеобходимо перезапустить его\n<strong><a href="https://t.me/uselleruz_bot?start=restart">Перезапуск</a></strong>', {parse_mode: 'HTML'})
-        }
+        // for(let chatId of chat_ids){
+        //     await this.bot.telegram.sendMessage(chatId, '<strong>📢 Были добавлены обновления:</strong>\n\n \nДля продолжения работы с ботом \nнеобходимо перезапустить его\n<strong><a href="https://t.me/uselleruz_bot?start=restart">Перезапуск</a></strong>', {parse_mode: 'HTML'})
+        // }
 
 
         this.commands = [ new StartCommand(this.bot), new FinanceCommand(this.bot), new ProductsCommand(this.bot), new OrdersCommand(this.bot, stateManagers), new ReviewsCommand(this.bot)]
