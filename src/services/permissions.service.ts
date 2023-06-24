@@ -102,12 +102,17 @@ export  default class PermissionsService{
             const user = await Users.findOne({where:{userId:userId}})
 
             if(!user) {
+
                 return this.state.setIsActivate({
                     status: false,
                     message:'Вы не авторизованы'
                 }, userId+'')
+
                 // throw new Error('Пользователь не найден')
             }
+
+            const date_now:any = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Dushanbe"})).getTime()
+            const date_end:any = new Date(user.date_end).getTime()
 
             if(user.status===Statuses.NO_ACTIVE) {
 
@@ -115,11 +120,17 @@ export  default class PermissionsService{
                     status: false,
                     message:'Подписка истекла'
                 }, userId+'')
+                const diffTime = Math.abs(date_end - date_now);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                if(diffDays>6){
+                    this.state.setClearData(true, user.userId+'')
+                }
+
+
                 return false
             }
 
-            const date_now:any = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Dushanbe"})).getTime()
-            const date_end:any = new Date(user.date_end).getTime()
+
 
 
 

@@ -12,7 +12,8 @@ interface ISessionsData  {
         orders: any[],
         is_notified:boolean,
         payments_history: any[],
-        invoice: any[]
+        invoice: any[],
+        clearData: boolean,
     }
 }
 
@@ -35,6 +36,7 @@ export class StateManager{
                     is_notified: false,
                     payments_history: [],
                     invoice: [],
+                    clearData: false
                 }
             })
         }
@@ -121,6 +123,32 @@ export class StateManager{
 
         if(data){
             return data.data.is_notified
+        }
+        return false
+    }
+
+    setClearData(clearData:boolean, id:string){
+        let elem = this.session_data.find((item:any)=>+item.id===+id)
+
+        if(elem){
+            elem.data.clearData = clearData
+            this.session_data = this.session_data.map((item:any)=>{
+                if(+item.id===+id){
+                    return {
+                        ...elem,
+                    }
+                }
+
+                return item
+            })
+        }
+    }
+
+    getClearData(id:string){
+        const data = this.session_data.find((item:any)=>+item.id===+id)
+
+        if(data){
+            return data.data.clearData
         }
         return false
     }

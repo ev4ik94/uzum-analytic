@@ -25,7 +25,7 @@ export class FinanceCommand extends Command{
                 const response_data:IFinanceData = await FinanceSevice.getFinanceInfo(ctx)
                 const history_data = await FinanceSevice.requestHistory(ctx)
 
-                if(history_data||response_data){
+                if(response_data||history_data){
 
                     if(response_data){
                         let message = ''

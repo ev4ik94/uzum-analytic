@@ -88,12 +88,14 @@ class Bot{
 
                 //@ts-ignore
                 if(ctx.session.userId){
-
-                    await UpdateService.onSubsriptionsEvents('check_subscribe', ctx)
-
-                    if(!stateManagers.getIsNotified(ctx.session.userId)&&stateManagers.getIsActivate(ctx.session.userId).status){
-                        stateManagers.setIsNotified(true, ctx.session.userId)
-                        await UpdateService.onSubsriptionsEvents('check_push_notify', ctx)
+                        await UpdateService.onCheckSubscribe(ctx)
+                    if(!stateManagers.getIsNotified(ctx.session.userId)){
+                        await UpdateService.onSubsriptionsEvents('check_subscribe', ctx)
+                        console.log(stateManagers.getIsActivate(ctx.session.userId).status)
+                        if(stateManagers.getIsActivate(ctx.session.userId).status){
+                            stateManagers.setIsNotified(true, ctx.session.userId)
+                            await UpdateService.onSubsriptionsEvents('check_push_notify', ctx)
+                        }
                     }
                 }
 
@@ -102,7 +104,7 @@ class Bot{
 
                 if(!is_activate?.status){
 
-                    await UpdateService.offSubscriptionsEvents('check_push_notify')
+                   // await UpdateService.offSubscriptionsEvents('check_push_notify')
                     return await ctx.reply(is_activate.message)
                 }
 
