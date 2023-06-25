@@ -291,7 +291,7 @@ console.log(path.resolve(__dirname, 'static', 'test.png'))
 
         await this.bot.telegram.sendMediaGroup('@useller_support', [{
             type: "photo",
-            media: 'https://webbotstats.com/'+path.resolve(__dirname, 'static', 'test.png')
+            media: 'https://webbotstats.com/public/test.png'
         }])
 
         // for(let chatId of chat_ids){
