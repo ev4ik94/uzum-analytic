@@ -218,13 +218,18 @@ class Bot{
             const {query_id, phone_number, content, tg_data, images} = req.body
 
             try{
-
                 const data_parse = JSON.parse(tg_data)
 
-                console.log(phone_number)
-                console.log(content)
-                console.log(images)
+                if(images){
+                    const images_data:any[] = JSON.parse(images).map(item=>{
+                        return {
+                            media: item
+                        }
+                    })
+                    await this.bot.telegram.sendMediaGroup('@useller_support', images_data)
+                }
 
+                await this.bot.telegram.sendMessage('@useller_support', `<b>Номер пользователя:</b> ${phone_number}\n<b>User id:</b> ${data_parse.id}\n<b>Текст:</b> ${content}`)
 
                 await this.bot.telegram.answerWebAppQuery(query_id, {
                     type:'article',
