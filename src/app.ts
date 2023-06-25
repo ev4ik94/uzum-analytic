@@ -255,11 +255,11 @@ class Bot{
                     await this.bot.telegram.sendMediaGroup('@useller_support', images_data)
 
 
-                    setTimeout(()=>{
-                        request_img.forEach((item:any, index:number)=>{
-                            fs.unlinkSync(path.resolve(__dirname, 'static', `pic-${query_id}-${index}.png`))
-                        })
-                    }, 1000)
+                    // setTimeout(()=>{
+                    //     request_img.forEach((item:any, index:number)=>{
+                    //         fs.unlinkSync(path.resolve(__dirname, 'static', `pic-${query_id}-${index}.png`))
+                    //     })
+                    // }, 1000)
 
                 }
 
