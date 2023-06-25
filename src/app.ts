@@ -264,8 +264,8 @@ class Bot{
         //     media: Buffer.from(test_img, 'base64')
         // }])
 
-        //@ts-ignore
-        await this.bot.telegram.sendPhoto('@useller_support', Buffer.from(test_img, 'base64'))
+        // //@ts-ignore
+        // await this.bot.telegram.sendPhoto('@useller_support', Buffer.from(test_img, 'base64'))
 
         await this.bot.telegram.sendMediaGroup('@useller_support', [{
             type: "photo",
