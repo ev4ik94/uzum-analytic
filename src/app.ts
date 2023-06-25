@@ -237,7 +237,7 @@ class Bot{
                     }
 
                     const request_img = JSON.parse(images)
-                    console.log(request_img)
+
 
                     const images_data:any[] = request_img.map((item:any, index:number)=>{
                         let base64Image = item.split(';base64,').pop();
@@ -247,18 +247,17 @@ class Bot{
                         });
                         return {
                             type: 'photo',
-                            media: `https://webbotstats.com/public/pic-${query_id}-${index}.png`
+                            media: `https://webbotstats.com/public/pic-${query_id}-${index}.png`,
+                            caption: 'test'
                         }
                     })
 
                     await this.bot.telegram.sendMediaGroup('@useller_support', images_data)
 
 
-                    setTimeout(()=>{
-                        request_img.forEach((item:any, index:number)=>{
-                            fs.unlinkSync(path.resolve(__dirname, 'static', `pic-${query_id}-${index}.png`))
-                        })
-                    }, 1000)
+                    request_img.forEach((item:any, index:number)=>{
+                        fs.unlinkSync(path.resolve(__dirname, 'static', `pic-${query_id}-${index}.png`))
+                    })
 
                 }
 
