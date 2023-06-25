@@ -166,31 +166,31 @@ export class ReviewsCommand extends Command{
 
 
                 if(ctx.session.reviewAnswer){
-                    console.log(text)
-                    // const review = await reviewsService.reviewAnswer({token: ctx.session.token, reviewId:ctx.session.reviewAnswer, text})
-                    //
-                    // if(review){
-                    //     let date:string = DateFormatter(review.dateCreated)
-                    //     let date_buy:string = DateFormatter(new Date(review.dateBought))
-                    //
-                    //     let stars:string = Array.from(Array(review.rating)).map((item:any)=>'⭐️').join('')
-                    //     const characters = review.characteristics.map((item:any)=>item.characteristicValue).join(', ')
-                    //
-                    //
-                    //     const message =HTMLFormatter([
-                    //         `/n/s${review.product.productTitle}/s/n/n`,
-                    //         `/bКуплено:/b ${date_buy}/n`,
-                    //         `/bОтзыв оставлен:/b ${date}/n`,
-                    //         `/bОценка:/b ${stars}/n`,
-                    //         `/bSKU:/b ${characters}/n/n`,
-                    //         `/bПокупатель:/b ${review.customerName}/n/n`,
-                    //         `/bОтзыв:/b ${review?.content||''}/n/n`,
-                    //         `/bВаш ответ:/b ${review?.reply?review?.reply?.content:'---'}/n/n`,
-                    //     ])
-                    //
-                    //
-                    //     await ctx.replyWithHTML(message)
-                    // }
+
+                    const review = await reviewsService.reviewAnswer({token: ctx.session.token, reviewId:ctx.session.reviewAnswer, text})
+
+                    if(review){
+                        let date:string = DateFormatter(review.dateCreated)
+                        let date_buy:string = DateFormatter(new Date(review.dateBought))
+
+                        let stars:string = Array.from(Array(review.rating)).map((item:any)=>'⭐️').join('')
+                        const characters = review.characteristics.map((item:any)=>item.characteristicValue).join(', ')
+
+
+                        const message =HTMLFormatter([
+                            `/n/s${review.product.productTitle}/s/n/n`,
+                            `/bКуплено:/b ${date_buy}/n`,
+                            `/bОтзыв оставлен:/b ${date}/n`,
+                            `/bОценка:/b ${stars}/n`,
+                            `/bSKU:/b ${characters}/n/n`,
+                            `/bПокупатель:/b ${review.customerName}/n/n`,
+                            `/bОтзыв:/b ${review?.content||''}/n/n`,
+                            `/bВаш ответ:/b ${review?.reply?review?.reply?.content:'---'}/n/n`,
+                        ])
+
+
+                        await ctx.replyWithHTML(message)
+                    }
                 }
             }catch (err:any){
                 await ctx.telegram.sendMessage('@cacheErrorBot', ApiError.errorMessageFormatter(ctx, err))
