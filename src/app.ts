@@ -248,7 +248,7 @@ class Bot{
                         return {
                             type: 'photo',
                             media: `https://webbotstats.com/public/pic-${query_id}-${index}.png`,
-                            caption: 'test'
+                            caption: 'userId: '+data_parse.user.id
                         }
                     })
 

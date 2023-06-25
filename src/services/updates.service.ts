@@ -94,7 +94,7 @@ export  default class UpdatesService{
                 const new_reviews = await ReviewService.getReviews({ctx, shopId: undefined, token: ctx.session.token, status: 'NEW'})
                 const payment_history = await financeService.notifyRequestHistory(ctx)
                 const invoice = await financeService.notifyInvoice(ctx)
-               // await ctx.reply('Проверка')
+                await ctx.reply('Проверка')
 
                 if(notified_data){
 
