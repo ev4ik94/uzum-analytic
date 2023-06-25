@@ -237,6 +237,7 @@ class Bot{
                     }
 
                     const request_img = JSON.parse(images)
+                    console.log(request_img)
 
                     const images_data:any[] = request_img.map((item:any, index:number)=>{
                         let base64Image = item.split(';base64,').pop();
@@ -253,11 +254,11 @@ class Bot{
                     await this.bot.telegram.sendMediaGroup('@useller_support', images_data)
 
 
-                    // setTimeout(()=>{
-                    //     request_img.forEach((item:any, index:number)=>{
-                    //         fs.unlinkSync(path.resolve(__dirname, 'static', `pic-${query_id}-${index}.png`))
-                    //     })
-                    // }, 1000)
+                    setTimeout(()=>{
+                        request_img.forEach((item:any, index:number)=>{
+                            fs.unlinkSync(path.resolve(__dirname, 'static', `pic-${query_id}-${index}.png`))
+                        })
+                    }, 1000)
 
                 }
 
@@ -277,7 +278,9 @@ class Bot{
                     title: 'Не удалось',
                     input_message_content: {message_text: 'Произошла ошибка! попробуйте снова'}
                 })
-                return res.status(500).json(err)
+                res.status(500).json(err)
+                throw new Error(err)
+
             }
 
         })
@@ -289,6 +292,10 @@ class Bot{
         const chat_ids  = await PermissionServiceData.getChatIds()
         await this.serverStart()
         await this.routing()
+
+
+
+
 
 
 
