@@ -100,7 +100,7 @@ export class FinanceCommand extends Command{
                     }
 
                     for(let k=0; k<invoice_data.length; k++){
-                        console.log(invoice_data[k])
+
                         const status = invoice_data[k].invoiceStatus.value
                         message+=HTMLFormatter([
                             `/n/s${invoice_statuses[status]?invoice_statuses[status]:''} Статус: ${invoice_data[k].status}/s/n/n`,
