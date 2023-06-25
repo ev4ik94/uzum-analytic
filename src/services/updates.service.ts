@@ -82,7 +82,7 @@ export  default class UpdatesService{
 
 
         this.intervalPushNotify = setInterval(async()=>{
-
+console.log(ctx.session.userId + 'START')
             if(this.state.getIsActivate(ctx.session.userId).status){
 
                 if(this.state.getClearData(ctx.session.userId)){
