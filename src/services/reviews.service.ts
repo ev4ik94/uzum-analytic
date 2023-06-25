@@ -98,6 +98,7 @@ export  default class ReviewsService{
 
     async reviewAnswer(data:{token:string, reviewId:string, text:string}){
         try{
+            console.log(data)
 
             const response_reviews = await fetch(`${process.env.API}/seller/product-reviews/reply/create`, {
                 method: 'post',
@@ -115,7 +116,6 @@ export  default class ReviewsService{
                 throw new Error(`URL: ${response_reviews.url} STATUS: ${response_reviews.status} TEXT: ${response_reviews.statusText}`)
             }
 
-            const body = await response_reviews.json()
 
 
             return await this.getReviewById({token: data.token, reviewId: data.reviewId})
