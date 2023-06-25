@@ -223,7 +223,7 @@ class Bot{
                 if(images){
                     const images_data:any[] = JSON.parse(images).map((item:any)=>{
                         return {
-                            media: item
+                            media: Buffer.from(item, 'base64')
                         }
                     })
                     await this.bot.telegram.sendMediaGroup('@useller_support', images_data)
