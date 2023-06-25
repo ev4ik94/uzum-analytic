@@ -220,29 +220,25 @@ class Bot{
             try{
 
                 // const data_parse = JSON.parse(tg_data)
-                //@ts-ignore
-                if(req.files){
-                    //@ts-ignore
-                    images = req.files
-                }
+
                 console.log(phone_number)
                 console.log(content)
-                console.log(images)
+                console.log(req)
 
 
                 await this.bot.telegram.answerWebAppQuery(query_id, {
                     type:'article',
                     id: query_id,
                     title: 'Успешно',
-                    input_message_content: {message_text: 'Вы успешно авторизовались'}
-                })
+                    input_message_content: {message_text: 'Ваш запрос принят на рассмотрение, скоро с вами свяжутся наши менеджеры'}
+                }).catch(err=>err)
                 return res.status(200).json({})
             }catch(err:any){
                 await this.bot.telegram.answerWebAppQuery(query_id, {
                     type:'article',
                     id: query_id,
-                    title: 'Не удалось авторизоваться',
-                    input_message_content: {message_text: 'Авторизация не прошла'}
+                    title: 'Не удалось',
+                    input_message_content: {message_text: 'Произошла ошибка! попробуйте снова'}
                 })
                 return res.status(500).json(err)
             }
