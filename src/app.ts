@@ -216,30 +216,37 @@ class Bot{
 
         app.post('/support-data', async(req:Request, res:Response)=>{
             const {query_id, phone_number, content, tg_data} = req.body
-            // const data_parse = JSON.parse(tg_data)
-            console.log(phone_number)
-            console.log(content)
-            console.log(tg_data)
-            //@ts-ignore
-            console.log(req)
+            let images = []
             try{
+
+                // const data_parse = JSON.parse(tg_data)
+                //@ts-ignore
+                if(req.files){
+                    //@ts-ignore
+                    images = req.files
+                }
+                console.log(phone_number)
+                console.log(content)
+                console.log(images)
+
+
                 await this.bot.telegram.answerWebAppQuery(query_id, {
                     type:'article',
                     id: query_id,
                     title: 'Успешно',
                     input_message_content: {message_text: 'Вы успешно авторизовались'}
                 })
-
                 return res.status(200).json({})
-            }catch (err){
+            }catch(err:any){
                 await this.bot.telegram.answerWebAppQuery(query_id, {
                     type:'article',
                     id: query_id,
                     title: 'Не удалось авторизоваться',
                     input_message_content: {message_text: 'Авторизация не прошла'}
                 })
-                return res.status(500).json({})
+                return res.status(500).json(err)
             }
+
         })
     }
 
