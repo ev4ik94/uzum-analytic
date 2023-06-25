@@ -98,7 +98,7 @@ export  default class ReviewsService{
 
     async reviewAnswer(data:{token:string, reviewId:string, text:string}){
         try{
-            console.log(data)
+
 
             const response_reviews = await fetch(`${process.env.API}/seller/product-reviews/reply/create`, {
                 method: 'post',
