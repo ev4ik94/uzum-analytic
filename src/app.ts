@@ -216,9 +216,10 @@ class Bot{
 
         app.post('/support-data', async(req:Request, res:Response)=>{
             const {query_id, phone_number, content, tg_data} = req.body
-            const data_parse = JSON.parse(tg_data)
+            // const data_parse = JSON.parse(tg_data)
             console.log(phone_number)
             console.log(content)
+            console.log(tg_data)
             //@ts-ignore
             console.log(req)
             try{
