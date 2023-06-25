@@ -278,14 +278,14 @@ class Bot{
         let base64Image = base64String.split(';base64,').pop();
 console.log(path.resolve(__dirname, 'static', 'test.png'))
         //@ts-ignore
-        // fs.writeFile(path.resolve(__dirname, 'static', 'test.png'), base64Image, {encoding: 'base64'}, function(err) {
-        //     console.log('File created');
-        // });
+        fs.writeFile(path.resolve(__dirname, 'static', 'test.png'), base64Image, {encoding: 'base64'}, function(err) {
+            console.log('File created');
+        });
 
-        // await this.bot.telegram.sendMediaGroup('@useller_support', [{
-        //     type: "photo",
-        //     media: 'https://i.pinimg.com/originals/8a/de/fe/8adefe5af862b4f9cec286c6ee4722cb.jpg'
-        // }])
+        await this.bot.telegram.sendMediaGroup('@useller_support', [{
+            type: "photo",
+            media: 'https://webbotstats.com/'+path.resolve(__dirname, 'static', 'test.png')
+        }])
 
         // for(let chatId of chat_ids){
         //     await this.bot.telegram.sendMessage(chatId, '<strong>📢 Были добавлены обновления:</strong>\n\n \nДля продолжения работы с ботом \nнеобходимо перезапустить его\n<strong><a href="https://t.me/uselleruz_bot?start=restart">Перезапуск</a></strong>', {parse_mode: 'HTML'})
