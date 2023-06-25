@@ -246,9 +246,7 @@ class Bot{
                         });
                         return {
                             type: 'photo',
-                            media: `https://webbotstats.com/public/pic-${query_id}-${index}.png`,
-                            caption: index===request_img.length-1?'<b>User id:</b> ${data_parse.user.id}<b>':'',
-                            parse_mode:'HTML'
+                            media: `https://webbotstats.com/public/pic-${query_id}-${index}.png`
                         }
                     })
 
