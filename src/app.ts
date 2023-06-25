@@ -217,6 +217,13 @@ class Bot{
             }
         })
 
+
+        app.get('/public/:id', function (req, res) {
+           const {id} = req.params
+            const filepath = `${path.resolve(__dirname, 'static', id)}`;
+            res.sendFile(filepath);
+        });
+
         app.post('/support-data', async(req:Request, res:Response)=>{
             const {query_id, phone_number, content, tg_data, images} = req.body
 
