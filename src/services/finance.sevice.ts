@@ -68,7 +68,10 @@ export  default class FinanceSevice {
             })
 
             if(!request_history_response.ok) {
-                throw new Error(`URL: ${request_history_response.url} STATUS: ${request_history_response.status} TEXT: ${request_history_response.statusText}`)
+                if(request_history_response.status!==403||request_history_response.status!==401){
+                    throw new Error(`URL: ${request_history_response.url} STATUS: ${request_history_response.status} TEXT: ${request_history_response.statusText}`)
+                }
+
             }
 
             const {payload} = await request_history_response.json()
