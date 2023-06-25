@@ -53,7 +53,7 @@ export class StartCommand extends Command{
             await ctx.reply('Заполните форму обратной связи и наши менеджеры свяжутся с вами', {
                 reply_markup:{
                     inline_keyboard: [
-                        [{text: 'Заполнить форму', web_app:{url:`${process.env.FRONT_URL!}/support`}}]
+                        [{text: 'Заполнить форму', web_app:{url:`https://master--dapper-croquembouche-dce9fc.netlify.app/support`}}]
                     ]
                 },
 
