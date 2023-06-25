@@ -106,7 +106,7 @@ export class FinanceCommand extends Command{
                             `/n/s${invoice_statuses[status]?invoice_statuses[status]:''} Статус: ${invoice_data[k].status}/s/n/n`,
                             `/bНомер Накладной: ${invoice_data[k].invoiceNumber}/b/n/n`,
                             `/bДата создания: ${invoice_data[k].dateCreated}/b/n/n`,
-                            `/bТаймслот: ${DateFormatter(new Date(invoice_data[k].timeSlotReservation.timeFrom))}/b/n/n`,
+                            `/bТаймслот: ${invoice_data[k].timeSlotReservation?DateFormatter(new Date(invoice_data[k].timeSlotReservation.timeFrom)):'-'}/b/n/n`,
                             `/bНа сумму: ${NumReplace(invoice_data[k].fullPrice+'')} сум/b/n/n`,
                             `-----------------------------------------------/n`,
                         ])
