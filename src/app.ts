@@ -278,9 +278,9 @@ class Bot{
         let base64Image = base64String.split(';base64,').pop();
 console.log(path.resolve(__dirname, 'static', 'test.png'))
         //@ts-ignore
-        fs.writeFile(path.resolve(__dirname, 'static', 'test.png'), base64Image, {encoding: 'base64'}, function(err) {
-            console.log('File created');
-        });
+        // fs.writeFile(path.resolve(__dirname, 'static', 'test.png'), base64Image, {encoding: 'base64'}, function(err) {
+        //     console.log('File created');
+        // });
 
         // await this.bot.telegram.sendMediaGroup('@useller_support', [{
         //     type: "photo",
