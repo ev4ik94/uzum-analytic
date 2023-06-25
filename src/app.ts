@@ -215,15 +215,15 @@ class Bot{
         })
 
         app.post('/support-data', async(req:Request, res:Response)=>{
-            const {query_id, phone_number, content, tg_data} = req.body
-            let images = []
+            const {query_id, phone_number, content, tg_data, images} = req.body
+
             try{
 
-                // const data_parse = JSON.parse(tg_data)
+                const data_parse = JSON.parse(tg_data)
 
                 console.log(phone_number)
                 console.log(content)
-                console.log(req)
+                console.log(images)
 
 
                 await this.bot.telegram.answerWebAppQuery(query_id, {
