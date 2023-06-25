@@ -170,7 +170,7 @@ export class ReviewsCommand extends Command{
                     const review = await reviewsService.reviewAnswer({token: ctx.session.token, reviewId:ctx.session.reviewAnswer, text})
 
                     if(review){
-                        let date:string = DateFormatter(review.dateCreated)
+                        let date:string = DateFormatter(new Date(review.dateCreated))
                         let date_buy:string = DateFormatter(new Date(review.dateBought))
 
                         let stars:string = Array.from(Array(review.rating)).map((item:any)=>'⭐️').join('')

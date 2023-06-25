@@ -65,11 +65,10 @@ export  default class UpdatesService{
     private async onCheckSubscribeInterval(ctx:any){
         const {userId} = ctx.session
         const PermissionServiceData = new PermissionService(this.state)
-        // return await PermissionServiceData.checkSubscribe(userId)
 
         setInterval(async()=>{
             await PermissionServiceData.checkSubscribe(userId)
-        }, 30000)
+        }, 300000)
     }
 
 
@@ -145,7 +144,7 @@ export  default class UpdatesService{
                 }
             }
 
-        }, 10000)
+        }, 60000)
     }
 
     private deleteCheckSubscribe(){
