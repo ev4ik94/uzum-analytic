@@ -221,7 +221,7 @@ class Bot{
                 const data_parse = JSON.parse(tg_data)
 
                 if(images){
-                    const images_data:any[] = JSON.parse(images).map(item=>{
+                    const images_data:any[] = JSON.parse(images).map((item:any)=>{
                         return {
                             media: item
                         }
