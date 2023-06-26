@@ -24,6 +24,7 @@ export class ReviewsCommand extends Command{
 
 
         this.bot.hears('/reviews', async (ctx)=>{
+            console.log('REVIEWS')
             const {userId} = ctx.session
             if(ctx.session.current_shop){
                 if(!this.currentPage.find((item:any)=>item.id===userId)){

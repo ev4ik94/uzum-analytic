@@ -15,11 +15,11 @@ export class StartCommand extends Command{
     handle() {
         const regexp_signout = new RegExp(/^signout/)
         this.bot.start(async(ctx)=>{
-
+            console.log(ctx.session.userId + 'START')
 
             if(!ctx.session.token){
 
-                // if(ctx.message.from.username==='eva_4eva'||ctx.message.from.username==='Akhadov') {
+                // if(ctx.message.from.username==='eva_4eva') {
                 //     ctx.session.token = 'ZvF2QEdLAhGxEOXeM3yO0KKmOOM'
                 //
                 // }

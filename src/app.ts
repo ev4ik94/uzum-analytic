@@ -57,7 +57,7 @@ class Bot{
 
 
             if(ctx.session.token){
-
+console.log(ctx.session.userId)
 
                 await AuthService.checkToken(ctx)
 
@@ -112,6 +112,8 @@ class Bot{
                    // await UpdateService.offSubscriptionsEvents('check_push_notify')
                     return await ctx.reply(is_activate.message)
                 }
+
+                console.log(ctx.session.userId + 'END')
 
 
             }else{
@@ -296,9 +298,9 @@ class Bot{
 
 
 
-        for(let chatId of chat_ids){
-            await this.bot.telegram.sendMessage(chatId, '<strong>📢 Были добавлены обновления:</strong>\n\n \nДля продолжения работы с ботом \nнеобходимо перезапустить его\n<strong><a href="https://t.me/uselleruz_bot?start=restart">Перезапуск</a></strong>', {parse_mode: 'HTML'})
-        }
+        // for(let chatId of chat_ids){
+        //     await this.bot.telegram.sendMessage(chatId, '<strong>📢 Были добавлены обновления:</strong>\n\n \nДля продолжения работы с ботом \nнеобходимо перезапустить его\n<strong><a href="https://t.me/uselleruz_bot?start=restart">Перезапуск</a></strong>', {parse_mode: 'HTML'})
+        // }
 
 
         this.commands = [ new StartCommand(this.bot), new FinanceCommand(this.bot), new ProductsCommand(this.bot), new OrdersCommand(this.bot, stateManagers), new ReviewsCommand(this.bot)]
