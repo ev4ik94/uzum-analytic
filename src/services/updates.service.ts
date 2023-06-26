@@ -65,9 +65,13 @@ export  default class UpdatesService{
     private async onCheckSubscribeInterval(ctx:any){
         const {userId} = ctx.session
         const PermissionServiceData = new PermissionService(this.state)
-
+console.log(ctx.session)
+console.log(this.state.getIsActivate(ctx.session.userId).status)
         setInterval(async()=>{
-            await PermissionServiceData.checkSubscribe(userId, ctx)
+            if(this.state.getIsActivate(ctx.session.userId).status){
+                await PermissionServiceData.checkSubscribe(userId, ctx)
+            }
+
         }, 10000)
     }
 
