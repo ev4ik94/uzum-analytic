@@ -94,6 +94,8 @@ export  default class UpdatesService{
                 const payment_history = await financeService.notifyRequestHistory(ctx)
                 const invoice = await financeService.notifyInvoice(ctx)
 
+                if(+ctx.session.userId===1692592) await ctx.reply('Проверка')
+
 
                 if(notified_data){
 
@@ -144,7 +146,7 @@ export  default class UpdatesService{
                 }
             }
 
-        }, 60000)
+        }, 10000)
     }
 
     private deleteCheckSubscribe(){
