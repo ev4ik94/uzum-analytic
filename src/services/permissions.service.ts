@@ -96,12 +96,12 @@ export  default class PermissionsService{
         }
     }
 
-    async checkSubscribe(userId:number){
+    async checkSubscribe(userId:number, ctx:any){
 
         try{
             const user = await Users.findOne({where:{userId:userId}})
 
-            if(!user) {
+            if(!user||!ctx.session.token) {
 
                 return this.state.setIsActivate({
                     status: false,

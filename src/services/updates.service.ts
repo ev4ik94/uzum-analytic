@@ -59,7 +59,7 @@ export  default class UpdatesService{
     async onCheckSubscribe(ctx:any){
         const {userId} = ctx.session
         const PermissionServiceData = new PermissionService(this.state)
-        return await PermissionServiceData.checkSubscribe(userId)
+        return await PermissionServiceData.checkSubscribe(userId, ctx)
     }
 
     private async onCheckSubscribeInterval(ctx:any){
@@ -67,8 +67,8 @@ export  default class UpdatesService{
         const PermissionServiceData = new PermissionService(this.state)
 
         setInterval(async()=>{
-            await PermissionServiceData.checkSubscribe(userId)
-        }, 300000)
+            await PermissionServiceData.checkSubscribe(userId, ctx)
+        }, 10000)
     }
 
 
@@ -83,8 +83,7 @@ export  default class UpdatesService{
         this.intervalPushNotify = setInterval(async()=>{
 
             if(ctx.session.userId&&this.state.getIsActivate(ctx.session.userId).status){
-                console.log(ctx.session.userId)
-console.log(this.state.getClearData(ctx.session.userId))
+
                 if(this.state.getClearData(ctx.session.userId)){
                     await OrdersServices.initData(ctx)
                     await financeService.initData(ctx)
