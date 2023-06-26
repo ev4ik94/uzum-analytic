@@ -99,23 +99,23 @@ export  default class UpdatesService{
 
                     for(let k=0; k<notified_data.length;k++){
                         if(notified_data[k].type==='new_order'){
-                            await ctx.reply('Новый заказ ❗️❗️❗️',  Markup.inlineKeyboard([Markup.button.callback('Просмотреть', `orderView${notified_data[k].order.id}`)]))
+                            await ctx.reply('📢 Новый заказ ❗️❗️❗️',  Markup.inlineKeyboard([Markup.button.callback('Просмотреть', `orderView${notified_data[k].order.id}`)]))
                         }else if(notified_data[k].type==='change_status'){
                             const status = notified_data[k].order?.status
 
                             if(status==='CANCELED'){
-                                await ctx.reply('Заказ отменен ❌',  Markup.inlineKeyboard([Markup.button.callback('Просмотреть', `orderView${notified_data[k].order.id}`)]))
+                                await ctx.reply('📢 Заказ отменен ❌',  Markup.inlineKeyboard([Markup.button.callback('Просмотреть', `orderView${notified_data[k].order.id}`)]))
                             }
 
                             if(status==='TO_WITHDRAW'){
-                                await ctx.reply('Заказ одобрен',  Markup.inlineKeyboard([Markup.button.callback('Просмотреть', `orderView${notified_data[k].order.id}`)]))
+                                await ctx.reply('📢 Заказ одобрен ✅',  Markup.inlineKeyboard([Markup.button.callback('Просмотреть', `orderView${notified_data[k].order.id}`)]))
                             }
 
                             // await ctx.reply('Заказ изменен',  Markup.inlineKeyboard([Markup.button.callback('Просмотреть', `orderView${notified_data[k].order.orderId}`)]))
 
                         }else if(notified_data[k].type==='change_date'){
                             if(notified_data[k].order.dateIssued){
-                                await ctx.reply('Заказ получен ✅',  Markup.inlineKeyboard([Markup.button.callback('Просмотреть', `orderView${notified_data[k].order.id}`)]))
+                                await ctx.reply('📢 Заказ получен 🛍',  Markup.inlineKeyboard([Markup.button.callback('Просмотреть', `orderView${notified_data[k].order.id}`)]))
                             }
 
                         }
@@ -125,21 +125,21 @@ export  default class UpdatesService{
 
                 if(new_reviews.length>0){
                     for(let i=0; i<new_reviews.length;i++){
-                        await ctx.reply('Новый отзыв 🙋‍♀️',  Markup.inlineKeyboard([Markup.button.callback('Просмотреть', `reviewView${new_reviews[i].reviewId}`)]))
+                        await ctx.reply('📢 Новый отзыв 💌️',  Markup.inlineKeyboard([Markup.button.callback('Просмотреть', `reviewView${new_reviews[i].reviewId}`)]))
                     }
                 }
 
                 if(payment_history){
                     for(let k=0; k<payment_history.length; k++){
                         if(payment_history[k].payments.status==='APPROVED'){
-                            await ctx.replyWithHTML(`<strong>Вывод средств одобрен 💸</strong>\nСумма: ${NumReplace(payment_history[k].payments.amount+'')} сум`)
+                            await ctx.replyWithHTML(`<strong>📢 Вывод средств одобрен 💸</strong>\nСумма: ${NumReplace(payment_history[k].payments.amount+'')} сум`)
                         }
                     }
                 }
 
                 if(invoice){
                     for(let k=0; k<invoice.length; k++){
-                        await ctx.replyWithHTML(`<strong>Статус накладной изменен 🧾</strong>\nНомер накладной ${invoice[k].invoice.invoiceNumber}\nСтатус: ${invoice[k].invoice.status}`)
+                        await ctx.replyWithHTML(`<strong>📢 Статус накладной изменен 📦</strong>\nНомер накладной ${invoice[k].invoice.invoiceNumber}\nСтатус: ${invoice[k].invoice.status}`)
                     }
                 }
             }

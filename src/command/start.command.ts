@@ -13,7 +13,7 @@ export class StartCommand extends Command{
     }
 
     handle() {
-
+        const regexp_signout = new RegExp(/^signout/)
         this.bot.start(async(ctx)=>{
 
 
@@ -43,10 +43,28 @@ export class StartCommand extends Command{
 
 
         this.bot.action('sign-out', async(ctx)=>{
-            //@ts-ignore
+            const buttons = Markup.inlineKeyboard([
+                [Markup.button.callback('Да', 'signoutYES'), Markup.button.callback('Нет', 'signoutNO')]
+            ])
 
             //ctx.session = null
-            await ctx.reply('Вы действительно хотите выйти из аккаунта? Yes/No')
+            await ctx.reply('Вы действительно хотите выйти из аккаунта?', buttons)
+        })
+
+        this.bot.action(regexp_signout, async(ctx)=>{
+            const {update} = ctx
+
+            //@ts-ignore
+            const data = update.callback_query.data
+            const action = data.replace(regexp_signout, '')
+            if(action==='YES'){
+                //@ts-ignore
+                ctx.session = null
+                await ctx.reply('Вы вышли из аккаунта, ждем вашего возвращения 😊')
+            }else{
+                await ctx.reply('Хорошо что вы еще с нами 😊')
+            }
+
         })
 
         this.bot.action('support', async(ctx)=>{
