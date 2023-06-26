@@ -127,8 +127,6 @@ export class OrdersCommand extends Command{
 
                 if(data.match('order')) {
 
-                    if(+ctx.session.userId===424705333) throw new Error('Проверка ошибки')
-
                     const page = data.match(action_orders_regexp)?undefined:
                         data.replace('orderpage', '').split('-')[1]
                     const status = data.match(action_orders_regexp)?

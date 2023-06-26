@@ -82,8 +82,9 @@ export  default class UpdatesService{
 
         this.intervalPushNotify = setInterval(async()=>{
 
-            if(this.state.getIsActivate(ctx.session.userId).status){
-
+            if(ctx.session.userId&&this.state.getIsActivate(ctx.session.userId).status){
+                console.log(ctx.session.userId)
+console.log(this.state.getClearData(ctx.session.userId))
                 if(this.state.getClearData(ctx.session.userId)){
                     await OrdersServices.initData(ctx)
                     await financeService.initData(ctx)
