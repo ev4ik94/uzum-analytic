@@ -28,7 +28,7 @@ export class FinanceCommand extends Command{
                 if(response_data||history_data){
 
                     if(response_data){
-                        let message = ''
+                        let message = 'Нет данных'
 
 
                         let date_now = new Date()
@@ -78,8 +78,9 @@ export class FinanceCommand extends Command{
                     await ctx.replyWithHTML('Что-то пошло не так, попробуйте снова!')
                 }
             }catch (err:any){
+                const err_message = `Метод: Command /finance\n\nОШИБКА: ${err}`
                 await ctx.reply(ApiError.serverError())
-                await ctx.telegram.sendMessage('@cacheErrorBot', ApiError.errorMessageFormatter(ctx, err))
+                await ctx.telegram.sendMessage('@cacheErrorBot', ApiError.errorMessageFormatter(ctx, err_message))
                 throw new Error(err)
 
             }
@@ -92,7 +93,7 @@ export class FinanceCommand extends Command{
 
                 if(invoice_data){
 
-                    let message = ''
+                    let message = 'Нет данных'
                     const invoice_statuses:any = {
                         "ACCEPTANCE_IN_PROGRESS": "🕒",
                         "ACCEPTED": "✅",
@@ -120,8 +121,9 @@ export class FinanceCommand extends Command{
                     await ctx.replyWithHTML('Что-то пошло не так, попробуйте снова!')
                 }
             }catch (err:any){
+                const err_message = `Метод: Command /invoice\n\nОШИБКА: ${err}`
                 await ctx.reply(ApiError.serverError())
-                await ctx.telegram.sendMessage('@cacheErrorBot', ApiError.errorMessageFormatter(ctx, err))
+                await ctx.telegram.sendMessage('@cacheErrorBot', ApiError.errorMessageFormatter(ctx, err_message))
                 throw new Error(err)
 
             }

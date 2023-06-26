@@ -24,7 +24,7 @@ export class ReviewsCommand extends Command{
 
 
         this.bot.hears('/reviews', async (ctx)=>{
-            console.log('REVIEWS')
+
             const {userId} = ctx.session
             if(ctx.session.current_shop){
                 if(!this.currentPage.find((item:any)=>item.id===userId)){
@@ -73,7 +73,8 @@ export class ReviewsCommand extends Command{
                 }
 
             }catch(err:any){
-                await ctx.telegram.sendMessage('@cacheErrorBot', ApiError.errorMessageFormatter(ctx, err))
+                const err_message = `Метод: Command /reviewView\n\nОШИБКА: ${err}`
+                await ctx.telegram.sendMessage('@cacheErrorBot', ApiError.errorMessageFormatter(ctx, err_message))
                 ctx.reply('Произошла ошибка на стороне сервера или обратитесь пожалуйста в службу поддержки')
                 throw new Error(err)
             }
@@ -142,7 +143,8 @@ export class ReviewsCommand extends Command{
 
 
             }catch(err:any){
-                await ctx.telegram.sendMessage('@cacheErrorBot', ApiError.errorMessageFormatter(ctx, err))
+                const err_message = `Метод: Command /reviewId\n\nОШИБКА: ${err}`
+                await ctx.telegram.sendMessage('@cacheErrorBot', ApiError.errorMessageFormatter(ctx, err_message))
                 ctx.reply('Произошла ошибка на стороне сервера, попробуйте снова')
                 throw new Error(err)
             }
@@ -194,7 +196,8 @@ export class ReviewsCommand extends Command{
                     }
                 }
             }catch (err:any){
-                await ctx.telegram.sendMessage('@cacheErrorBot', ApiError.errorMessageFormatter(ctx, err))
+                const err_message = `Метод: Command review Answer /text\n\nОШИБКА: ${err}`
+                await ctx.telegram.sendMessage('@cacheErrorBot', ApiError.errorMessageFormatter(ctx, err_message))
                 ctx.reply('Произошла ошибка на стороне сервера или обратитесь пожалуйста в службу поддержки')
                 throw new Error(err)
             }
@@ -270,7 +273,8 @@ export class ReviewsCommand extends Command{
                     await ctx.reply('Список пуст ⭕️')
                 }
             }catch (err:any){
-                await ctx.telegram.sendMessage('@cacheErrorBot', ApiError.errorMessageFormatter(ctx, err))
+                const err_message = `Метод: Command /reviewStatus\n\nОШИБКА: ${err}`
+                await ctx.telegram.sendMessage('@cacheErrorBot', ApiError.errorMessageFormatter(ctx, err_message))
                 ctx.reply('Произошла ошибка на стороне сервера или обратитесь пожалуйста в службу поддержки')
                 throw new Error(err)
             }

@@ -1,21 +1,24 @@
 import {Command} from "./command.class";
 import {Telegraf, Markup} from "telegraf";
 import {IBotContext} from "../context/context.interface";
+import {ApiError} from "../utils/ErrorHandler";
+import {IStateManager} from "../config/config.interface";
 
 
 
 
 
 export class StartCommand extends Command{
-
-    constructor(bot:Telegraf<IBotContext>) {
+    state:IStateManager
+    constructor(bot:Telegraf<IBotContext>, stateManager:IStateManager) {
         super(bot);
+        this.state = stateManager
     }
 
     handle() {
         const regexp_signout = new RegExp(/^signout/)
         this.bot.start(async(ctx)=>{
-            console.log(ctx.session.userId + 'START')
+
 
             if(!ctx.session.token){
 
@@ -47,22 +50,34 @@ export class StartCommand extends Command{
                 [Markup.button.callback('Да', 'signoutYES'), Markup.button.callback('Нет', 'signoutNO')]
             ])
 
-            //ctx.session = null
             await ctx.reply('Вы действительно хотите выйти из аккаунта?', buttons)
         })
 
         this.bot.action(regexp_signout, async(ctx)=>{
-            const {update} = ctx
+            try{
+                const {update} = ctx
+                const {userId} = ctx.session
 
-            //@ts-ignore
-            const data = update.callback_query.data
-            const action = data.replace(regexp_signout, '')
-            if(action==='YES'){
                 //@ts-ignore
-                ctx.session = null
-                await ctx.reply('Вы вышли из аккаунта, ждем вашего возвращения 😊')
-            }else{
-                await ctx.reply('Хорошо что вы еще с нами 😊')
+                const data = update.callback_query.data
+                const action = data.replace(regexp_signout, '')
+                if(action==='YES'){
+                    //@ts-ignore
+                    ctx.session = null
+                    this.state.setIsActivate({
+                        status: false,
+                        message: ''
+                    }, userId)
+                    this.state.setIsNotified(false, userId)
+                    await ctx.reply('Вы вышли из аккаунта, ждем вашего возвращения 😊')
+                }else{
+                    await ctx.reply('Хорошо что вы еще с нами 😊')
+                }
+            }catch(err:any){
+                const err_message = `Метод: Command /signout\n\nОШИБКА: ${err}`
+                await ctx.telegram.sendMessage('@cacheErrorBot', ApiError.errorMessageFormatter(ctx, err_message))
+                ctx.reply('Произошла ошибка на стороне сервера или обратитесь пожалуйста в службу поддержки')
+                throw new Error(err)
             }
 
         })

@@ -32,6 +32,7 @@ export interface ISessionData{
     reviewAnswer: string|null
     shops: IShop[]
     orders: IOrders[]
+    products: any[]
     reviews: IReview[]
     current_shop: number
 }

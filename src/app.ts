@@ -57,7 +57,7 @@ class Bot{
 
 
             if(ctx.session.token){
-console.log(ctx.session.userId)
+
 
                 await AuthService.checkToken(ctx)
 
@@ -113,7 +113,7 @@ console.log(ctx.session.userId)
                     return await ctx.reply(is_activate.message)
                 }
 
-                console.log(ctx.session.userId + 'END')
+
 
 
             }else{
@@ -132,10 +132,15 @@ console.log(ctx.session.userId)
                     }else{
                         //@ts-ignore
                         const text = ctx.update.message.text
-                        if(text!=='/start') return await ctx.reply('Вы не авторизованы')
+
+                        const commands = ['/start', '/cabinet']
+                        if(!commands.includes(text)) return await ctx.reply('Вы не авторизованы')
                     }
                 }else{
-                    return await ctx.reply('Вы не авторизованы')
+                    //@ts-ignore
+                    const callback = ctx.update?.callback_query?.data || ''
+                    const callback_query = ['support', 'directory']
+                    if(!callback_query.includes(callback)) return await ctx.reply('Вы не авторизованы')
                 }
             }
 
@@ -229,6 +234,8 @@ console.log(ctx.session.userId)
         app.post('/support-data', async(req:Request, res:Response)=>{
             const {query_id, phone_number, content, tg_data, images} = req.body
 
+            console.log(req.body)
+
             try{
                 const data_parse = JSON.parse(tg_data)
 
@@ -303,7 +310,7 @@ console.log(ctx.session.userId)
         // }
 
 
-        this.commands = [ new StartCommand(this.bot), new FinanceCommand(this.bot), new ProductsCommand(this.bot), new OrdersCommand(this.bot, stateManagers), new ReviewsCommand(this.bot)]
+        this.commands = [ new StartCommand(this.bot, stateManagers), new FinanceCommand(this.bot), new ProductsCommand(this.bot), new OrdersCommand(this.bot, stateManagers), new ReviewsCommand(this.bot)]
         for(const command of this.commands){
             command.handle()
         }

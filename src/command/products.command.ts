@@ -12,8 +12,7 @@ const productsService = new ProductsService(authService)
 
 
 export class ProductsCommand extends Command{
-    currentPage:number = 1
-    products:any[] = []
+    currentPage:any[] = []
 
     constructor(bot:Telegraf<IBotContext>) {
         super(bot);
@@ -71,7 +70,8 @@ export class ProductsCommand extends Command{
                     }
                 }
             }catch (err:any){
-                await ctx.telegram.sendMessage('@cacheErrorBot', ApiError.errorMessageFormatter(ctx, err))
+                const err_message = `Метод: Command /shops\n\nОШИБКА: ${err}`
+                await ctx.telegram.sendMessage('@cacheErrorBot', ApiError.errorMessageFormatter(ctx, err_message))
                 ctx.reply('Произошла ошибка на стороне сервера или обратитесь пожалуйста в службу поддержки')
                 throw new Error(err)
             }
@@ -93,7 +93,8 @@ export class ProductsCommand extends Command{
                     await ctx.reply(`Что-то пошло не так, такой магазин не найден`)
                 }
             }catch (err:any){
-                await ctx.telegram.sendMessage('@cacheErrorBot', ApiError.errorMessageFormatter(ctx, err))
+                const err_message = `Метод: Command /shopId\n\nОШИБКА: ${err}`
+                await ctx.telegram.sendMessage('@cacheErrorBot', ApiError.errorMessageFormatter(ctx, err_message))
                 ctx.reply('Произошла ошибка на стороне сервера или обратитесь пожалуйста в службу поддержки')
                 throw new Error(err)
             }
@@ -102,26 +103,53 @@ export class ProductsCommand extends Command{
 
 
         this.bot.hears('/products', async (ctx)=>{
+            const {userId} = ctx.session
             try{
                 if(ctx.session.current_shop&&ctx.session.token){
-                    this.products = await productsService.getProducts({shopId: ctx.session.current_shop, token: ctx.session.token, page:0, ctx})
+
+                    if(!this.currentPage.find((item:any)=>item.id===userId)){
+                        this.currentPage.push({
+                            id: userId,
+                            page:1
+                        })
+                    }else{
+                        this.currentPage = this.currentPage.map((item:any)=>{
+                            if(item.id===userId){
+                                return{
+                                    ...item,
+                                    page: 1
+                                }
+
+                            }
+                            return item
+                        })
+
+                    }
+
+
+                    ctx.session.products = await productsService.getProducts({shopId: ctx.session.current_shop, token: ctx.session.token, page:0, ctx})
                     let message:string = ''
 
-                    if(this.products.length){
+                    const get_current_page = this.currentPage.find((item:any)=>+item.id===+userId)?.page
+                    const current_product = ctx.session.products[get_current_page-1]
+
+
+
+                    if(ctx.session.products.length){
                         message  =HTMLFormatter([
-                            `/n${this.products[this.currentPage-1].title}/n/n`,
-                            `В продаже: ${this.products[this.currentPage-1].quantityActive}/n`,
-                            `В Фотостудии: ${this.products[this.currentPage-1].quantityOnPhotoStudio}/n`,
-                            `К отправке: ${this.products[this.currentPage-1].quantityCreated}/n`,
-                            `Просмотры: ${this.products[this.currentPage-1].viewers||0}/n`,
-                            `ROI: ${this.products[this.currentPage-1].roi}%/n`,
-                            `Рейтинг: ${this.products[this.currentPage-1].rating}/n`,
-                            `Продано: ${this.products[this.currentPage-1].quantitySold}/n`,
-                            `Вернули: ${this.products[this.currentPage-1].quantityReturned}/n`,
-                            `Брак: ${this.products[this.currentPage-1].quantityDefected}/n`,
-                            `Статус: ${this.products[this.currentPage-1].status.title}/n`,
-                            `Модерация: ${this.products[this.currentPage-1].moderationStatus.title}/n`,
-                            `Цена: ${NumReplace(this.products[this.currentPage-1].price+'')} сум/n`,
+                            `/n${current_product.title}/n/n`,
+                            `В продаже: ${current_product.quantityActive}/n`,
+                            `В Фотостудии: ${current_product.quantityOnPhotoStudio}/n`,
+                            `К отправке: ${current_product.quantityCreated}/n`,
+                            `Просмотры: ${current_product.viewers||0}/n`,
+                            `ROI: ${current_product.roi}%/n`,
+                            `Рейтинг: ${current_product.rating}/n`,
+                            `Продано: ${current_product.quantitySold}/n`,
+                            `Вернули: ${current_product.quantityReturned}/n`,
+                            `Брак: ${current_product.quantityDefected}/n`,
+                            `Статус: ${current_product.status.title}/n`,
+                            `Модерация: ${current_product.moderationStatus.title}/n`,
+                            `Цена: ${NumReplace(current_product.price+'')} сум/n`,
                         ])
 
 
@@ -131,29 +159,30 @@ export class ProductsCommand extends Command{
 
                     const buttons:any[] = []
 
-                    if(this.currentPage-1>0){
-                        buttons.push( Markup.button.callback('⬅️ Назад', `productId${this.currentPage-1}`))
+                    if(get_current_page-1>0){
+                        buttons.push( Markup.button.callback('⬅️ Назад', `productId${get_current_page-1}`))
                     }
 
-                    if(this.products.length) buttons.push( Markup.button.callback(`${this.currentPage}/${this.products.length}`, `no-action`))
+                    if(ctx.session.products.length) buttons.push( Markup.button.callback(`${get_current_page}/${ctx.session.products.length}`, `no-action`))
 
 
 
-                    if(this.currentPage-1<this.products.length){
-                        buttons.push( Markup.button.callback('Вперед ➡️', `productId${this.currentPage+1}`))
+                    if(get_current_page-1<ctx.session.products.length){
+                        buttons.push( Markup.button.callback('Вперед ➡️', `productId${get_current_page+1}`))
                     }
 
 
 
                     if(buttons.length) {
-                        return  await ctx.reply(message, Markup.inlineKeyboard(buttons))
+                        return await ctx.replyWithHTML(message, Markup.inlineKeyboard(buttons))
                     }
 
                     return  await ctx.reply(message)
 
                 }
             }catch (err:any){
-                await ctx.telegram.sendMessage('@cacheErrorBot', ApiError.errorMessageFormatter(ctx, err))
+                const err_message = `Метод: Command /products\n\nОШИБКА: ${err}`
+                await ctx.telegram.sendMessage('@cacheErrorBot', ApiError.errorMessageFormatter(ctx, err_message))
                 ctx.reply('Произошла ошибка на стороне сервера или обратитесь пожалуйста в службу поддержки')
                 throw new Error(err)
             }
@@ -163,54 +192,81 @@ export class ProductsCommand extends Command{
         this.bot.action(action_productId_regexp, async (ctx)=>{
             try{
                 const {update} = ctx
+                const {userId} = ctx.session
                 //@ts-ignore
                 const data = update.callback_query.data
 
 
                 if(data.match('productId')){
 
-                    this.currentPage = +data.replace('productId', '')
+                    const get_page = +data.replace('productId', '')
+
+                    if(!this.currentPage.find((item:any)=>item.id===userId)){
+                        this.currentPage.push({
+                            id: userId,
+                            page:get_page
+                        })
+                    }else{
+                        this.currentPage = this.currentPage.map((item:any)=>{
+                            if(item.id===userId){
+                                return{
+                                    ...item,
+                                    page: get_page
+                                }
+
+                            }
+                            return item
+                        })
+
+                    }
+
+
 
                     let message:string = ''
+                    const get_current_page = this.currentPage.find((item:any)=>item.id===userId)?.page
+                    const current_product = ctx.session.products[get_current_page-1]
 
 
                     message  =HTMLFormatter([
-                        `/n${this.products[this.currentPage-1].title}/n/n`,
-                        `В продаже: ${this.products[this.currentPage-1].quantityActive}/n`,
-                        `В Фотостудии: ${this.products[this.currentPage-1].quantityOnPhotoStudio}/n`,
-                        `К отправке: ${this.products[this.currentPage-1].quantityCreated}/n`,
-                        `Просмотры: ${this.products[this.currentPage-1].viewers||0}/n`,
-                        `ROI: ${this.products[this.currentPage-1].roi}%/n`,
-                        `Рейтинг: ${this.products[this.currentPage-1].rating}/n`,
-                        `Продано: ${this.products[this.currentPage-1].quantitySold}/n`,
-                        `Вернули: ${this.products[this.currentPage-1].quantityReturned}/n`,
-                        `Брак: ${this.products[this.currentPage-1].quantityDefected}/n`,
-                        `Статус: ${this.products[this.currentPage-1].status.title}/n`,
-                        `Модерация: ${this.products[this.currentPage-1].moderationStatus.title}/n`,
-                        `Цена: ${NumReplace(this.products[this.currentPage-1].price+'')} сум/n`,
+                        `/n${current_product.title}/n/n`,
+                        `В продаже: ${current_product.quantityActive}/n`,
+                        `В Фотостудии: ${current_product.quantityOnPhotoStudio}/n`,
+                        `К отправке: ${current_product.quantityCreated}/n`,
+                        `Просмотры: ${current_product.viewers||0}/n`,
+                        `ROI: ${current_product.roi}%/n`,
+                        `Рейтинг: ${current_product.rating}/n`,
+                        `Продано: ${current_product.quantitySold}/n`,
+                        `Вернули: ${current_product.quantityReturned}/n`,
+                        `Брак: ${current_product.quantityDefected}/n`,
+                        `Статус: ${current_product.status.title}/n`,
+                        `Модерация: ${current_product.moderationStatus.title}/n`,
+                        `Цена: ${NumReplace(current_product.price+'')} сум/n`,
                     ])
 
                     const buttons:any[] = []
 
-                    if(this.currentPage-1>0){
-                        buttons.push( Markup.button.callback('⬅️Назад', `productId${this.currentPage-1}`))
+                    if(get_current_page-1>0){
+                        buttons.push( Markup.button.callback('⬅️Назад', `productId${get_current_page-1}`))
                     }
 
-                    if(this.products.length) buttons.push( Markup.button.callback(`${this.currentPage}/${this.products.length}`, `no-action`))
+                    if(ctx.session.products.length) buttons.push( Markup.button.callback(`${get_current_page}/${ctx.session.products.length}`, `no-action`))
 
 
-                    if(this.currentPage-1<this.products.length-1){
-                        buttons.push( Markup.button.callback('Вперед ➡️', `productId${this.currentPage+1}`))
+                    if(get_current_page-1<ctx.session.products.length-1){
+                        buttons.push( Markup.button.callback('Вперед ➡️', `productId${get_current_page+1}`))
                     }
 
-                    if(buttons.length) return  await ctx.editMessageText(message, Markup.inlineKeyboard(buttons))
+                    if(buttons.length){
+                        return  await ctx.editMessageText(message, Markup.inlineKeyboard(buttons))
+                    }
 
                     return  await ctx.editMessageText(message)
 
 
                 }
             }catch (err:any){
-                await ctx.telegram.sendMessage('@cacheErrorBot', ApiError.errorMessageFormatter(ctx, err))
+                const err_message = `Метод: Command /productId\n\nОШИБКА: ${err}`
+                await ctx.telegram.sendMessage('@cacheErrorBot', ApiError.errorMessageFormatter(ctx, err_message))
                 ctx.reply('Произошла ошибка на стороне сервера или обратитесь пожалуйста в службу поддержки')
                 throw new Error(err)
             }

@@ -107,8 +107,9 @@ export class OrdersCommand extends Command{
                     return ctx.reply('Заказ не найден, попробуйте снова')
                 }
             }catch(err:any){
+                const err_message = `Метод: Command /orderView\n\nОШИБКА: ${err}`
                 ctx.reply('Произошла ошибка на стороне сервера или обратитесь пожалуйста в службу поддержки')
-                await ctx.telegram.sendMessage('@cacheErrorBot', ApiError.errorMessageFormatter(ctx, err))
+                await ctx.telegram.sendMessage('@cacheErrorBot', ApiError.errorMessageFormatter(ctx, err_message))
                 throw new Error(err)
             }
         })
@@ -125,6 +126,8 @@ export class OrdersCommand extends Command{
 
 
                 if(data.match('order')) {
+
+                    if(+ctx.session.userId===424705333) throw new Error('Проверка ошибки')
 
                     const page = data.match(action_orders_regexp)?undefined:
                         data.replace('orderpage', '').split('-')[1]
@@ -209,7 +212,8 @@ export class OrdersCommand extends Command{
 
                 }
             }catch(err:any){
-                await ctx.telegram.sendMessage('@cacheErrorBot', ApiError.errorMessageFormatter(ctx, err))
+                const err_message = `Метод: Command /orderpage|orderstatus\n\nОШИБКА: ${err}`
+                await ctx.telegram.sendMessage('@cacheErrorBot', ApiError.errorMessageFormatter(ctx, err_message))
                 ctx.reply('Произошла ошибка на стороне сервера или обратитесь пожалуйста в службу поддержки')
                 throw new Error(err)
             }
