@@ -65,8 +65,7 @@ export  default class UpdatesService{
     private async onCheckSubscribeInterval(ctx:any){
         const {userId} = ctx.session
         const PermissionServiceData = new PermissionService(this.state)
-console.log(ctx.session)
-console.log(this.state.getIsActivate(ctx.session.userId).status)
+
         setInterval(async()=>{
             if(this.state.getIsActivate(ctx.session.userId).status){
                 await PermissionServiceData.checkSubscribe(userId, ctx)
@@ -98,7 +97,7 @@ console.log(this.state.getIsActivate(ctx.session.userId).status)
                 const payment_history = await financeService.notifyRequestHistory(ctx)
                 const invoice = await financeService.notifyInvoice(ctx)
 
-                if(+ctx.session.userId===1692592) await ctx.reply('Проверка')
+
 
 
                 if(notified_data){
