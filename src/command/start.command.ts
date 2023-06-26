@@ -34,7 +34,7 @@ export class StartCommand extends Command{
                 })
 
             }else{
-                await ctx.replyWithHTML('В обновленной версии были добавлены новые возможности:\n-Кабинет продавца (Служба поддержки)')
+                await ctx.replyWithHTML('В обновленной версии были добавлены новые возможности:\n-Кабинет продавца (Возможность выйти из текущего аккаунта)')
                 //await ctx.replyWithHTML('Бот снова готов работать!')
             }
 
