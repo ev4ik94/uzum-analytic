@@ -71,7 +71,7 @@ export  default class UpdatesService{
                 await PermissionServiceData.checkSubscribe(userId, ctx)
             }
 
-        }, 10000)
+        }, 300000)
     }
 
 
@@ -149,7 +149,7 @@ export  default class UpdatesService{
                 }
             }
 
-        }, 10000)
+        }, 180000)
     }
 
     private deleteCheckSubscribe(){
