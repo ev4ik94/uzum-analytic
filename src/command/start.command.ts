@@ -37,7 +37,7 @@ export class StartCommand extends Command{
                 })
 
             }else{
-                //await ctx.replyWithHTML('В обновленной версии были исправлены неполадки в работе:\n-Активные товары')
+                //await ctx.replyWithHTML('В обновленной версии были дополненны ')
                 await ctx.replyWithHTML('Бот снова готов работать!')
             }
 
