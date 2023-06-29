@@ -110,7 +110,7 @@ class Bot{
                 if(!is_activate?.status){
 
                    // await UpdateService.offSubscriptionsEvents('check_push_notify')
-                    return await ctx.reply(is_activate.message)
+                    return await ctx.replyWithHTML(is_activate.message)
                 }
 
 
@@ -304,7 +304,7 @@ class Bot{
 
 
         // for(let chatId of chat_ids){
-        //     await this.bot.telegram.sendMessage(chatId, '<strong>📢 Были добавлены обновления:</strong>\n\n \nДля продолжения работы с ботом \nнеобходимо перезапустить его\n<strong><a href="https://t.me/uselleruz_bot?start=restart">Перезапуск</a></strong>', {parse_mode: 'HTML'})
+        //     this.bot.telegram.sendMessage(chatId, '<strong>📢 Были добавлены обновления:</strong>\n\n \nДля продолжения работы с ботом \nнеобходимо перезапустить его\n<strong><a href="https://t.me/uselleruz_bot?start=restart">Перезапуск</a></strong>', {parse_mode: 'HTML'})
         // }
 
 
