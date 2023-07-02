@@ -126,96 +126,96 @@ export  default class OrdersService{
 
             let orderItems = orders_uzum.orderItems
 
-            // if(userId===424705333){
-            //     orderItems.push({
-            //         amount:1,
-            //         amountReturns:0,
-            //         cancelled:null,
-            //         comment:null,
-            //         commission:22350,
-            //         date:1687189699403,
-            //         dateIssued:null,
-            //         id:8039703,
-            //         orderId:3769471,
-            //         productId:441691,
-            //         productImage:{
-            //             photo: {
-            //                 480:
-            //                     {
-            //                         high: "https://images.uzum.uz/chf9f6tenntd8rf9a700/t_product_540_high.jpg"
-            //                     }
-            //             }
-            //         },
-            //         productTitle:"Футболка женская укороченная оверсайз",
-            //         purchasePrice:79500,
-            //         returnCause:null,
-            //         sellPrice:149000,
-            //         sellerProfit:126650,
-            //         shopId:11921,
-            //         skuTitle:"REDFOXY-RFTOP-ГОЛУБ-M",
-            //         status:"PROCESSING",
-            //         withdrawnProfit:0
-            //     })
-            //     orderItems.push({
-            //         amount:1,
-            //         amountReturns:0,
-            //         cancelled:null,
-            //         comment:null,
-            //         commission:22350,
-            //         date:1687189699403,
-            //         dateIssued:null,
-            //         id:8039702,
-            //         orderId:3769471,
-            //         productId:424094,
-            //         productImage:{
-            //             photo: {
-            //                 480:
-            //                     {
-            //                         high: "https://images.uzum.uz/chek4vcvutv6po2iic8g/t_product_540_high.jpg"
-            //
-            //                     }
-            //             }
-            //         },
-            //         productTitle:"Женские лосины утягивающие в рубчик",
-            //         purchasePrice:79500,
-            //         returnCause:null,
-            //         sellPrice:149000,
-            //         sellerProfit:126650,
-            //         shopId:11921,
-            //         skuTitle:"REDFOXY-RFLSBLA-СЕРЫЙ-M",
-            //         status:"PROCESSING",
-            //         withdrawnProfit:0
-            //     })
-            //     orderItems.push({
-            //         amount:1,
-            //         amountReturns:0,
-            //         cancelled:null,
-            //         comment:null,
-            //         commission:22350,
-            //         date:1687189699403,
-            //         dateIssued:null,
-            //         id:8039701,
-            //         orderId:3769471,
-            //         productId:441691,
-            //         productImage:{
-            //             photo: {
-            //                 480:
-            //                     {
-            //                         high: "https://images.uzum.uz/chf9f6tenntd8rf9a700/t_product_540_high.jpg"
-            //                     }
-            //             }
-            //         },
-            //         productTitle:"Футболка женская укороченная оверсайз",
-            //         purchasePrice:79500,
-            //         returnCause:null,
-            //         sellPrice:149000,
-            //         sellerProfit:126650,
-            //         shopId:11921,
-            //         skuTitle:"REDFOXY-RFTOP-ГОЛУБ-M",
-            //         status:"PROCESSING",
-            //         withdrawnProfit:0
-            //     })
-            // }
+            if(userId===424705333||userId===1692592){
+                orderItems.push({
+                    amount:1,
+                    amountReturns:0,
+                    cancelled:null,
+                    comment:null,
+                    commission:22350,
+                    date:1687189699403,
+                    dateIssued:null,
+                    id:8039703,
+                    orderId:3769471,
+                    productId:441691,
+                    productImage:{
+                        photo: {
+                            480:
+                                {
+                                    high: "https://images.uzum.uz/chf9f6tenntd8rf9a700/t_product_540_high.jpg"
+                                }
+                        }
+                    },
+                    productTitle:"Футболка женская укороченная оверсайз",
+                    purchasePrice:79500,
+                    returnCause:null,
+                    sellPrice:149000,
+                    sellerProfit:126650,
+                    shopId:11921,
+                    skuTitle:"REDFOXY-RFTOP-ГОЛУБ-M",
+                    status:"PROCESSING",
+                    withdrawnProfit:0
+                })
+                orderItems.push({
+                    amount:1,
+                    amountReturns:0,
+                    cancelled:null,
+                    comment:null,
+                    commission:22350,
+                    date:1687189699403,
+                    dateIssued:null,
+                    id:8039702,
+                    orderId:3769471,
+                    productId:424094,
+                    productImage:{
+                        photo: {
+                            480:
+                                {
+                                    high: "https://images.uzum.uz/chek4vcvutv6po2iic8g/t_product_540_high.jpg"
+
+                                }
+                        }
+                    },
+                    productTitle:"Женские лосины утягивающие в рубчик",
+                    purchasePrice:79500,
+                    returnCause:null,
+                    sellPrice:149000,
+                    sellerProfit:126650,
+                    shopId:11921,
+                    skuTitle:"REDFOXY-RFLSBLA-СЕРЫЙ-M",
+                    status:"PROCESSING",
+                    withdrawnProfit:0
+                })
+                orderItems.push({
+                    amount:1,
+                    amountReturns:0,
+                    cancelled:null,
+                    comment:null,
+                    commission:22350,
+                    date:1687189699403,
+                    dateIssued:null,
+                    id:8039701,
+                    orderId:3769471,
+                    productId:441691,
+                    productImage:{
+                        photo: {
+                            480:
+                                {
+                                    high: "https://images.uzum.uz/chf9f6tenntd8rf9a700/t_product_540_high.jpg"
+                                }
+                        }
+                    },
+                    productTitle:"Футболка женская укороченная оверсайз",
+                    purchasePrice:79500,
+                    returnCause:null,
+                    sellPrice:149000,
+                    sellerProfit:126650,
+                    shopId:11921,
+                    skuTitle:"REDFOXY-RFTOP-ГОЛУБ-M",
+                    status:"PROCESSING",
+                    withdrawnProfit:0
+                })
+            }
 
 
 
@@ -275,24 +275,17 @@ export  default class OrdersService{
                                     if(elem.status==='CANCELED'){
                                         return {
                                             ...item,
-                                            status: elem.status,
-                                            returnCause: elem.returnCause,
-                                            amountReturns: elem.amountReturns,
-                                            comment: elem.comment,
-                                            amount: elem.amount,
-                                            dateIssued: elem.dateIssued
+                                            ...elem
                                         }
                                     }else{
                                         return {
                                             ...item,
-                                            status: elem.status,
-                                            amount: elem.amount,
-                                            dateIssued: elem.dateIssued
+                                            ...elem
                                         }
                                     }
                                 }
 
-                                return {...item}
+                                return item
                             }), userId)
 
 
@@ -306,11 +299,11 @@ export  default class OrdersService{
                                 if(item.orderId===elem.orderId){
                                     return {
                                         ...item,
-                                        dateIssued: elem.dateIssued
+                                        ...elem
                                     }
                                 }
 
-                                return {...item}
+                                return item
                             }), userId)
                         }
                     }

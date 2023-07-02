@@ -85,7 +85,7 @@ export  default class UpdatesService{
 
         this.intervalPushNotify = setInterval(async()=>{
 
-            if(ctx.session.userId&&this.state.getIsActivate(ctx.session.userId).status){
+            if(this.state.getIsActivate(ctx.session.userId).status){
 
                 if(this.state.getClearData(ctx.session.userId)){
                     await OrdersServices.initData(ctx)
@@ -149,7 +149,7 @@ export  default class UpdatesService{
                 }
             }
 
-        }, 180000)
+        }, 60000)
     }
 
     private deleteCheckSubscribe(){

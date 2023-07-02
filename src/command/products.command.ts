@@ -228,19 +228,19 @@ export class ProductsCommand extends Command{
 
 
                     message  =HTMLFormatter([
-                        `/n${current_product.title}/n/n`,
-                        `В продаже: ${current_product.quantityActive}/n`,
-                        `В Фотостудии: ${current_product.quantityOnPhotoStudio}/n`,
-                        `К отправке: ${current_product.quantityCreated}/n`,
-                        `Просмотры: ${current_product.viewers||0}/n`,
-                        `ROI: ${current_product.roi}%/n`,
-                        `Рейтинг: ${current_product.rating}/n`,
-                        `Продано: ${current_product.quantitySold}/n`,
-                        `Вернули: ${current_product.quantityReturned}/n`,
-                        `Брак: ${current_product.quantityDefected}/n`,
-                        `Статус: ${current_product.status.title}/n`,
-                        `Модерация: ${current_product.moderationStatus.title}/n`,
-                        `Цена: ${NumReplace(current_product.price+'')} сум/n`,
+                        `/n${current_product?.title}/n/n`,
+                        `В продаже: ${current_product?.quantityActive}/n`,
+                        `В Фотостудии: ${current_product?.quantityOnPhotoStudio}/n`,
+                        `К отправке: ${current_product?.quantityCreated}/n`,
+                        `Просмотры: ${current_product?.viewers||0}/n`,
+                        `ROI: ${current_product?.roi}%/n`,
+                        `Рейтинг: ${current_product?.rating}/n`,
+                        `Продано: ${current_product?.quantitySold}/n`,
+                        `Вернули: ${current_product?.quantityReturned}/n`,
+                        `Брак: ${current_product?.quantityDefected}/n`,
+                        `Статус: ${current_product?.status.title}/n`,
+                        `Модерация: ${current_product?.moderationStatus.title}/n`,
+                        `Цена: ${NumReplace((current_product?.price||'0')+'')} сум/n`,
                     ])
 
                     const buttons:any[] = []
