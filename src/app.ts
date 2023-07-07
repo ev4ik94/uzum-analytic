@@ -108,9 +108,22 @@ class Bot{
 
 
                 if(!is_activate?.status){
+                    //@ts-ignore
+                    const text = ctx.update?.message?.text
+                    const commands = ['/start', '/cabinet']
 
-                   // await UpdateService.offSubscriptionsEvents('check_push_notify')
-                    return await ctx.replyWithHTML(is_activate.message)
+                    //@ts-ignore
+                    const callback = ctx.update?.callback_query?.data || ''
+                    const callback_query = ['support', 'directory']
+
+                    if(callback_query.includes(callback)) {
+                        await next()
+                    }else if(commands.includes(text)){
+                        await next()
+                    }else{
+                        return await ctx.replyWithHTML(is_activate.message)
+                    }
+
                 }
 
 
