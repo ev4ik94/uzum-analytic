@@ -227,6 +227,8 @@ class Bot{
                 username: user.username||''
             })
 
+            await this.bot.telegram.sendMessage('@useller_support', `Пользователь Авторизовался/nUsername: ${user.username}/nuserId: ${user.id}`)
+
 
 
             try{

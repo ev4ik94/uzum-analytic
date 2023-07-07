@@ -1,6 +1,7 @@
 import {IStateManager} from "../config/config.interface";
 import {Statuses, Users} from "../models";
 import {Op} from 'sequelize'
+import {ApiError} from "../utils/ErrorHandler";
 
 const fetch = require('node-fetch')
 
@@ -84,6 +85,8 @@ export  default class PermissionsService{
             const user_find = await Users.findOne({where:{userId:data.userId}})
 
             if(!user_find) await Users.create(data_create)
+
+
 
             this.state.setIsActivate({
                 status: true,
