@@ -165,7 +165,8 @@ class Bot{
             res.send('HELLO I`m work')
         })
         app.get(`/users`, async(req:Request, res:Response)=>{
-            const {search, status} = req.params
+            const {search, status} = req.query
+            console.log(req)
             let users:any = {}
             if(search){
                 users = await PermissionServiceData.searchUser(search)
