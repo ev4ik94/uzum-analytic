@@ -3,6 +3,7 @@ import {IStateManager} from "../config/config.interface";
 const fetch = require('node-fetch')
 import {IOrders} from '../context/context.interface'
 import AuthenticatedService from "./authenticated.service";
+import {ApiError} from "../utils/ErrorHandler";
 
 
 const AuthService = new AuthenticatedService()
@@ -19,9 +20,10 @@ export  default class OrdersService{
         try{
             const {token, userId, shops} = ctx.session
             const orders_uzum = await this.getOrders({status: 'ALL', ctx, shopId: undefined, token, page:'1', size: 200})
-            const {orderItems} = orders_uzum
+            const orderItems = orders_uzum?.orderItems||[]
 
-            const orders_with_shop = orderItems.map((item:any)=>{
+
+            const orders_with_shop = (orderItems||[]).map((item:any)=>{
                 const shop_info = shops.find((sho:any)=>sho.id===item.shopId)
                 return{
                     ...item,
@@ -68,10 +70,16 @@ export  default class OrdersService{
 
 
             if(!response_orders.ok) {
-                if(response_orders.stat===401){
+
+                if(response_orders.status===401){
                     await AuthService.refreshToken(data.ctx)
+                }else{
+                    await data.ctx.telegram.sendMessage('@cacheErrorBot', ApiError.errorMessageFormatter(data.ctx, `URL: ${response_orders.url} STATUS: ${response_orders.status} USER_ID: ${data.ctx.session.userId} TEXT: ${response_orders.statusText}`))
+                    return
                 }
-                throw new Error(`URL: ${response_orders.url} STATUS: ${response_orders.status} TEXT: ${response_orders.statusText}`)
+
+                //throw new Error(`URL: ${response_orders.url} STATUS: ${response_orders.status} TEXT: ${response_orders.statusText}`)
+
             }
 
 
@@ -109,6 +117,7 @@ export  default class OrdersService{
 
 
         }catch (err:any){
+            await data.ctx.telegram.sendMessage('@cacheErrorBot', ApiError.errorMessageFormatter(data.ctx, JSON.stringify(err)))
             throw new Error(err)
         }
     }
@@ -124,197 +133,146 @@ export  default class OrdersService{
             const orders_uzum = await this.getOrders({status: 'ALL', ctx, shopId: undefined, token, page:'1', size: 200})
             let is_notified = false
 
-            let orderItems = orders_uzum.orderItems
+            let orderItems = orders_uzum?.orderItems || []
 
-            if(userId===424705333||userId===1692592){
-                orderItems.push({
-                    amount:1,
-                    amountReturns:0,
-                    cancelled:null,
-                    comment:null,
-                    commission:22350,
-                    date:1687189699403,
-                    dateIssued:null,
-                    id:8039703,
-                    orderId:3769471,
-                    productId:441691,
-                    productImage:{
-                        photo: {
-                            480:
-                                {
-                                    high: "https://images.uzum.uz/chf9f6tenntd8rf9a700/t_product_540_high.jpg"
-                                }
+            if(orders_uzum){
+                // if(date_t<date){
+                //     orderItems.push({
+                //         amount:1,
+                //         amountReturns:0,
+                //         cancelled:null,
+                //         comment:null,
+                //         commission:22350,
+                //         date:1687189699403,
+                //         dateIssued:null,
+                //         id:8039703,
+                //         orderId:3769471,
+                //         productId:441691,
+                //         productImage:{
+                //             photo: {
+                //                 480:
+                //                     {
+                //                         high: "https://images.uzum.uz/chf9f6tenntd8rf9a700/t_product_540_high.jpg"
+                //                     }
+                //             }
+                //         },
+                //         productTitle:"Футболка женская укороченная оверсайз",
+                //         purchasePrice:79500,
+                //         returnCause:null,
+                //         sellPrice:149000,
+                //         sellerProfit:126650,
+                //         shopId:11921,
+                //         skuTitle:"REDFOXY-RFTOP-ГОЛУБ-M",
+                //         status:"PROCESSING",
+                //         withdrawnProfit:0
+                //     })
+                // }
+
+
+
+                orderItems = (orderItems||[]).map((item:any)=>{
+                    const shop_info = shops.find((sho:any)=>sho.id===item.shopId)
+                    return{
+                        ...item,
+                        shop: {
+                            title: shop_info.shopTitle,
+                            id:  shop_info.id
                         }
-                    },
-                    productTitle:"Футболка женская укороченная оверсайз",
-                    purchasePrice:79500,
-                    returnCause:null,
-                    sellPrice:149000,
-                    sellerProfit:126650,
-                    shopId:11921,
-                    skuTitle:"REDFOXY-RFTOP-ГОЛУБ-M",
-                    status:"PROCESSING",
-                    withdrawnProfit:0
-                })
-                orderItems.push({
-                    amount:1,
-                    amountReturns:0,
-                    cancelled:null,
-                    comment:null,
-                    commission:22350,
-                    date:1687189699403,
-                    dateIssued:null,
-                    id:8039702,
-                    orderId:3769471,
-                    productId:424094,
-                    productImage:{
-                        photo: {
-                            480:
-                                {
-                                    high: "https://images.uzum.uz/chek4vcvutv6po2iic8g/t_product_540_high.jpg"
-
-                                }
-                        }
-                    },
-                    productTitle:"Женские лосины утягивающие в рубчик",
-                    purchasePrice:79500,
-                    returnCause:null,
-                    sellPrice:149000,
-                    sellerProfit:126650,
-                    shopId:11921,
-                    skuTitle:"REDFOXY-RFLSBLA-СЕРЫЙ-M",
-                    status:"PROCESSING",
-                    withdrawnProfit:0
-                })
-                orderItems.push({
-                    amount:1,
-                    amountReturns:0,
-                    cancelled:null,
-                    comment:null,
-                    commission:22350,
-                    date:1687189699403,
-                    dateIssued:null,
-                    id:8039701,
-                    orderId:3769471,
-                    productId:441691,
-                    productImage:{
-                        photo: {
-                            480:
-                                {
-                                    high: "https://images.uzum.uz/chf9f6tenntd8rf9a700/t_product_540_high.jpg"
-                                }
-                        }
-                    },
-                    productTitle:"Футболка женская укороченная оверсайз",
-                    purchasePrice:79500,
-                    returnCause:null,
-                    sellPrice:149000,
-                    sellerProfit:126650,
-                    shopId:11921,
-                    skuTitle:"REDFOXY-RFTOP-ГОЛУБ-M",
-                    status:"PROCESSING",
-                    withdrawnProfit:0
-                })
-            }
-
-
-
-            orderItems = orderItems.map((item:any)=>{
-                const shop_info = shops.find((sho:any)=>sho.id===item.shopId)
-                return{
-                    ...item,
-                    shop: {
-                        title: shop_info.shopTitle,
-                        id:  shop_info.id
-                    }
-
-                }
-            })
-
-
-
-
-            let notify_data:any = []
-
-
-            if(orders&&(orders.length&&orderItems.length)){
-
-                const order_ids = orders.map((item:any)=>item.id)
-                const order_ids_uzum = orderItems.map((item:any)=>item.id)
-
-                for(let i=0; i<order_ids_uzum.length; i++){
-                    const data_n:any = {}
-                    if(!order_ids.includes(order_ids_uzum[i])){
-                        let newOrder = orderItems.find((order:IOrders)=>order.id===order_ids_uzum[i])
-
-                        this.state.setOrders([...this.state.getOrders(userId), newOrder], userId)
-                        is_notified = true
-                        data_n['type'] = 'new_order'
-                        data_n['order'] = newOrder
-                        notify_data.push(data_n)
 
                     }
-                }
+                })
 
 
-                for(let k=0; k<orders.length;k++){
-                    const data_n:any = {}
-                    let elem = orderItems.find((item:IOrders)=>item.id===orders[k].id)
-
-                    if(elem){
 
 
-                        if(elem.status!==orders[k].status){
-                            data_n['type'] = 'change_status'
-                            data_n['order'] = elem
-                            notify_data.push(data_n)
+                let notify_data:any = []
+
+
+                if((orders&&orderItems)&&(orders.length&&orderItems.length)){
+
+                    const order_ids = (orders||[]).map((item:any)=>item.id)
+                    const order_ids_uzum = (orders||[]).map((item:any)=>item.id)
+
+                    for(let i=0; i<order_ids_uzum.length; i++){
+                        const data_n:any = {}
+                        if(!order_ids.includes(order_ids_uzum[i])){
+
+                            let newOrder = orderItems.find((order:IOrders)=>order.id===order_ids_uzum[i])
+
+                            this.state.setOrders([...this.state.getOrders(userId), newOrder], userId)
                             is_notified = true
+                            data_n['type'] = 'new_order'
+                            data_n['order'] = newOrder
+                            notify_data.push(data_n)
 
-                            this.state.setOrders(this.state.getOrders(userId).map((item:IOrders)=>{
-                                if(item.orderId===elem.orderId){
-                                    if(elem.status==='CANCELED'){
-                                        return {
-                                            ...item,
-                                            ...elem
+
+                        }
+                    }
+
+
+                    for(let k=0; k<orders.length;k++){
+                        const data_n:any = {}
+                        let elem = orderItems.find((item:IOrders)=>item.id===orders[k].id)
+
+                        if(elem){
+
+
+                            if(elem.status!==orders[k].status){
+                                data_n['type'] = 'change_status'
+                                data_n['order'] = elem
+                                notify_data.push(data_n)
+                                is_notified = true
+
+                                this.state.setOrders(this.state.getOrders(userId).map((item:IOrders)=>{
+                                    if(item.orderId===elem.orderId){
+                                        if(elem.status==='CANCELED'){
+                                            return {
+                                                ...item,
+                                                ...elem
+                                            }
+                                        }else{
+                                            return {
+                                                ...item,
+                                                ...elem
+                                            }
                                         }
-                                    }else{
+                                    }
+
+                                    return item
+                                }), userId)
+
+
+                            }else if(elem.status!=='CANCELED'&&+elem.dateIssued!==+orders[k].dateIssued){
+                                data_n['type'] = 'change_date'
+                                data_n['order'] = elem
+                                notify_data.push(data_n)
+                                is_notified = true
+
+                                this.state.setOrders(this.state.getOrders(userId).map((item:IOrders)=>{
+                                    if(item.orderId===elem.orderId){
                                         return {
                                             ...item,
                                             ...elem
                                         }
                                     }
-                                }
 
-                                return item
-                            }), userId)
-
-
-                        }else if(elem.status!=='CANCELED'&&+elem.dateIssued!==+orders[k].dateIssued){
-                            data_n['type'] = 'change_date'
-                            data_n['order'] = elem
-                            notify_data.push(data_n)
-                            is_notified = true
-
-                            this.state.setOrders(this.state.getOrders(userId).map((item:IOrders)=>{
-                                if(item.orderId===elem.orderId){
-                                    return {
-                                        ...item,
-                                        ...elem
-                                    }
-                                }
-
-                                return item
-                            }), userId)
+                                    return item
+                                }), userId)
+                            }
                         }
                     }
+
+
+                }else {
+                    this.state.setOrders(orderItems, userId)
                 }
 
-
-            }else {
-                this.state.setOrders(orderItems, userId)
+                if(is_notified) return notify_data
             }
 
-            if(is_notified) return notify_data
+
+
+
 
             return false
 

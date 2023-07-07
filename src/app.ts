@@ -56,7 +56,7 @@ class Bot{
         this.bot.use(async(ctx, next)=>{
 
 
-            if(ctx.session.token){
+            if(ctx?.session?.token){
 
 
                 await AuthService.checkToken(ctx)
@@ -165,9 +165,24 @@ class Bot{
             res.send('HELLO I`m work')
         })
         app.get(`/users`, async(req:Request, res:Response)=>{
-            const users = await PermissionServiceData.getUsersAll()
+            const {search, status} = req.params
+            let users:any = {}
+            if(search){
+                users = await PermissionServiceData.searchUser(search)
+            }else if(status){
+                users = await PermissionServiceData.sortUser(status)
+            }else{
+                users = await PermissionServiceData.getUsersAll()
+            }
+
             res.status(200).json(users)
         })
+        app.get(`/users/search`, async(req:Request, res:Response)=>{
+            const {search} = req.params
+            const result = await PermissionServiceData.searchUser(search)
+            res.status(200).json('result')
+        })
+
         app.get(`/users/:id`, async(req:Request, res:Response)=>{
             const {id} = req.params
             const user = await PermissionServiceData.getUser(+id)
@@ -305,9 +320,9 @@ class Bot{
 
 
 
-        for(let chatId of chat_ids){
-            this.bot.telegram.sendMessage(chatId, '<strong>📢 Были добавлены обновления:</strong>\n\n \nДля продолжения работы с ботом \nнеобходимо перезапустить его\n<strong><a href="https://t.me/uselleruz_bot?start=restart">Перезапуск</a></strong>', {parse_mode: 'HTML'})
-        }
+        // for(let chatId of chat_ids){
+        //     this.bot.telegram.sendMessage(chatId, '<strong>📢 Были добавлены обновления:</strong>\n\n \nДля продолжения работы с ботом \nнеобходимо перезапустить его\n<strong><a href="https://t.me/uselleruz_bot?start=restart">Перезапуск</a></strong>', {parse_mode: 'HTML'})
+        // }
 
 
 

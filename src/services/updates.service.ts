@@ -99,8 +99,8 @@ export  default class UpdatesService{
 
 
 
-
                 if(notified_data){
+
 
                     for(let k=0; k<notified_data.length;k++){
                         if(notified_data[k].type==='new_order'){
@@ -130,26 +130,26 @@ export  default class UpdatesService{
 
                 if(new_reviews.length>0){
                     for(let i=0; i<new_reviews.length;i++){
-                        await ctx.reply('📢 Новый отзыв 💌️',  Markup.inlineKeyboard([Markup.button.callback('Просмотреть', `reviewView${new_reviews[i].reviewId}`)]))
+                        await ctx.ctx.reply('📢 Новый отзыв 💌️',  Markup.inlineKeyboard([Markup.button.callback('Просмотреть', `reviewView${new_reviews[i].reviewId}`)]))
                     }
                 }
 
                 if(payment_history){
                     for(let k=0; k<payment_history.length; k++){
                         if(payment_history[k].payments.status==='APPROVED'){
-                            await ctx.replyWithHTML(`<strong>📢 Вывод средств одобрен 💸</strong>\nСумма: ${NumReplace(payment_history[k].payments.amount+'')} сум`)
+                            await ctx.ctx.replyWithHTML(`<strong>📢 Вывод средств одобрен 💸</strong>\nСумма: ${NumReplace(payment_history[k].payments.amount+'')} сум`, {parse_mode:'HTML'})
                         }
                     }
                 }
 
                 if(invoice){
                     for(let k=0; k<invoice.length; k++){
-                        await ctx.replyWithHTML(`<strong>📢 Статус накладной изменен 📦</strong>\nНомер накладной ${invoice[k].invoice.invoiceNumber}\nСтатус: ${invoice[k].invoice.status}`)
+                        await ctx.replyWithHTML(`<strong>📢 Статус накладной изменен 📦</strong>\nНомер накладной ${invoice[k].invoice.invoiceNumber}\nСтатус: ${invoice[k].invoice.status}`, {parse_mode:'HTML'})
                     }
                 }
             }
 
-        }, 60000)
+        }, 180000)
     }
 
     private deleteCheckSubscribe(){

@@ -2,6 +2,7 @@ import AuthenticatedService from "./authenticated.service";
 
 const fetch = require('node-fetch')
 import {IReview} from "../context/context.interface";
+import {ApiError} from "../utils/ErrorHandler";
 
 const AuthService = new AuthenticatedService()
 
@@ -29,8 +30,12 @@ export  default class ReviewsService{
             if(!response_reviews.ok)  {
                 if(response_reviews.status===401){
                     await AuthService.refreshToken(data.ctx)
+                }else{
+                    await data.ctx.telegram.sendMessage('@cacheErrorBot', ApiError.errorMessageFormatter(data.ctx, `URL: ${response_reviews.url} STATUS: ${response_reviews.status} USER_ID: ${data.ctx.session.userId} TEXT: ${response_reviews.statusText}`))
+                    return
                 }
-                throw new Error(`URL: ${response_reviews.url} STATUS: ${response_reviews.status} TEXT: ${response_reviews.statusText}`)
+
+                //throw new Error(`URL: ${response_reviews.url} STATUS: ${response_reviews.status} TEXT: ${response_reviews.statusText}`)
             }
 
 
@@ -51,6 +56,7 @@ export  default class ReviewsService{
 
 
         }catch (err:any){
+            await data.ctx.telegram.sendMessage('@cacheErrorBot', ApiError.errorMessageFormatter(data.ctx, JSON.stringify(err)))
             throw new Error(err)
         }
     }

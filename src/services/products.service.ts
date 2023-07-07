@@ -1,5 +1,4 @@
 import {IAuth, IConfig} from "../config/config.interface";
-import {Markup} from "telegraf";
 const fetch = require('node-fetch')
 
 
@@ -17,33 +16,11 @@ export  default class ProductsService{
                 headers: {'Authorization': `Bearer ${data.token}`, 'accept-language': 'ru-RU'}
             });
 
-            if(!response_products.ok) throw new Error(`URL: ${response_products.url} STATUS: ${response_products.status} TEXT: ${response_products.statusText}`)
+            if(!response_products.ok) {
+                 throw new Error(`URL: ${response_products.url} STATUS: ${response_products.status} TEXT: ${response_products.statusText}`)
+            }
 
             const body:any = await response_products.json();
-
-
-            // const buttons = body.productList.map((item:any)=>{
-            //     return Markup.button.callback(item.title, `productId${item.productId}`)
-            // })
-            //
-            //
-            //
-            // let arr = [],
-            //     arr1 = [];
-            //
-            // for(let i=0; i<buttons.length; i++){
-            //
-            //     arr1.push(buttons[i])
-            //
-            //     if(!(i%3)&&i!==0){
-            //         arr.push(arr1)
-            //         arr1= []
-            //     }else if(i===(buttons.length-1)){
-            //         arr.push(arr1)
-            //         arr1= []
-            //     }
-            // }
-
 
 
             return body.productList

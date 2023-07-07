@@ -235,6 +235,45 @@ export  default class PermissionsService{
     }
 
 
+    async searchUser(searchParam:string){
+        try{
+
+            const search_result = await Users.findAndCountAll({where:{
+                    [Op.like]: [
+                        { userId: `%${searchParam}` },
+                        { username: `%${searchParam}` }
+                    ]
+                }})
+
+            console.log(search_result)
+
+            //if(!user) throw new Error('Такого пользователя не существует')
+
+        }catch(err:any){
+            throw new Error(err)
+        }
+
+    }
+
+    async sortUser(param:string){
+        try{
+
+            const search_result = await Users.findAndCountAll({where:{
+                    status: param
+                }})
+
+            console.log(search_result)
+
+            //if(!user) throw new Error('Такого пользователя не существует')
+
+
+        }catch(err:any){
+            throw new Error(err)
+        }
+
+    }
+
+
     async checkUserPermissions(userId:number){
         try{
             const find_user = await Users.findOne({where: {userId:userId}})

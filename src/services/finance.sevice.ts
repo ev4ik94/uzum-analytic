@@ -2,6 +2,9 @@ import {IStateManager} from "../config/config.interface";
 const fetch = require('node-fetch')
 import {ApiError} from "../utils/ErrorHandler";
 import {IOrders} from "../context/context.interface";
+import AuthenticatedService from "./authenticated.service";
+
+const AuthService = new AuthenticatedService()
 
 export  default class FinanceSevice {
 
@@ -47,12 +50,23 @@ export  default class FinanceSevice {
                 headers: {'Authorization': `Bearer ${token}`, 'accept-language': 'ru-RU'}
             })
 
-            if(!invoice_response.ok) throw new Error(`URL: ${invoice_response.url} STATUS: ${invoice_response.status} TEXT: ${invoice_response.statusText}`)
+            if(!invoice_response.ok) {
+                if(invoice_response.status===401){
+                    await AuthService.refreshToken(ctx)
+                }else{
+                    await ctx.telegram.sendMessage('@cacheErrorBot', ApiError.errorMessageFormatter(ctx, `URL: ${invoice_response.url} STATUS: ${invoice_response.status} USER_ID: ${ctx.session.userId} TEXT: ${invoice_response.statusText}`))
+                    return
+                }
+
+                //throw new Error(`URL: ${invoice_response.url} STATUS: ${invoice_response.status} TEXT: ${invoice_response.statusText}`)
+
+            }
 
             return  await invoice_response.json()
 
         }catch(err:any){
-            throw new Error(err)
+            await ctx.telegram.sendMessage('@cacheErrorBot', ApiError.errorMessageFormatter(ctx, JSON.stringify(err)))
+            //throw new Error(err)
         }
     }
 
@@ -67,6 +81,10 @@ export  default class FinanceSevice {
             })
 
             if(!request_history_response.ok) {
+                if(request_history_response.status===401){
+                    await AuthService.refreshToken(ctx)
+                }
+
                 return undefined
             }
 
@@ -139,7 +157,8 @@ export  default class FinanceSevice {
             return false
 
         }catch (err:any){
-            throw new Error(err)
+            await ctx.telegram.sendMessage('@cacheErrorBot', ApiError.errorMessageFormatter(ctx, JSON.stringify(err)))
+            //throw new Error(err)
         }
     }
 
@@ -202,7 +221,8 @@ export  default class FinanceSevice {
             return false
 
         }catch (err:any){
-            throw new Error(err)
+            await ctx.telegram.sendMessage('@cacheErrorBot', ApiError.errorMessageFormatter(ctx, JSON.stringify(err)))
+            //throw new Error(err)
         }
     }
 
