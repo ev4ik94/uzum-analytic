@@ -240,13 +240,9 @@ export  default class PermissionsService{
 
             const search_result = await Users.findAndCountAll({where:{
                     [Op.or]: [
-                        { username: {[Op.like]: `%${searchParam}`} }
+                        { username: {[Op.like]: `%${searchParam}%`} }
                     ]
                 }})
-
-            console.log(search_result)
-
-            //if(!user) throw new Error('Такого пользователя не существует')
 
             return search_result
 
@@ -280,10 +276,7 @@ export  default class PermissionsService{
                     status: param
                 }})
 
-            console.log(search_result)
-
-            //if(!user) throw new Error('Такого пользователя не существует')
-
+            return search_result
 
         }catch(err:any){
             throw new Error(err)
