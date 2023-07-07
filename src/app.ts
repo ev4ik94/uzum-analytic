@@ -166,7 +166,7 @@ class Bot{
         })
         app.get(`/users`, async(req:Request, res:Response)=>{
             const {search, status} = req.query
-            console.log(req)
+
             let users:any = {}
             if(search){
                 users = await PermissionServiceData.searchUser(search)
@@ -178,10 +178,10 @@ class Bot{
 
             res.status(200).json(users)
         })
-        app.get(`/users/search`, async(req:Request, res:Response)=>{
-            const {search} = req.params
-            const result = await PermissionServiceData.searchUser(search)
-            res.status(200).json('result')
+        app.get(`/users/:userId`, async(req:Request, res:Response)=>{
+            const {userId} = req.params
+            const result = await PermissionServiceData.searchUserByUserId(+userId)
+            res.status(200).json(result)
         })
 
         app.get(`/users/:id`, async(req:Request, res:Response)=>{
