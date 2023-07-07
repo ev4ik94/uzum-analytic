@@ -227,7 +227,7 @@ class Bot{
                 username: user.username||''
             })
 
-            await this.bot.telegram.sendMessage('@useller_support', `Пользователь Авторизовался/nUsername: ${user.username}/nuserId: ${user.id}`)
+            await this.bot.telegram.sendMessage('@useller_support', `Пользователь Авторизовался\nUsername: ${user.username}\nuserId: ${user.id}`)
 
 
 
@@ -261,7 +261,6 @@ class Bot{
         app.post('/support-data', async(req:Request, res:Response)=>{
             const {query_id, phone_number, content, tg_data, images} = req.body
 
-            console.log(req.body)
 
             try{
                 const data_parse = JSON.parse(tg_data)
@@ -332,9 +331,9 @@ class Bot{
 
 
 
-        // for(let chatId of chat_ids){
-        //     this.bot.telegram.sendMessage(chatId, '<strong>📢 Были добавлены обновления:</strong>\n\n \nДля продолжения работы с ботом \nнеобходимо перезапустить его\n<strong><a href="https://t.me/uselleruz_bot?start=restart">Перезапуск</a></strong>', {parse_mode: 'HTML'})
-        // }
+        for(let chatId of chat_ids){
+            this.bot.telegram.sendMessage(chatId, '<strong>📢 Были добавлены обновления:</strong>\n\n \nДля продолжения работы с ботом \nнеобходимо перезапустить его\n<strong><a href="https://t.me/uselleruz_bot?start=restart">Перезапуск</a></strong>', {parse_mode: 'HTML'})
+        }
 
 
 
