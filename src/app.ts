@@ -116,7 +116,7 @@ class Bot{
                     const callback = ctx.update?.callback_query?.data || ''
                     const callback_query = ['support', 'directory', 'sign-out', 'signoutYES', 'signoutNO']
 
-                    if(!callback_query.includes(callback)||!commands.includes(text)) {
+                    if(!callback_query.includes(callback)&&!commands.includes(text)) {
                         return await ctx.replyWithHTML(is_activate.message)
                     }
 
