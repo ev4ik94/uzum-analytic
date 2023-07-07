@@ -235,7 +235,7 @@ export  default class PermissionsService{
     }
 
 
-    async searchUser(searchParam:string){
+    async searchUser(searchParam:any){
         try{
 
             const search_result = await Users.findAndCountAll({where:{
@@ -255,7 +255,7 @@ export  default class PermissionsService{
 
     }
 
-    async sortUser(param:string){
+    async sortUser(param:any){
         try{
 
             const search_result:any = await Users.findAndCountAll({where:{
