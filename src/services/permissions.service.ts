@@ -239,9 +239,9 @@ export  default class PermissionsService{
         try{
 
             const search_result = await Users.findAndCountAll({where:{
-                    [Op.like]: [
-                        { userId: `%${searchParam}` },
-                        { username: `%${searchParam}` }
+                    [Op.or]: [
+                        { userId: {[Op.like]: `%${searchParam}`} },
+                        { username: {[Op.like]: `%${searchParam}`} }
                     ]
                 }})
 
@@ -258,7 +258,7 @@ export  default class PermissionsService{
     async sortUser(param:string){
         try{
 
-            const search_result = await Users.findAndCountAll({where:{
+            const search_result:any = await Users.findAndCountAll({where:{
                     status: param
                 }})
 
@@ -276,7 +276,7 @@ export  default class PermissionsService{
 
     async checkUserPermissions(userId:number){
         try{
-            const find_user = await Users.findOne({where: {userId:userId}})
+            const find_user:any = await Users.findOne({where: {userId:userId}})
 
             if(!find_user) return false
 
