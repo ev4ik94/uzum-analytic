@@ -227,7 +227,7 @@ class Bot{
                 username: user.username||''
             })
 
-            await this.bot.telegram.sendMessage('@useller_support', `Пользователь Авторизовался\nUsername: ${user.username}\nuserId: ${user.id}`)
+
 
 
 
@@ -238,7 +238,7 @@ class Bot{
                     title: 'Успешно',
                     input_message_content: {message_text: 'Вы успешно авторизовались'}
                 })
-
+                await this.bot.telegram.sendMessage('@useller_support', `Пользователь Авторизовался\nUsername: ${user.username}\nuserId: ${user.id}`)
                 return res.status(200).json({})
             }catch (err){
                 await this.bot.telegram.answerWebAppQuery(query_id, {
@@ -346,6 +346,7 @@ class Bot{
 
         this.bot.catch((err:any) => {
             console.log(err)
+            this.bot.telegram.sendMessage('@cacheBotError', err)
 
 
         })

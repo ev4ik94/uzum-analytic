@@ -128,16 +128,16 @@ export  default class UpdatesService{
 
                 }
 
-                if(new_reviews.length>0){
+                if(new_reviews&&new_reviews.length>0){
                     for(let i=0; i<new_reviews.length;i++){
-                        await ctx.ctx.reply('📢 Новый отзыв 💌️',  Markup.inlineKeyboard([Markup.button.callback('Просмотреть', `reviewView${new_reviews[i].reviewId}`)]))
+                        await ctx.reply('📢 Новый отзыв 💌️',  Markup.inlineKeyboard([Markup.button.callback('Просмотреть', `reviewView${new_reviews[i].reviewId}`)]))
                     }
                 }
 
                 if(payment_history){
                     for(let k=0; k<payment_history.length; k++){
                         if(payment_history[k].payments.status==='APPROVED'){
-                            await ctx.ctx.replyWithHTML(`<strong>📢 Вывод средств одобрен 💸</strong>\nСумма: ${NumReplace(payment_history[k].payments.amount+'')} сум`, {parse_mode:'HTML'})
+                            await ctx.replyWithHTML(`<strong>📢 Вывод средств одобрен 💸</strong>\nСумма: ${NumReplace(payment_history[k].payments.amount+'')} сум`, {parse_mode:'HTML'})
                         }
                     }
                 }

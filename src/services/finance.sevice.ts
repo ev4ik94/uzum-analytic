@@ -53,6 +53,7 @@ export  default class FinanceSevice {
             if(!invoice_response.ok) {
                 if(invoice_response.status===401){
                     await AuthService.refreshToken(ctx)
+                    return
                 }else{
                     await ctx.telegram.sendMessage('@cacheErrorBot', ApiError.errorMessageFormatter(ctx, `URL: ${invoice_response.url} STATUS: ${invoice_response.status} USER_ID: ${ctx.session.userId} TEXT: ${invoice_response.statusText}`))
                     return
@@ -65,7 +66,7 @@ export  default class FinanceSevice {
             return  await invoice_response.json()
 
         }catch(err:any){
-            await ctx.telegram.sendMessage('@cacheErrorBot', ApiError.errorMessageFormatter(ctx, JSON.stringify(err)))
+            //await ctx.telegram.sendMessage('@cacheErrorBot', ApiError.errorMessageFormatter(ctx, JSON.stringify(err)))
             //throw new Error(err)
         }
     }
@@ -157,7 +158,7 @@ export  default class FinanceSevice {
             return false
 
         }catch (err:any){
-            await ctx.telegram.sendMessage('@cacheErrorBot', ApiError.errorMessageFormatter(ctx, JSON.stringify(err)))
+            await ctx.telegram.sendMessage('@cacheBotError', ApiError.errorMessageFormatter(ctx, JSON.stringify(err)))
             //throw new Error(err)
         }
     }
@@ -221,7 +222,7 @@ export  default class FinanceSevice {
             return false
 
         }catch (err:any){
-            await ctx.telegram.sendMessage('@cacheErrorBot', ApiError.errorMessageFormatter(ctx, JSON.stringify(err)))
+            //await ctx.telegram.sendMessage('@cacheBotError', ApiError.errorMessageFormatter(ctx, JSON.stringify(err)))
             //throw new Error(err)
         }
     }

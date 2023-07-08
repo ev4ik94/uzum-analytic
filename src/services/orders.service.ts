@@ -73,8 +73,9 @@ export  default class OrdersService{
 
                 if(response_orders.status===401){
                     await AuthService.refreshToken(data.ctx)
+                    return
                 }else{
-                    await data.ctx.telegram.sendMessage('@cacheErrorBot', ApiError.errorMessageFormatter(data.ctx, `URL: ${response_orders.url} STATUS: ${response_orders.status} USER_ID: ${data.ctx.session.userId} TEXT: ${response_orders.statusText}`))
+                    //await data.ctx.telegram.sendMessage('@cacheBotError', ApiError.errorMessageFormatter(data.ctx, `URL: ${response_orders.url} STATUS: ${response_orders.status} USER_ID: ${data.ctx.session.userId} TEXT: ${response_orders.statusText}`))
                     return
                 }
 
@@ -117,7 +118,7 @@ export  default class OrdersService{
 
 
         }catch (err:any){
-            await data.ctx.telegram.sendMessage('@cacheErrorBot', ApiError.errorMessageFormatter(data.ctx, JSON.stringify(err)))
+            //await data.ctx.telegram.sendMessage('@cacheBotError', ApiError.errorMessageFormatter(data.ctx, JSON.stringify(err)))
             throw new Error(err)
         }
     }
@@ -133,44 +134,11 @@ export  default class OrdersService{
             const orders_uzum = await this.getOrders({status: 'ALL', ctx, shopId: undefined, token, page:'1', size: 200})
             let is_notified = false
 
-            let orderItems = orders_uzum?.orderItems || []
+            let orderItems:any[] = orders_uzum?.orderItems || []
 
             if(orders_uzum){
-                // if(date_t<date){
-                //     orderItems.push({
-                //         amount:1,
-                //         amountReturns:0,
-                //         cancelled:null,
-                //         comment:null,
-                //         commission:22350,
-                //         date:1687189699403,
-                //         dateIssued:null,
-                //         id:8039703,
-                //         orderId:3769471,
-                //         productId:441691,
-                //         productImage:{
-                //             photo: {
-                //                 480:
-                //                     {
-                //                         high: "https://images.uzum.uz/chf9f6tenntd8rf9a700/t_product_540_high.jpg"
-                //                     }
-                //             }
-                //         },
-                //         productTitle:"Футболка женская укороченная оверсайз",
-                //         purchasePrice:79500,
-                //         returnCause:null,
-                //         sellPrice:149000,
-                //         sellerProfit:126650,
-                //         shopId:11921,
-                //         skuTitle:"REDFOXY-RFTOP-ГОЛУБ-M",
-                //         status:"PROCESSING",
-                //         withdrawnProfit:0
-                //     })
-                // }
 
-
-
-                orderItems = (orderItems||[]).map((item:any)=>{
+                orderItems = orderItems.map((item:any)=>{
                     const shop_info = shops.find((sho:any)=>sho.id===item.shopId)
                     return{
                         ...item,
@@ -188,10 +156,10 @@ export  default class OrdersService{
                 let notify_data:any = []
 
 
-                if((orders&&orderItems)&&(orders.length&&orderItems.length)){
+                if(orders&&(orders.length&&orderItems.length)){
 
-                    const order_ids = (orders||[]).map((item:any)=>item.id)
-                    const order_ids_uzum = (orders||[]).map((item:any)=>item.id)
+                    const order_ids:any[] = orders.map((item:any)=>item.id)
+                    const order_ids_uzum:any[] = orderItems.map((item:any)=>item.id)
 
                     for(let i=0; i<order_ids_uzum.length; i++){
                         const data_n:any = {}

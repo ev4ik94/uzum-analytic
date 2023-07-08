@@ -30,8 +30,9 @@ export  default class ReviewsService{
             if(!response_reviews.ok)  {
                 if(response_reviews.status===401){
                     await AuthService.refreshToken(data.ctx)
+                    return
                 }else{
-                    await data.ctx.telegram.sendMessage('@cacheErrorBot', ApiError.errorMessageFormatter(data.ctx, `URL: ${response_reviews.url} STATUS: ${response_reviews.status} USER_ID: ${data.ctx.session.userId} TEXT: ${response_reviews.statusText}`))
+                    //await data.ctx.telegram.sendMessage('@cacheBotError', ApiError.errorMessageFormatter(data.ctx, `URL: ${response_reviews.url} STATUS: ${response_reviews.status} USER_ID: ${data.ctx.session.userId} TEXT: ${response_reviews.statusText}`))
                     return
                 }
 
@@ -41,22 +42,22 @@ export  default class ReviewsService{
 
             const body = await response_reviews.json()
 
+            if(body?.payload){
+                const {payload} = body
 
 
-            const {payload} = body
+                payload.forEach((item:IReview)=>{
+                    if(!item.read)  this.reviewMark({token: data.token, reviewId: item.reviewId+''})
+                })
 
-            payload.forEach(async(item:IReview)=>{
-                if(!item.read) await this.reviewMark({token: data.token, reviewId: item.reviewId+''})
-            })
+                return payload
+            }
 
-
-
-            return payload
-
+            return []
 
 
         }catch (err:any){
-            await data.ctx.telegram.sendMessage('@cacheErrorBot', ApiError.errorMessageFormatter(data.ctx, JSON.stringify(err)))
+            //await data.ctx.telegram.sendMessage('@cacheBotError', ApiError.errorMessageFormatter(data.ctx, JSON.stringify(err)))
             throw new Error(err)
         }
     }
