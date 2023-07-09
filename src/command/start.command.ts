@@ -3,6 +3,9 @@ import {Telegraf, Markup} from "telegraf";
 import {IBotContext} from "../context/context.interface";
 import {ApiError} from "../utils/ErrorHandler";
 import {IStateManager} from "../config/config.interface";
+import {translater} from "../utils";
+
+
 
 
 
@@ -17,31 +20,52 @@ export class StartCommand extends Command{
 
     handle() {
         const regexp_signout = new RegExp(/^signout/)
+        const regexp_language = new RegExp(/^lang/)
         this.bot.start(async(ctx)=>{
 
 
             if(!ctx.session.token){
+                const buttons = Markup.inlineKeyboard([
+                    [Markup.button.callback('Русский 🇷🇺', 'langRU'), Markup.button.callback('O`zbek 🇺🇿', 'langUZ')]
+                ])
+                return await ctx.reply('Выберите язык', buttons)
 
-                // if(ctx.message.from.username==='eva_4eva') {
-                //     ctx.session.token = 'ZvF2QEdLAhGxEOXeM3yO0KKmOOM'
-                //
-                // }
-
-                return await ctx.reply('Для начала работы с ботом, вам необходимо авторизоваться', {
-                    reply_markup:{
-                        inline_keyboard: [
-                            [{text: 'Авторизоваться', web_app:{url:process.env.FRONT_URL!}}]
-                        ]
-                    },
-
-                })
 
             }else{
+                translater('ru', '')
                 //await ctx.replyWithHTML('❗️В обновленной версии были исправлены\nТехнические неполадки с работой 📢 <b>Уведомлений</b>\n\nEсли вы сталкиваетесь с ошибками в работе бота, просим уведомлять нас через службу поддержки или обратится к <a href="https://t.me/manager_useller">Менеджеру</a>')
                 await ctx.replyWithHTML('Бот снова готов работать!')
             }
 
 
+        })
+
+
+        this.bot.action(regexp_language, async(ctx)=>{
+
+            try{
+                const {update} = ctx
+                const {userId} = ctx.session
+
+                //@ts-ignore
+                const data = update.callback_query.data
+                const language = data.replace(regexp_language, '')
+
+                ctx.session.lang = language.toLowerCase()
+
+                if(!ctx.session.token){
+                    return await ctx.reply('Для начала работы с ботом, вам необходимо авторизоваться', {
+                        reply_markup:{
+                            inline_keyboard: [
+                                [{text: 'Авторизоваться', web_app:{url:process.env.FRONT_URL!}}]
+                            ]
+                        },
+
+                    })
+                }
+            }catch (err:any){
+                throw new Error(err)
+            }
         })
 
 

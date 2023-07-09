@@ -26,6 +26,7 @@ export interface ISessionData{
     auth_email: string
     password: string
     userId: string
+    lang: string
     token: string
     refresh_token: string
     auth: boolean

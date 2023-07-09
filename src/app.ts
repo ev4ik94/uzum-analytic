@@ -56,7 +56,10 @@ class Bot{
         this.bot.use(async(ctx, next)=>{
 
 
+
             if(ctx?.session?.token){
+
+
 
 
                 await AuthService.checkToken(ctx)

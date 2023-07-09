@@ -1,4 +1,5 @@
 import moment from "moment";
+const {ru} = require('../translation/index')
 
 export const NumReplace = (n:string) => {
     let parts = n.toString().split(".");
@@ -23,6 +24,10 @@ export const DateFormatter = (date:Date)=>{
     let minutes = `0${date_with_timezone.getMinutes()}`.slice(-2)
 
     return `${date_with_timezone.getDate()} ${month[date_with_timezone.getMonth()]} ${date_with_timezone.getFullYear()} года, ${hours}:${minutes}`
+}
+
+export function translater(language:string, id:string){
+    console.log(ru)
 }
 
 
