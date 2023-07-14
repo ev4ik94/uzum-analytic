@@ -117,7 +117,7 @@ class Bot{
 
                     //@ts-ignore
                     const callback = ctx.update?.callback_query?.data || ''
-                    const callback_query = ['support', 'directory', 'sign-out', 'signoutYES', 'signoutNO']
+                    const callback_query = ['support', 'directory', 'sign-out', 'signoutYES', 'signoutNO', 'language', 'langRU', 'langUZ']
 
                     if(!callback_query.includes(callback)&&!commands.includes(text)) {
                         return await ctx.replyWithHTML(is_activate.message)
@@ -151,7 +151,7 @@ class Bot{
                 }else{
                     //@ts-ignore
                     const callback = ctx.update?.callback_query?.data || ''
-                    const callback_query = ['support', 'directory']
+                    const callback_query = ['support', 'directory', 'language', 'langRU', 'langUZ']
                     if(!callback_query.includes(callback)) return await ctx.reply('Вы не авторизованы')
                 }
             }
@@ -334,9 +334,9 @@ class Bot{
 
 
 
-        for(let chatId of chat_ids){
-            this.bot.telegram.sendMessage(chatId, '<strong>📢 Были добавлены обновления:</strong>\n\n \nДля продолжения работы с ботом \nнеобходимо перезапустить его\n<strong><a href="https://t.me/uselleruz_bot?start=restart">Перезапуск</a></strong>', {parse_mode: 'HTML'})
-        }
+        // for(let chatId of chat_ids){
+        //     this.bot.telegram.sendMessage(chatId, '<strong>📢 Были добавлены обновления:</strong>\n\n \nДля продолжения работы с ботом \nнеобходимо перезапустить его\n<strong><a href="https://t.me/uselleruz_bot?start=restart">Перезапуск</a></strong>', {parse_mode: 'HTML'})
+        // }
 
 
 

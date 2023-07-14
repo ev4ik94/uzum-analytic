@@ -1,5 +1,5 @@
 import moment from "moment";
-const {ru} = require('../translation/index')
+const {ru, uz} = require('../translation/index')
 
 export const NumReplace = (n:string) => {
     let parts = n.toString().split(".");
@@ -27,7 +27,11 @@ export const DateFormatter = (date:Date)=>{
 }
 
 export function translater(language:string, id:string){
-    console.log(ru)
+
+    if(language==='ru')  return ru[id]
+    if(language==='uz')  return uz[id]
+
+
 }
 
 

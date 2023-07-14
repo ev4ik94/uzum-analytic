@@ -44,7 +44,7 @@ export  default class OrdersService{
 
     async getOrders(data:{shopId?:number, token:string, status:string, ctx:any, page?:string, size?:number}){
         try{
-
+            const language:string = data.ctx.session.lang||'ru'
             const {shops} = data.ctx.session
 
             let params:{group:boolean, statuses:string, size: number, page: number} = {
@@ -60,11 +60,11 @@ export  default class OrdersService{
 
             if(data.status==='ALL'){
                 response_orders = await fetch(`${process.env.API}/seller/finance/orders?group=false&size=${params.size}&page=${params.page}${data.shopId?`&shopId=${data.shopId}`:''}`, {
-                    headers: {'Authorization': `Bearer ${data.token}`, 'accept-language': 'ru-RU'}
+                    headers: {'Authorization': `Bearer ${data.token}`, 'accept-language': language==='ru'?'ru-RU':'uz-UZ'}
                 });
             }else{
                 response_orders = await fetch(`${process.env.API}/seller/finance/orders?group=false&size=${params.size}&page=${params.page}&statuses=${params.statuses}${data.shopId?`&shopId=${data.shopId}`:''}`, {
-                    headers: {'Authorization': `Bearer ${data.token}`, 'accept-language': 'ru-RU'}
+                    headers: {'Authorization': `Bearer ${data.token}`, 'accept-language': language==='ru'?'ru-RU':'uz-UZ'}
                 });
             }
 
@@ -126,6 +126,7 @@ export  default class OrdersService{
 
     async notificationOrdersNew(ctx:any){
         try{
+
             const {token, userId, shops} = ctx.session
             const orders = this.state.getOrders(userId)
 

@@ -15,15 +15,15 @@ export  default class ReviewsService{
         try{
 
             let response_reviews:any;
-
+            const language:string = data.ctx.session.lang||'ru'
             if(data.status==='NEW'){
 
                 response_reviews = await fetch(`${process.env.API}/seller/product-reviews?page=0&filter=NEW${data.shopId?`&shopIds=${data.shopId}`:''}&size=20`, {
-                    headers: {'Authorization': `Bearer ${data.token}`, 'accept-language': 'ru-RU'}
+                    headers: {'Authorization': `Bearer ${data.token}`, 'accept-language': language==='ru'?'ru-RU':'uz-UZ'}
                 });
             }else{
                 response_reviews = await fetch(`${process.env.API}/seller/product-reviews?page=0&filter=${data.status}${data.shopId?`&shopIds=${data.shopId}`:''}&size=20`, {
-                    headers: {'Authorization': `Bearer ${data.token}`, 'accept-language': 'ru-RU'}
+                    headers: {'Authorization': `Bearer ${data.token}`, 'accept-language': language==='ru'?'ru-RU':'uz-UZ'}
                 });
             }
 

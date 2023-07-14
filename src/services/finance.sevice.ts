@@ -29,9 +29,10 @@ export  default class FinanceSevice {
 
     static async getFinanceInfo(ctx:any){
         try{
+            const language:string = ctx.session.lang||'ru'
             const {current_shop, token} = ctx.session
             const finance_response = await fetch(`${process.env.API}/seller/finance/statement?shopId=${current_shop}`, {
-                headers: {'Authorization': `Bearer ${token}`, 'accept-language': 'ru-RU'}
+                headers: {'Authorization': `Bearer ${token}`, 'accept-language': language==='ru'?'ru-RU':'uz-UZ'}
             })
 
             if(!finance_response.ok) throw new Error(`URL: ${finance_response.url} STATUS: ${finance_response.status} TEXT: ${finance_response.statusText}`)
@@ -45,9 +46,10 @@ export  default class FinanceSevice {
 
     static async getInvoiceInfo(ctx:any){
         try{
+            const language:string = ctx.session.lang||'ru'
             const {current_shop, token} = ctx.session
             const invoice_response = await fetch(`${process.env.API}/seller/shop/${current_shop}/invoice?page=0&size=20`, {
-                headers: {'Authorization': `Bearer ${token}`, 'accept-language': 'ru-RU'}
+                headers: {'Authorization': `Bearer ${token}`, 'accept-language': language==='ru'?'ru-RU':'uz-UZ'}
             })
 
             if(!invoice_response.ok) {
@@ -55,7 +57,7 @@ export  default class FinanceSevice {
                     await AuthService.refreshToken(ctx)
                     return
                 }else{
-                    await ctx.telegram.sendMessage('@cacheErrorBot', ApiError.errorMessageFormatter(ctx, `URL: ${invoice_response.url} STATUS: ${invoice_response.status} USER_ID: ${ctx.session.userId} TEXT: ${invoice_response.statusText}`))
+                    await ctx.telegram.sendMessage('@cacheBotError', ApiError.errorMessageFormatter(ctx, `URL: ${invoice_response.url} STATUS: ${invoice_response.status} USER_ID: ${ctx.session.userId} TEXT: ${invoice_response.statusText}`))
                     return
                 }
 
@@ -76,9 +78,10 @@ export  default class FinanceSevice {
 
     static async requestHistory(ctx:any, all?:boolean):Promise<{inProcessingCount:number, withdrawList:any[]}|undefined>{
         try{
+            const language:string = ctx.session.lang||'ru'
             const {current_shop, token} = ctx.session
             const request_history_response = await fetch(`${process.env.API}/seller/withdraws/latest-short?count=10${!all?`&shopId=${current_shop}`:''}`, {
-                headers: {'Authorization': `Bearer ${token}`, 'accept-language': 'ru-RU'}
+                headers: {'Authorization': `Bearer ${token}`, 'accept-language': language==='ru'?'ru-RU':'uz-UZ'}
             })
 
             if(!request_history_response.ok) {

@@ -1,9 +1,8 @@
 import {Command} from "./command.class";
 import {Markup, Telegraf} from "telegraf";
-import {IBotContext, IOrders, IResponseProduct} from "../context/context.interface";
+import {IBotContext, IOrders} from "../context/context.interface";
 import OrdersService from "../services/orders.service";
-import {DateFormatter, HTMLFormatter, month, NumReplace} from "../utils";
-import AuthenticatedService from "../services/authenticated.service";
+import {DateFormatter, HTMLFormatter, NumReplace, translater} from "../utils";
 import {IStateManager} from "../config/config.interface";
 import {ApiError} from "../utils/ErrorHandler";
 
@@ -24,15 +23,16 @@ export class OrdersCommand extends Command{
         const action_orders_view_regexp = new RegExp(/^orderView/)
         const action_orders_get = new RegExp(/^(orderpage)|(orderstatus)/)
 
-        const buttons_orders = [
-            Markup.button.callback('В обработке 🕒', `orderstatusPROCESSING`),
-            Markup.button.callback('Одобренные ✅', `orderstatusTO_WITHDRAW`),
-            Markup.button.callback('Вернули ❌', `orderstatusCANCELED`)
-        ]
+
 
         this.bot.hears('/orders', async (ctx)=>{
+            const buttons_orders = [
+                Markup.button.callback(`${translater(ctx.session.lang||'ru', 'PROCESSING_HISTORY')} 🕒`, `orderstatusPROCESSING`),
+                Markup.button.callback(`${translater(ctx.session.lang||'ru', 'SUCCESS_STATUS')} ✅`, `orderstatusTO_WITHDRAW`),
+                Markup.button.callback(`${translater(ctx.session.lang||'ru', 'CANCELED_STATUS_ORDER')} ❌`, `orderstatusCANCELED`)
+            ]
             if(ctx.session.current_shop){
-                await ctx.reply(`Список всех заказов`, Markup.inlineKeyboard(buttons_orders))
+                await ctx.reply(`${translater(ctx.session.lang||'ru', 'LIST_ORDERS')}`, Markup.inlineKeyboard(buttons_orders))
             }
 
         })
@@ -46,7 +46,13 @@ export class OrdersCommand extends Command{
                 const data = update.callback_query.data
                 const orderId = data.replace('orderView', '')
 
+
                 const elem:any = this.state.getOrders(userId).find((item:IOrders)=>+item.id===+orderId)
+
+
+                if(+userId===461310116||+userId===424705333){
+                    await ctx.telegram.sendMessage('@logsUsers', `Запрос: (orderView) ${data}\nОтвет:\n${JSON.stringify(elem||{})}`)
+                }
 
                 if(elem){
                     const date:string = DateFormatter(new Date(elem.date))
@@ -60,42 +66,44 @@ export class OrdersCommand extends Command{
 
                     let message:string = '';
 
+
+
                     if(elem.status==='CANCELED'){
 
                         message+=HTMLFormatter([
-                            `/n/sМагазин: ${elem.shop.title}/s/n`,
-                            `/n/sПричина отказа: ${elem.returnCause || 'Причина не указана'}/s/n`,
-                            `/sКоментарий клиента: ${elem.comment || 'Причина не указана'}/s/n/n`,
-                            `/n/sКол-во товара: ${elem?.amountReturns||' '}/s/n`,
+                            `/n/s${translater(ctx.session.lang||'ru', 'SHOP')}: ${elem.shop.title}/s/n`,
+                            `/n/s${translater(ctx.session.lang||'ru', 'CANCELED_REASON')}: ${elem.returnCause || `${translater(ctx.session.lang||'ru', 'NO_REASON')}`}/s/n`,
+                            `/s${translater(ctx.session.lang||'ru', 'CUSTOMER_COMMENT')}: ${elem.comment || `${translater(ctx.session.lang||'ru', 'NO_REASON')}`}/s/n/n`,
+                            `/n/s${translater(ctx.session.lang||'ru', 'AMOUNT_ITEMS')}: ${elem?.amountReturns||' '}/s/n`,
                             `/bSKU:/b${elem.skuTitle}/n`,
-                            `/bТовар:/b ${elem.productTitle}/n`,
-                            `/bЦена:/b ${NumReplace(elem.sellPrice)} сум/n`,
-                            `/bСумма к выводу:/b ${NumReplace(elem.sellerProfit)} сум/n/n`,
-                            `/bДата заказа:/b ${date}/n`,
-                            `/bДата Отказа:/b ${dateIssue}/n/n`,
+                            `/b${translater(ctx.session.lang||'ru', 'ITEM')}:/b ${elem.productTitle}/n`,
+                            `/b${translater(ctx.session.lang||'ru', 'COST')}:/b ${NumReplace(elem.sellPrice)} сум/n`,
+                            `/b${translater(ctx.session.lang||'ru', 'SELLER_COST')}:/b ${NumReplace(elem.sellerProfit)} сум/n/n`,
+                            `/b${translater(ctx.session.lang||'ru', 'DATE_BUY')}:/b ${date}/n`,
+                            `/b${translater(ctx.session.lang||'ru', 'DATE_CANCELED')}:/b ${dateIssue}/n/n`,
                         ])
 
                     }else if(elem.dateIssued){
                         message+=HTMLFormatter([
-                            `/n/sМагазин: ${elem.shop.title}/s/n`,
+                            `/n/s${translater(ctx.session.lang||'ru', 'SHOP')}: ${elem.shop.title}/s/n`,
                             `/bSKU:/b${elem.skuTitle}/n`,
-                            `/n/sКол-во товара: ${elem?.amount||' '}/s/n`,
-                            `/bТовар:/b ${elem.productTitle}/n`,
-                            `/bЦена:/b ${NumReplace(elem.sellPrice)} сум/n`,
-                            `/bСумма к выводу:/b ${NumReplace(elem.sellerProfit)} сум/n/n`,
-                            `/bДата заказа:/b ${date}/n`,
-                            `/bДата Получения:/b ${dateIssue}/n/n`,
+                            `/n/s${translater(ctx.session.lang||'ru', 'AMOUNT_ITEMS')}: ${elem?.amount||' '}/s/n`,
+                            `/b${translater(ctx.session.lang||'ru', 'ITEM')}:/b ${elem.productTitle}/n`,
+                            `/b${translater(ctx.session.lang||'ru', 'COST')}:/b ${NumReplace(elem.sellPrice)} сум/n`,
+                            `/b${translater(ctx.session.lang||'ru', 'SELLER_COST')}:/b ${NumReplace(elem.sellerProfit)} сум/n/n`,
+                            `/b${translater(ctx.session.lang||'ru', 'DATE_BUY')}:/b ${date}/n`,
+                            `/b${translater(ctx.session.lang||'ru', 'DATE_ISSUED')}:/b ${dateIssue}/n/n`,
                         ])
                     }else{
                         message+=HTMLFormatter([
-                            `/n/sМагазин: ${elem.shop.title}/s/n`,
+                            `/n/s${translater(ctx.session.lang||'ru', 'SHOP')}: ${elem.shop.title}/s/n`,
                             `/bSKU:/b${elem.skuTitle}/n`,
-                            `/n/sКол-во товара: ${elem?.amount||' '}/s/n`,
-                            `/bТовар:/b ${elem.productTitle}/n`,
-                            `/bЦена:/b ${NumReplace(elem.sellPrice)} сум/n`,
-                            `/bСумма к выводу:/b ${NumReplace(elem.sellerProfit)} сум/n/n`,
-                            `/bДата заказа:/b ${date}/n`,
-                            `/bДата Получения:/b --- /n/n`,
+                            `/n/s${translater(ctx.session.lang||'ru', 'AMOUNT_ITEMS')}: ${elem?.amount||' '}/s/n`,
+                            `/b${translater(ctx.session.lang||'ru', 'ITEM')}:/b ${elem.productTitle}/n`,
+                            `/b${translater(ctx.session.lang||'ru', 'COST')}:/b ${NumReplace(elem.sellPrice)} сум/n`,
+                            `/b${translater(ctx.session.lang||'ru', 'SELLER_COST')}:/b ${NumReplace(elem.sellerProfit)} сум/n/n`,
+                            `/b${translater(ctx.session.lang||'ru', 'DATE_BUY')}:/b ${date}/n`,
+                            `/b${translater(ctx.session.lang||'ru', 'DATE_ISSUED')}:/b --- /n/n`,
                         ])
 
                     }
@@ -107,12 +115,12 @@ export class OrdersCommand extends Command{
 
 
                 }else{
-                    return ctx.reply('Заказ не найден, попробуйте снова')
+                    return ctx.reply(translater(ctx.session.lang||'ru', 'NOT_FINED_ORDER'))
                 }
             }catch(err:any){
                 const err_message = `Метод: Command /orderView\n\nОШИБКА: ${err}`
-                ctx.reply('Произошла ошибка на стороне сервера или обратитесь пожалуйста в службу поддержки')
-                await ctx.telegram.sendMessage('@cacheErrorBot', ApiError.errorMessageFormatter(ctx, err_message))
+                ctx.reply(`${translater(ctx.session.lang||'ru', 'ERROR_HANDLER')}`)
+                await ctx.telegram.sendMessage('@cacheBotError', ApiError.errorMessageFormatter(ctx, err_message))
                 throw new Error(err)
             }
         })
@@ -149,8 +157,15 @@ export class OrdersCommand extends Command{
                     const pagination:{currentPage:number, total_pages:number, size:number} = dataOrders?.pagination
 
 
+                    const buttons_orders = [
+                        Markup.button.callback(`${translater(ctx.session.lang||'ru', 'PROCESSING_HISTORY')} 🕒`, `orderstatusPROCESSING`),
+                        Markup.button.callback(`${translater(ctx.session.lang||'ru', 'SUCCESS_STATUS')} ✅`, `orderstatusTO_WITHDRAW`),
+                        Markup.button.callback(`${translater(ctx.session.lang||'ru', 'CANCELED_STATUS_ORDER')} ❌`, `orderstatusCANCELED`)
+                    ]
 
-                    let message = `\n<strong>Общее кол-во: ${total}</strong>\n`
+
+
+                    let message = `\n<strong>${translater(ctx.session.lang||'ru', 'ALL_ITEMS')}: ${total}</strong>\n`
 
                     if(Array.isArray(orders)){
                         if(orders.length>0){
@@ -167,38 +182,38 @@ export class OrdersCommand extends Command{
 
                                 message+=HTMLFormatter([
                                     `/n№:${num}`,
-                                    `/n/sМагазин : ${item.shop.title}/s/n`,
-                                    `${item.status==='CANCELED'?`/n/sВернули Заказ ❌/nпо причине: ${item.returnCause}/s`:item.dateIssued?`/n/sПолучили ✅/s`:''}/n`,
-                                    `${(item.comment||'').replace(/\./g, '')?`/bКоментарий клиента:/b ${item.comment}/n`:''}`,
-                                    `/bКол-во товара:/b ${item.status==='CANCELED'?item.amountReturns:item.amount}/n`,
+                                    `/n/s${translater(ctx.session.lang||'ru', 'SHOP')} : ${item.shop.title}/s/n`,
+                                    `${item.status==='CANCELED'?`/n/s${translater(ctx.session.lang||'ru', 'RETURN_ORDER')} ❌/n${translater(ctx.session.lang||'ru', 'CAUSE')}: ${item.returnCause||'---'}/s`:item.dateIssued?`/n/s${translater(ctx.session.lang||'ru', 'GET_ORDER')} ✅/s`:''}/n`,
+                                    `${(item.comment||'').replace(/\./g, '')?`/b${translater(ctx.session.lang||'ru', 'CUSTOMER_COMMENT')}:/b ${item.comment}/n`:''}`,
+                                    `/b${translater(ctx.session.lang||'ru', 'AMOUNT_ITEMS')}:/b ${item.status==='CANCELED'?item.amountReturns:item.amount}/n`,
                                     `/bSKU:/b ${item.skuTitle}/n`,
-                                    `/bТовар:/b ${item.productTitle}/n`,
-                                    `/bЦена:/b ${NumReplace(item.sellPrice)} сум/n`,
-                                    `/bСумма к выводу:/b ${NumReplace(item.sellerProfit)} сум/n`,
-                                    `/bДата заказа:/b ${dateFormater}/n`,
-                                    `/bДата Получения:/b ${dateFormaterIssue}/n`,
+                                    `/b${translater(ctx.session.lang||'ru', 'ITEM')}:/b ${item.productTitle}/n`,
+                                    `/b${translater(ctx.session.lang||'ru', 'COST')}:/b ${NumReplace(item.sellPrice)} сум/n`,
+                                    `/b${translater(ctx.session.lang||'ru', 'SELLER_COST')}:/b ${NumReplace(item.sellerProfit)} сум/n`,
+                                    `/b${translater(ctx.session.lang||'ru', 'DATE_BUY')}:/b ${dateFormater}/n`,
+                                    `/b${translater(ctx.session.lang||'ru', 'DATE_ISSUED')}:/b ${dateFormaterIssue}/n`,
                                     `-------------------------------------`,
                                 ])
                             })
                         }else{
-                            message = 'Список пуст ⭕️'
+                            message = `${translater(ctx.session.lang||'ru', 'LIST_EMPTY')} ⭕️`
                         }
 
                     }else{
-                        message = 'Список пуст ⭕️'
+                        message = `${translater(ctx.session.lang||'ru', 'LIST_EMPTY')} ⭕️`
                     }
 
 
                     const pagination_buttons:any[] = []
 
                     if(pagination.currentPage>1){
-                        pagination_buttons.push(Markup.button.callback(`⬅️ Назад`, `orderpage${status}-${pagination.currentPage-1}`))
+                        pagination_buttons.push(Markup.button.callback(`⬅️ ${translater(ctx.session.lang||'ru', 'BACK')}`, `orderpage${status}-${pagination.currentPage-1}`))
                     }
 
                     pagination_buttons.push(Markup.button.callback(`${pagination.currentPage}/${pagination.total_pages}`, `actionNo`))
 
                     if(pagination.currentPage<pagination.total_pages){
-                        pagination_buttons.push(Markup.button.callback(`Вперед ➡️`, `orderpage${status}-${pagination.currentPage+1}`))
+                        pagination_buttons.push(Markup.button.callback(`${translater(ctx.session.lang||'ru', 'FRONT')} ➡️`, `orderpage${status}-${pagination.currentPage+1}`))
                     }
 
                     if(pagination.total_pages>1){
@@ -214,8 +229,8 @@ export class OrdersCommand extends Command{
                 }
             }catch(err:any){
                 const err_message = `Метод: Command /orderpage|orderstatus\n\nОШИБКА: ${err}`
-                await ctx.telegram.sendMessage('@cacheErrorBot', ApiError.errorMessageFormatter(ctx, err_message))
-                ctx.reply('Произошла ошибка на стороне сервера или обратитесь пожалуйста в службу поддержки')
+                await ctx.telegram.sendMessage('@cacheBotError', ApiError.errorMessageFormatter(ctx, err_message))
+                ctx.reply(translater(ctx.session.lang||'ru', 'ERROR_HANDLER'))
                 throw new Error(err)
             }
 

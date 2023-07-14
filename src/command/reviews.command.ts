@@ -2,7 +2,7 @@ import {Command} from "./command.class";
 import {Markup, Telegraf} from "telegraf";
 import {IBotContext, IOrders, IResponseProduct, IReview} from "../context/context.interface";
 import OrdersService from "../services/orders.service";
-import {DateFormatter, HTMLFormatter, month, NumReplace} from "../utils";
+import {DateFormatter, HTMLFormatter, month, NumReplace, translater} from "../utils";
 import ReviewsService from "../services/reviews.service";
 import {ApiError} from "../utils/ErrorHandler";
 
@@ -33,9 +33,9 @@ export class ReviewsCommand extends Command{
                         page:1
                     })
                 }
-                await ctx.reply(`Отзывы`, Markup.inlineKeyboard([
-                    Markup.button.callback('Отзывы без ответа', `reviewStatusNO_REPLY`),
-                        Markup.button.callback('Отзывы с ответом', `reviewStatusWITH_REPLY`)])
+                await ctx.reply(translater(ctx.session.lang||'ru', 'REVIEWS'), Markup.inlineKeyboard([
+                    Markup.button.callback(translater(ctx.session.lang||'ru', 'REVIEWS_WITHOUT_ANSWER'), `reviewStatusNO_REPLY`),
+                        Markup.button.callback(translater(ctx.session.lang||'ru', 'REVIEWS_WITH_ANSWER'), `reviewStatusWITH_REPLY`)])
                 )
             }
 
@@ -56,26 +56,26 @@ export class ReviewsCommand extends Command{
                 if(review){
                     let stars:string = Array.from(Array(review.rating)).map((item:any)=>'⭐️').join('')
                     const message  =HTMLFormatter([
-                        `/n/sТовар: ${review.product.productTitle}/s/n`,
-                        `/n/sМагазин:/s ${review.shop.title}/n`,
-                        `/n/sДата покупки:/s ${DateFormatter(new Date(review.dateBought))}/n`,
-                        `/n/sОтзыв оставлен:/s ${DateFormatter(new Date(review.dateCreated))}/n`,
-                        `/n/sПокупатель:/s ${review.customerName}/n`,
-                        `/n/sОценка:/s ${stars}/n`,
+                        `/n/s${translater(ctx.session.lang||'ru', 'ITEM')}: ${review.product.productTitle}/s/n`,
+                        `/n/s${translater(ctx.session.lang||'ru', 'SHOP')}:/s ${review.shop.title}/n`,
+                        `/n/s${translater(ctx.session.lang||'ru', 'DATE_BY')}:/s ${DateFormatter(new Date(review.dateBought))}/n`,
+                        `/n/s${translater(ctx.session.lang||'ru', 'REVIEW_WRITED')}:/s ${DateFormatter(new Date(review.dateCreated))}/n`,
+                        `/n/s${translater(ctx.session.lang||'ru', 'BUYER')}:/s ${review.customerName}/n`,
+                        `/n/s${translater(ctx.session.lang||'ru', 'RAIT')}:/s ${stars}/n`,
                         `/n/sSKU:/s ${review.characteristics.map((item:any)=>`${item.characteristic}, ${item.characteristicValue}`).join('\n')}/n`,
-                        `/n/sОтзыв:/s ${review.content}/n/n`
+                        `/n/s${translater(ctx.session.lang||'ru', 'REVIEW')}:/s ${review.content}/n/n`
                     ])
 
 
-                    await ctx.replyWithHTML(message, Markup.inlineKeyboard([Markup.button.callback('Ответить', `reviewAnswer${review.reviewId}`)]))
+                    await ctx.replyWithHTML(message, Markup.inlineKeyboard([Markup.button.callback(translater(ctx.session.lang||'ru', 'ANSWER'), `reviewAnswer${review.reviewId}`)]))
                 }else{
-                    await ctx.replyWithHTML('Отзыв не найден')
+                    await ctx.replyWithHTML(translater(ctx.session.lang||'ru', 'REVIEW_NOT_FOUND'))
                 }
 
             }catch(err:any){
                 const err_message = `Метод: Command /reviewView\n\nОШИБКА: ${err}`
-                await ctx.telegram.sendMessage('@cacheErrorBot', ApiError.errorMessageFormatter(ctx, err_message))
-                ctx.reply('Произошла ошибка на стороне сервера или обратитесь пожалуйста в службу поддержки')
+                await ctx.telegram.sendMessage('@cacheBotError', ApiError.errorMessageFormatter(ctx, err_message))
+                ctx.reply(translater(ctx.session.lang||'ru', 'ERROR_HANDLER'))
                 throw new Error(err)
             }
         })
@@ -117,26 +117,26 @@ export class ReviewsCommand extends Command{
                 let stars:string = Array.from(Array(reviews[get_current_page.page-1].rating)).map((item:any)=>'⭐️').join('')
 
                 const message  =HTMLFormatter([
-                    `/nТовар: ${reviews[get_current_page.page-1].product.productTitle}/n/n`,
-                    `Дата: ${date}/n`,
-                    `Оценка: ${stars}/n`,
-                    `Отзыв: ${reviews[get_current_page.page-1].content}/n/n`
+                    `/n${translater(ctx.session.lang||'ru', 'ITEM')}: ${reviews[get_current_page.page-1].product.productTitle}/n/n`,
+                    `${translater(ctx.session.lang||'ru', 'DATE')}: ${date}/n`,
+                    `${translater(ctx.session.lang||'ru', 'RAIT')}: ${stars}/n`,
+                    `${translater(ctx.session.lang||'ru', 'REVIEW')}: ${reviews[get_current_page.page-1].content}/n/n`
                 ])
 
                 const buttons:any[] = []
 
                 if(get_current_page.page-1>0){
-                    buttons.push( Markup.button.callback('⬅️ Назад', `reviewId${get_current_page.page-1}`))
+                    buttons.push( Markup.button.callback(`⬅️ ${translater(ctx.session.lang||'ru', 'BACK')}`, `reviewId${get_current_page.page-1}`))
                 }
 
                 if(reviews[get_current_page.page-1]?.reply){
-                    buttons.push( Markup.button.callback('Ответить', `reviewAnswer${reviews[get_current_page.page-1].reviewId}`))
+                    buttons.push( Markup.button.callback(translater(ctx.session.lang||'ru', 'ANSWER'), `reviewAnswer${reviews[get_current_page.page-1].reviewId}`))
                 }
 
 
 
                 if(get_current_page.page-1<reviews.length-1){
-                    buttons.push( Markup.button.callback('Вперед ➡️', `reviewId${get_current_page.page+1}`))
+                    buttons.push( Markup.button.callback(`${translater(ctx.session.lang||'ru', 'FRONT')} ➡️`, `reviewId${get_current_page.page+1}`))
                 }
 
                 await ctx.editMessageText(message, Markup.inlineKeyboard(buttons))
@@ -144,8 +144,8 @@ export class ReviewsCommand extends Command{
 
             }catch(err:any){
                 const err_message = `Метод: Command /reviewId\n\nОШИБКА: ${err}`
-                await ctx.telegram.sendMessage('@cacheErrorBot', ApiError.errorMessageFormatter(ctx, err_message))
-                ctx.reply('Произошла ошибка на стороне сервера, попробуйте снова')
+                await ctx.telegram.sendMessage('@cacheBotError', ApiError.errorMessageFormatter(ctx, err_message))
+                ctx.reply(translater(ctx.session.lang||'ru', 'ERROR_HANDLER'))
                 throw new Error(err)
             }
         })
@@ -157,7 +157,7 @@ export class ReviewsCommand extends Command{
             //@ts-ignore
             const data = update.callback_query.data
             ctx.session.reviewAnswer = data.replace('reviewAnswer', '')
-            await ctx.reply('Отправьте текст для ответа на отзыв')
+            await ctx.reply(translater(ctx.session.lang||'ru', 'SEND_TEXT_FOR_ANSWER'))
 
         })
 
@@ -182,13 +182,13 @@ export class ReviewsCommand extends Command{
 
                         const message =HTMLFormatter([
                             `/n/s${review.product.productTitle}/s/n/n`,
-                            `/bКуплено:/b ${date_buy}/n`,
-                            `/bОтзыв оставлен:/b ${date}/n`,
-                            `/bОценка:/b ${stars}/n`,
+                            `/b${translater(ctx.session.lang||'ru', 'BUYED')}:/b ${date_buy}/n`,
+                            `/b${translater(ctx.session.lang||'ru', 'REVIEW_WRITED')}:/b ${date}/n`,
+                            `/b${translater(ctx.session.lang||'ru', 'RAIT')}:/b ${stars}/n`,
                             `/bSKU:/b ${characters}/n/n`,
-                            `/bПокупатель:/b ${review.customerName}/n/n`,
-                            `/bОтзыв:/b ${review?.content||''}/n/n`,
-                            `/bВаш ответ:/b ${review?.reply?review?.reply?.content:'---'}/n/n`,
+                            `/b${translater(ctx.session.lang||'ru', 'BUYER')}:/b ${review.customerName}/n/n`,
+                            `/b${translater(ctx.session.lang||'ru', 'REVIEW')}:/b ${review?.content||''}/n/n`,
+                            `/b${translater(ctx.session.lang||'ru', 'YOU_ANSWER')}:/b ${review?.reply?review?.reply?.content:'---'}/n/n`,
                         ])
 
 
@@ -197,8 +197,8 @@ export class ReviewsCommand extends Command{
                 }
             }catch (err:any){
                 const err_message = `Метод: Command review Answer /text\n\nОШИБКА: ${err}`
-                await ctx.telegram.sendMessage('@cacheErrorBot', ApiError.errorMessageFormatter(ctx, err_message))
-                ctx.reply('Произошла ошибка на стороне сервера или обратитесь пожалуйста в службу поддержки')
+                await ctx.telegram.sendMessage('@cacheBotError', ApiError.errorMessageFormatter(ctx, err_message))
+                ctx.reply(translater(ctx.session.lang||'ru', 'ERROR_HANDLER'))
                 throw new Error(err)
             }
 
@@ -243,26 +243,26 @@ export class ReviewsCommand extends Command{
                     let stars:string = Array.from(Array(reviews[get_current_page.page-1].rating)).map((item:any)=>'⭐️').join('')
 
                     message  =HTMLFormatter([
-                        `/nТовар: ${reviews[get_current_page.page-1].product.productTitle}/n/n`,
-                        `Дата: ${date}/n`,
-                        `Оценка: ${stars}/n`,
-                        `Отзыв: ${reviews[get_current_page.page-1].content}/n/n`
+                        `/n${translater(ctx.session.lang||'ru', 'ITEM')}: ${reviews[get_current_page.page-1].product.productTitle}/n/n`,
+                        `${translater(ctx.session.lang||'ru', 'DATE')}: ${date}/n`,
+                        `${translater(ctx.session.lang||'ru', 'RAIT')}: ${stars}/n`,
+                        `${translater(ctx.session.lang||'ru', 'REVIEW')}: ${reviews[get_current_page.page-1].content}/n/n`
                     ])
 
 
                     const buttons:any[] = []
 
                     if(get_current_page.page-1>1){
-                        buttons.push( Markup.button.callback('⬅️ Назад', `reviewId${get_current_page.page-1}`))
+                        buttons.push( Markup.button.callback(`⬅️ ${translater(ctx.session.lang||'ru', 'BACK')}`, `reviewId${get_current_page.page-1}`))
                     }
 
                     if(status==='NO_REPLY'&&reviews.length){
-                        buttons.push( Markup.button.callback('Ответить', `reviewAnswer${reviews[get_current_page.page-1].reviewId}`))
+                        buttons.push( Markup.button.callback(translater(ctx.session.lang||'ru', 'ANSWER'), `reviewAnswer${reviews[get_current_page.page-1].reviewId}`))
                     }
 
 
                     if(get_current_page.page-1<reviews.length-1){
-                        buttons.push( Markup.button.callback('Вперед ➡️', `reviewId${get_current_page.page+1}`))
+                        buttons.push( Markup.button.callback(`${translater(ctx.session.lang||'ru', 'FRONT')} ➡️`, `reviewId${get_current_page.page+1}`))
                     }
 
                     if(buttons.length) return  await ctx.replyWithHTML(message, Markup.inlineKeyboard(buttons))
@@ -270,12 +270,12 @@ export class ReviewsCommand extends Command{
                     return  await ctx.reply(message)
 
                 }else{
-                    await ctx.reply('Список пуст ⭕️')
+                    await ctx.reply(`${translater(ctx.session.lang||'ru', 'LIST_EMPTY')} ⭕️`)
                 }
             }catch (err:any){
                 const err_message = `Метод: Command /reviewStatus\n\nОШИБКА: ${err}`
-                await ctx.telegram.sendMessage('@cacheErrorBot', ApiError.errorMessageFormatter(ctx, err_message))
-                ctx.reply('Произошла ошибка на стороне сервера или обратитесь пожалуйста в службу поддержки')
+                await ctx.telegram.sendMessage('@cacheBotError', ApiError.errorMessageFormatter(ctx, err_message))
+                ctx.reply(translater(ctx.session.lang||'ru', 'ERROR_HANDLER'))
                 throw new Error(err)
             }
         })

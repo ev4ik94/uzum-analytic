@@ -2,13 +2,11 @@ import {Command} from "./command.class";
 
 import {Markup, Telegraf} from "telegraf";
 import {IBotContext, IFinanceData, IHistoryRequest} from "../context/context.interface";
-import UpdatesService from "../services/updates.service";
 import FinanceSevice from "../services/finance.sevice";
-import {DateFormatter, HTMLFormatter, month, NumReplace} from "../utils";
+import {DateFormatter, HTMLFormatter, month, NumReplace, translater} from "../utils";
 import {ApiError} from "../utils/ErrorHandler";
 
 
-// const UpdateService = new UpdatesService()
 
 
 
@@ -28,22 +26,22 @@ export class FinanceCommand extends Command{
                 if(response_data||history_data){
 
                     if(response_data){
-                        let message = 'Нет данных'
+                        let message = translater(ctx.session.lang||'ru', 'NO_MATCH_DATA')
 
 
                         let date_now = new Date()
                         let month_current = date_now.getMonth()
 
                         message+=HTMLFormatter([
-                            `/n/s✅ Доступно к выводу:/n/n    ${NumReplace(response_data.forWithdraw+'')} сум/s/n`,
+                            `/n/s✅ ${translater(ctx.session.lang||'ru', 'FINANCE_APPROVED')}:/n/n    ${NumReplace(response_data.forWithdraw+'')} сум/s/n`,
                             `-----------------------------------------------/n`,
-                            `/b🕘 В обработке:/n/n    ${NumReplace(response_data.processing+'')} сум/b/n`,
+                            `/b🕘 ${translater(ctx.session.lang||'ru', 'FINANCE_PROCESSING')}:/n/n    ${NumReplace(response_data.processing+'')} сум/b/n`,
                             `-----------------------------------------------/n`,
-                            `/b❌ Возвраты:/n/n    ${NumReplace(response_data.cancelled+'')} сум/b/n`,
+                            `/b❌ ${translater(ctx.session.lang||'ru', 'FINANCE_CANCELED')}:/n/n    ${NumReplace(response_data.cancelled+'')} сум/b/n`,
                             `-----------------------------------------------/n`,
-                            `/b🗓 Выведено за ${month[month_current]}:/n/n    ${NumReplace(response_data.withdrawnForCurrentMonth+'')} сум/b/n`,
+                            `/b🗓 ${translater(ctx.session.lang||'ru', 'FINANCE_PERIOD')} ${month[month_current]}:/n/n    ${NumReplace(response_data.withdrawnForCurrentMonth+'')} сум/b/n`,
                             `-----------------------------------------------/n`,
-                            `/b⏺ Выведено за все время:/n/n    ${NumReplace(response_data.withdrawn+'')} сум/b/n`
+                            `/b⏺ ${translater(ctx.session.lang||'ru', 'FINANCE_PERIOD_ALL_TIME')}:/n/n    ${NumReplace(response_data.withdrawn+'')} сум/b/n`
                         ])
 
 
@@ -55,7 +53,7 @@ export class FinanceCommand extends Command{
                         let message_history = ''
 
                         message_history+=HTMLFormatter([
-                            `/n/sВ процессе вывода: ${inProcessingCount}/s/n-----------------------------------------------/n`,
+                            `/n/s${translater(ctx.session.lang||'ru', 'FINANCE_PROCESSING_1')}: ${inProcessingCount}/s/n-----------------------------------------------/n`,
                         ])
 
 
@@ -63,19 +61,19 @@ export class FinanceCommand extends Command{
 
                         withdrawList.forEach((item:IHistoryRequest)=>{
                             message_history+=HTMLFormatter([
-                                `/bСумма вывода: ${NumReplace(item.amount+'')} сум/b/n`,
-                                `/b${DateFormatter(new Date(item.createdDate))}/n/n${item.status==='APPROVED'?'✅ Исполнен':item.status==='CREATED'?'🕘 В обработке':'❌ Отменен'}/b/n`,
+                                `/b${translater(ctx.session.lang||'ru', 'FINANCE_AMOUNT')}: ${NumReplace(item.amount+'')} сум/b/n`,
+                                `/b${DateFormatter(new Date(item.createdDate))}/n/n${item.status==='APPROVED'?`✅ ${translater(ctx.session.lang||'ru', 'FINANCE_AMOUNT')}`:item.status==='CREATED'?`🕘 ${translater(ctx.session.lang||'ru', 'PROCESSING_HISTORY')}`:`❌ ${translater(ctx.session.lang||'ru', 'CANCELED_STATUS')}`}/b/n`,
                                 `-----------------------------------------------/n`,
                             ])
                         })
 
                         await ctx.replyWithHTML(message_history)
                     }else{
-                        await ctx.replyWithHTML('Вы пока не выводили деньги')
+                        await ctx.replyWithHTML(`${translater(ctx.session.lang||'ru', 'No_FINANCE_HISTORY')}`)
                     }
 
                 } else{
-                    await ctx.replyWithHTML('Что-то пошло не так, попробуйте снова!')
+                    await ctx.replyWithHTML(`${translater(ctx.session.lang||'ru', 'ERROR_HANDLER')}`)
                 }
             }catch (err:any){
                 const err_message = `Метод: Command /finance\n\nОШИБКА: ${err}`
@@ -93,7 +91,7 @@ export class FinanceCommand extends Command{
 
                 if(invoice_data){
 
-                    let message = 'Нет данных'
+                    let message = ''
                     const invoice_statuses:any = {
                         "ACCEPTANCE_IN_PROGRESS": "🕒",
                         "ACCEPTED": "✅",
@@ -104,21 +102,23 @@ export class FinanceCommand extends Command{
 
                         const status = invoice_data[k].invoiceStatus.value
                         message+=HTMLFormatter([
-                            `/n/s${invoice_statuses[status]?invoice_statuses[status]:''} Статус: ${invoice_data[k].status}/s/n/n`,
-                            `/bНомер Накладной: ${invoice_data[k].invoiceNumber}/b/n/n`,
-                            `/bДата создания: ${invoice_data[k].dateCreated}/b/n/n`,
-                            `/bТаймслот: ${invoice_data[k].timeSlotReservation?DateFormatter(new Date(invoice_data[k].timeSlotReservation.timeFrom)):'-'}/b/n/n`,
-                            `/bНа сумму: ${NumReplace(invoice_data[k].fullPrice+'')} сум/b/n/n`,
+                            `/n/s${invoice_statuses[status]?invoice_statuses[status]:''} ${translater(ctx.session.lang||'ru', 'STATUS')}: ${invoice_data[k].status}/s/n/n`,
+                            `/b${translater(ctx.session.lang||'ru', 'INVOICE_NUMBER')}: ${invoice_data[k].invoiceNumber}/b/n/n`,
+                            `/b${translater(ctx.session.lang||'ru', 'DATE_CREATED')}: ${invoice_data[k].dateCreated}/b/n/n`,
+                            `/b${translater(ctx.session.lang||'ru', 'TIMESLOT')}: ${invoice_data[k].timeSlotReservation?DateFormatter(new Date(invoice_data[k].timeSlotReservation.timeFrom)):'-'}/b/n/n`,
+                            `/b${translater(ctx.session.lang||'ru', 'BY_SUM')}: ${NumReplace(invoice_data[k].fullPrice+'')} сум/b/n/n`,
                             `-----------------------------------------------/n`,
                         ])
                     }
-                    await ctx.reply('В списке показаны последние 10 созданных накладных')
+
+                    if(!message.length) translater(ctx.session.lang||'ru', 'NO_MATCH_DATA')
+                    await ctx.reply(`${translater(ctx.session.lang||'ru', 'LAST_LIST_INVOICE')}`)
                     await ctx.replyWithHTML(message)
 
 
 
                 } else{
-                    await ctx.replyWithHTML('Что-то пошло не так, попробуйте снова!')
+                    await ctx.replyWithHTML(`${translater(ctx.session.lang||'ru', 'ERROR_HANDLER')}`)
                 }
             }catch (err:any){
                 const err_message = `Метод: Command /invoice\n\nОШИБКА: ${err}`

@@ -3,7 +3,7 @@ import {Markup, Telegraf} from "telegraf";
 import {IBotContext, IResponseProduct, IReview} from "../context/context.interface";
 import ProductsService from "../services/products.service";
 import AuthenticatedService from "../services/authenticated.service";
-import {DateFormatter, HTMLFormatter, NumReplace} from "../utils";
+import {DateFormatter, HTMLFormatter, NumReplace, translater} from "../utils";
 import {ApiError} from "../utils/ErrorHandler";
 
 const authService = new AuthenticatedService()
@@ -50,29 +50,32 @@ export class ProductsCommand extends Command{
                         }
                     }
 
+                    const text = translater(ctx.session.lang||'ru', 'CURRENT_SHOP')
+
 
                     if(ctx.session.current_shop){
                         const current_shop_data = ctx.session.shops.find((item:any)=>+item.id===+ctx.session.current_shop)
+
                         if(current_shop_data){
-                            await ctx.reply(`На данный момент вы находитесь в магазине ${current_shop_data.shopTitle}`)
+                            await ctx.reply(`${text} ${current_shop_data.shopTitle}`)
                         }else{
-                            await ctx.reply(`На данный момент вы находитесь в магазине ${ctx.session.shops[0].shopTitle}`)
+                            await ctx.reply(`${text} ${ctx.session.shops[0].shopTitle}`)
                         }
 
                     }else{
-                        await ctx.reply(`На данный момент вы находитесь в магазине ${ctx.session.shops[0].shopTitle}`)
+                        await ctx.reply(`${text} ${ctx.session.shops[0].shopTitle}`)
                     }
 
 
 
                     if(buttons_shop.length>1){
-                        await ctx.reply("Выберите магазин для дальнейшей работы с ботом", Markup.inlineKeyboard(arr))
+                        await ctx.reply(translater(ctx.session.lang||'ru', 'SELECT_SHOP'), Markup.inlineKeyboard(arr))
                     }
                 }
             }catch (err:any){
                 const err_message = `Метод: Command /shops\n\nОШИБКА: ${err}`
-                await ctx.telegram.sendMessage('@cacheErrorBot', ApiError.errorMessageFormatter(ctx, err_message))
-                ctx.reply('Произошла ошибка на стороне сервера или обратитесь пожалуйста в службу поддержки')
+                await ctx.telegram.sendMessage('@cacheBotError', ApiError.errorMessageFormatter(ctx, err_message))
+                ctx.reply(translater(ctx.session.lang||'ru', 'ERROR_HANDLER'))
                 throw new Error(err)
             }
         })
@@ -88,14 +91,14 @@ export class ProductsCommand extends Command{
                 const shop_info = ctx.session.shops.find((item:any)=>item.id===+shop_id)
                 if(shop_info){
                     ctx.session.current_shop = +shop_id;
-                    await ctx.reply(`Вы переключились на магазин ${shop_info?.shopTitle}`)
+                    await ctx.reply(`${translater(ctx.session.lang||'ru', 'TURN_SHOP')} ${shop_info?.shopTitle}`)
                 }else{
-                    await ctx.reply(`Что-то пошло не так, такой магазин не найден`)
+                    await ctx.reply(translater(ctx.session.lang||'ru', 'NOT_FOUND_SHOP'))
                 }
             }catch (err:any){
                 const err_message = `Метод: Command /shopId\n\nОШИБКА: ${err}`
-                await ctx.telegram.sendMessage('@cacheErrorBot', ApiError.errorMessageFormatter(ctx, err_message))
-                ctx.reply('Произошла ошибка на стороне сервера или обратитесь пожалуйста в службу поддержки')
+                await ctx.telegram.sendMessage('@cacheBotError', ApiError.errorMessageFormatter(ctx, err_message))
+                ctx.reply(translater(ctx.session.lang||'ru', 'ERROR_HANDLER'))
                 throw new Error(err)
             }
 
@@ -138,29 +141,29 @@ export class ProductsCommand extends Command{
                     if(ctx.session.products.length){
                         message  =HTMLFormatter([
                             `/n${current_product.title}/n/n`,
-                            `В продаже: ${current_product.quantityActive}/n`,
-                            `В Фотостудии: ${current_product.quantityOnPhotoStudio}/n`,
-                            `К отправке: ${current_product.quantityCreated}/n`,
-                            `Просмотры: ${current_product.viewers||0}/n`,
+                            `${translater(ctx.session.lang||'ru', 'PRODUCTS_IN_SALE')}: ${current_product.quantityActive}/n`,
+                            `${translater(ctx.session.lang||'ru', 'PRODUCTS_IN_PHOTO')}: ${current_product.quantityOnPhotoStudio}/n`,
+                            `${translater(ctx.session.lang||'ru', 'READY_TO_SHIP')}: ${current_product.quantityCreated}/n`,
+                            `${translater(ctx.session.lang||'ru', 'VIEWS')}: ${current_product.viewers||0}/n`,
                             `ROI: ${current_product.roi}%/n`,
-                            `Рейтинг: ${current_product.rating}/n`,
-                            `Продано: ${current_product.quantitySold}/n`,
-                            `Вернули: ${current_product.quantityReturned}/n`,
-                            `Брак: ${current_product.quantityDefected}/n`,
-                            `Статус: ${current_product.status.title}/n`,
-                            `Модерация: ${current_product.moderationStatus.title}/n`,
-                            `Цена: ${NumReplace(current_product.price+'')} сум/n`,
+                            `${translater(ctx.session.lang||'ru', 'RAITING')}: ${current_product.rating}/n`,
+                            `${translater(ctx.session.lang||'ru', 'SOLD')}: ${current_product.quantitySold}/n`,
+                            `${translater(ctx.session.lang||'ru', 'RETURN')}: ${current_product.quantityReturned}/n`,
+                            `${translater(ctx.session.lang||'ru', 'BRAK')}: ${current_product.quantityDefected}/n`,
+                            `${translater(ctx.session.lang||'ru', 'STATUS')}: ${current_product.status.title}/n`,
+                            `${translater(ctx.session.lang||'ru', 'MODERATION')}: ${current_product.moderationStatus.title}/n`,
+                            `${translater(ctx.session.lang||'ru', 'COST')}: ${NumReplace(current_product.price+'')} сум/n`,
                         ])
 
 
                     }else{
-                        message+='Список пуст'
+                        message+=translater(ctx.session.lang||'ru', 'LIST_EMPTY')
                     }
 
                     const buttons:any[] = []
 
                     if(get_current_page-1>0){
-                        buttons.push( Markup.button.callback('⬅️ Назад', `productId${get_current_page-1}`))
+                        buttons.push( Markup.button.callback(`⬅️ ${translater(ctx.session.lang||'ru', 'BACK')}`, `productId${get_current_page-1}`))
                     }
 
                     if(ctx.session.products.length) buttons.push( Markup.button.callback(`${get_current_page}/${ctx.session.products.length}`, `no-action`))
@@ -168,7 +171,7 @@ export class ProductsCommand extends Command{
 
 
                     if(get_current_page-1<ctx.session.products.length){
-                        buttons.push( Markup.button.callback('Вперед ➡️', `productId${get_current_page+1}`))
+                        buttons.push( Markup.button.callback(`${translater(ctx.session.lang||'ru', 'FRONT')} ➡️`, `productId${get_current_page+1}`))
                     }
 
 
@@ -182,8 +185,8 @@ export class ProductsCommand extends Command{
                 }
             }catch (err:any){
                 const err_message = `Метод: Command /products\n\nОШИБКА: ${err}`
-                await ctx.telegram.sendMessage('@cacheErrorBot', ApiError.errorMessageFormatter(ctx, err_message))
-                ctx.reply('Произошла ошибка на стороне сервера или обратитесь пожалуйста в службу поддержки')
+                await ctx.telegram.sendMessage('@cacheBotError', ApiError.errorMessageFormatter(ctx, err_message))
+                ctx.reply(translater(ctx.session.lang||'ru', 'ERROR_HANDLER'))
                 throw new Error(err)
             }
         })
@@ -229,21 +232,21 @@ export class ProductsCommand extends Command{
                     if(current_product){
                         message  =HTMLFormatter([
                             `/n${current_product?.title}/n/n`,
-                            `В продаже: ${current_product?.quantityActive}/n`,
-                            `В Фотостудии: ${current_product?.quantityOnPhotoStudio}/n`,
-                            `К отправке: ${current_product?.quantityCreated}/n`,
-                            `Просмотры: ${current_product?.viewers||0}/n`,
+                            `${translater(ctx.session.lang||'ru', 'PRODUCTS_IN_SALE')}: ${current_product?.quantityActive}/n`,
+                            `${translater(ctx.session.lang||'ru', 'PRODUCTS_IN_PHOTO')}: ${current_product?.quantityOnPhotoStudio}/n`,
+                            `${translater(ctx.session.lang||'ru', 'READY_TO_SHIP')}: ${current_product?.quantityCreated}/n`,
+                            `${translater(ctx.session.lang||'ru', 'VIEWS')}: ${current_product?.viewers||0}/n`,
                             `ROI: ${current_product?.roi}%/n`,
-                            `Рейтинг: ${current_product?.rating}/n`,
-                            `Продано: ${current_product?.quantitySold}/n`,
-                            `Вернули: ${current_product?.quantityReturned}/n`,
-                            `Брак: ${current_product?.quantityDefected}/n`,
-                            `Статус: ${current_product?.status.title}/n`,
-                            `Модерация: ${current_product?.moderationStatus.title}/n`,
-                            `Цена: ${NumReplace((current_product?.price||'0')+'')} сум/n`,
+                            `${translater(ctx.session.lang||'ru', 'RAITING')}: ${current_product?.rating}/n`,
+                            `${translater(ctx.session.lang||'ru', 'SOLD')}: ${current_product?.quantitySold}/n`,
+                            `${translater(ctx.session.lang||'ru', 'RETURN')}: ${current_product?.quantityReturned}/n`,
+                            `${translater(ctx.session.lang||'ru', 'BRAK')}: ${current_product?.quantityDefected}/n`,
+                            `${translater(ctx.session.lang||'ru', 'STATUS')}: ${current_product?.status.title}/n`,
+                            `${translater(ctx.session.lang||'ru', 'MODERATION')}: ${current_product?.moderationStatus.title}/n`,
+                            `${translater(ctx.session.lang||'ru', 'COST')}: ${NumReplace((current_product?.price||'0')+'')} сум/n`,
                         ])
                     }else{
-                        message = 'Товар не найден'
+                        message = translater(ctx.session.lang||'ru', 'PRODUCT_NOT_FOUND')
                     }
 
 
@@ -252,14 +255,14 @@ export class ProductsCommand extends Command{
                     const buttons:any[] = []
 
                     if(get_current_page-1>0){
-                        buttons.push( Markup.button.callback('⬅️Назад', `productId${get_current_page-1}`))
+                        buttons.push( Markup.button.callback(`⬅️${translater(ctx.session.lang||'ru', 'BACK')}`, `productId${get_current_page-1}`))
                     }
 
                     if(ctx.session.products.length) buttons.push( Markup.button.callback(`${get_current_page}/${ctx.session.products.length}`, `no-action`))
 
 
                     if(get_current_page-1<ctx.session.products.length-1){
-                        buttons.push( Markup.button.callback('Вперед ➡️', `productId${get_current_page+1}`))
+                        buttons.push( Markup.button.callback(`${translater(ctx.session.lang||'ru', 'FRONT')} ➡️`, `productId${get_current_page+1}`))
                     }
 
                     if(buttons.length){
@@ -272,8 +275,8 @@ export class ProductsCommand extends Command{
                 }
             }catch (err:any){
                 const err_message = `Метод: Command /productId\n\nОШИБКА: ${err}`
-                await ctx.telegram.sendMessage('@cacheErrorBot', ApiError.errorMessageFormatter(ctx, err_message))
-                ctx.reply('Произошла ошибка на стороне сервера или обратитесь пожалуйста в службу поддержки')
+                await ctx.telegram.sendMessage('@cacheBotError', ApiError.errorMessageFormatter(ctx, err_message))
+                ctx.reply(translater(ctx.session.lang||'ru', 'ERROR_HANDLER'))
                 throw new Error(err)
             }
 

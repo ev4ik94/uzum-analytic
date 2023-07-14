@@ -22,19 +22,19 @@ export class StartCommand extends Command{
         const regexp_signout = new RegExp(/^signout/)
         const regexp_language = new RegExp(/^lang/)
         this.bot.start(async(ctx)=>{
+            const language = ctx.session.lang || 'ru'
 
 
             if(!ctx.session.token){
                 const buttons = Markup.inlineKeyboard([
                     [Markup.button.callback('Русский 🇷🇺', 'langRU'), Markup.button.callback('O`zbek 🇺🇿', 'langUZ')]
                 ])
-                return await ctx.reply('Выберите язык', buttons)
+                return await ctx.reply(translater(language, 'SELECT_LANGUAGE'), buttons)
 
 
             }else{
-                translater('ru', '')
-                //await ctx.replyWithHTML('❗️В обновленной версии были исправлены\nТехнические неполадки с работой 📢 <b>Уведомлений</b>\n\nEсли вы сталкиваетесь с ошибками в работе бота, просим уведомлять нас через службу поддержки или обратится к <a href="https://t.me/manager_useller">Менеджеру</a>')
-                await ctx.replyWithHTML('Бот снова готов работать!')
+                await ctx.replyWithHTML(`❗️${translater(language, 'UPDATES')}`)
+                //await ctx.replyWithHTML( translater(language, 'BOT_WORK_AGAIN'))
             }
 
 
@@ -53,16 +53,19 @@ export class StartCommand extends Command{
 
                 ctx.session.lang = language.toLowerCase()
 
+
                 if(!ctx.session.token){
-                    return await ctx.reply('Для начала работы с ботом, вам необходимо авторизоваться', {
+                    return await ctx.reply(translater(language.toLowerCase(), 'START_AUTHORIZATION'), {
                         reply_markup:{
                             inline_keyboard: [
-                                [{text: 'Авторизоваться', web_app:{url:process.env.FRONT_URL!}}]
+                                [{text: translater(language.toLowerCase(), 'AUTHORIZATION'), web_app:{url:process.env.FRONT_URL!}}]
                             ]
                         },
 
                     })
                 }
+
+                return await ctx.reply(`${translater(language.toLowerCase(), 'SELECTED')} ${language==='RU'?'Русский язык':'O`zbek tilini'}`)
             }catch (err:any){
                 throw new Error(err)
             }
@@ -71,10 +74,10 @@ export class StartCommand extends Command{
 
         this.bot.action('sign-out', async(ctx)=>{
             const buttons = Markup.inlineKeyboard([
-                [Markup.button.callback('Да', 'signoutYES'), Markup.button.callback('Нет', 'signoutNO')]
+                [Markup.button.callback(translater(ctx.session.lang||'ru', 'YES'), 'signoutYES'), Markup.button.callback(translater(ctx.session.lang||'ru', 'NO'), 'signoutNO')]
             ])
 
-            await ctx.reply('Вы действительно хотите выйти из аккаунта?', buttons)
+            await ctx.reply(translater(ctx.session.lang||'ru', 'SIGN_OUT_ACCEPT'), buttons)
         })
 
         this.bot.action(regexp_signout, async(ctx)=>{
@@ -93,60 +96,59 @@ export class StartCommand extends Command{
                         message: ''
                     }, userId)
 
-                    await ctx.reply('Вы вышли из аккаунта, ждем вашего возвращения 😊')
+                    await ctx.reply(translater(ctx.session.lang||'ru', 'SIGN_OUT_YES_TEXT'))
                 }else{
-                    await ctx.reply('Хорошо что вы еще с нами 😊')
+                    await ctx.reply(translater(ctx.session.lang||'ru', 'SIGN_OUT_NO_TEXT'))
                 }
             }catch(err:any){
                 const err_message = `Метод: Command /signout\n\nОШИБКА: ${err}`
                 await ctx.telegram.sendMessage('@cacheErrorBot', ApiError.errorMessageFormatter(ctx, err_message))
-                ctx.reply('Произошла ошибка на стороне сервера или обратитесь пожалуйста в службу поддержки')
+                ctx.reply(translater(ctx.session.lang||'ru','ERROR_HANDLER'))
                 throw new Error(err)
             }
 
         })
 
+
+
         this.bot.action('support', async(ctx)=>{
-            await ctx.reply('Заполните форму обратной связи и наши менеджеры свяжутся с вами', {
+
+            await ctx.reply(translater(ctx.session.lang||'ru','INPUT_SUPPORT_FORM'), {
                 reply_markup:{
                     inline_keyboard: [
-                        [{text: 'Заполнить форму', web_app:{url:`https://master--dapper-croquembouche-dce9fc.netlify.app/support`}}]
+                        [{text: translater(ctx.session.lang||'ru','INPUT_SUPPORT_FORM_ACTION'), web_app:{url:`https://master--dapper-croquembouche-dce9fc.netlify.app/support`}}]
                     ]
                 },
 
             })
+
+
         })
 
         this.bot.action('directory', async(ctx)=>{
-            await ctx.replyWithHTML('<strong>Меню</strong>\n' +
-                '<b>Активные товары</b> - те товары которые в продаже магазина на котором находитесь.\n' +
-                ' \n' +
-                '                                              Уведомление\n' +
-                '<b>Новый заказ ❗️❗️❗</b>️ - заказ нового товара каждого\n' +
-                '\n' +
-                '<b>Заказ получен 🛍</b> -  Клиент забрал с ПВЗ ваш товар.\n' +
-                '\n' +
-                '<b>Заказ одобрен ✅</b> - Деньги за текущий товар доступны к выводу.\n' +
-                '\n' +
-                '<b>Заказ отменен ❌</b> - отмена заказа клиентом либо клиент не забрал в срок свой товар с ПВЗ\n' +
-                '\n' +
-                '<b>Новый отзыв 💌</b> -  отзыв на товар оставленный клиентом\n' +
-                '\n' +
-                '<b>Вывод средств одобрен 💸</b> - ваш запрос на вывод средств одобрен.\n' +
-                '\n' +
-                '<b>Товар принят на складе 📦</b> - ваши товары приняли на складе и готовы к продаже.\n' +
-                '\n' +
-                '<b>📢 Были добавлены обновления:</b> При добавлении нового функционала или правки выявленных багов в работе бота. Бот будет уведомлять вас о необходимости перезапуска, для получения всех обновлений')
+            await ctx.replyWithHTML(translater(ctx.session.lang||'ru', 'SUPPORT_DIRECTORY'))
+        })
+
+        this.bot.action('select-language', async(ctx)=>{
+
+            const buttons = Markup.inlineKeyboard([
+                [Markup.button.callback('Русский 🇷🇺', 'langRU'), Markup.button.callback('O`zbek 🇺🇿', 'langUZ')]
+            ])
+            return await ctx.reply(translater(ctx.session.lang||'ru', 'SELECT_LANGUAGE'), buttons)
         })
 
 
         this.bot.hears('/cabinet', async(ctx)=>{
+
             const buttons = Markup.inlineKeyboard([
-                [Markup.button.callback('🙍‍♂️ Служба поддержки', 'support')],
-               [Markup.button.callback('📒 Справочник', 'directory')],
-                [Markup.button.callback('⬅️ Выйти из аккаунта', 'sign-out')]
+                [Markup.button.callback(translater(ctx.session.lang||'ru', 'TEXT_SUPPORT'), 'support')],
+               [Markup.button.callback(translater(ctx.session.lang||'ru', 'TEXT_DIRECTORY'), 'directory')],
+                [Markup.button.callback(translater(ctx.session.lang||'ru', 'TEXT_SELECT_LANG'), 'select-language')],
+                [Markup.button.callback(translater(ctx.session.lang||'ru', 'TEXT_SIGN_OUT'), 'sign-out')]
+
             ])
-            await ctx.reply('Кабинет продавца, здесь вы можете выйти из аккаунта, обратиться в службу поддержки или ознакомится со справочником бота', buttons)
+
+            await ctx.reply(translater(ctx.session.lang||'ru', 'TITLE_CABINET'), buttons)
         })
 
 
