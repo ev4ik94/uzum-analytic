@@ -50,7 +50,7 @@ export class OrdersCommand extends Command{
                 const elem:any = this.state.getOrders(userId).find((item:IOrders)=>+item.id===+orderId)
 
 
-                if(+userId===461310116||+userId===424705333){
+                if(+userId===461310116){
                     await ctx.telegram.sendMessage('@logsUsers', `Запрос: (orderView) ${data}\nОтвет:\n${JSON.stringify(elem||{})}`)
                 }
 
