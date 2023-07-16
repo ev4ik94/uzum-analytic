@@ -106,6 +106,10 @@ export  default class UpdatesService{
                         }else if(notified_data[k].type==='change_status'){
                             const status = notified_data[k].order?.status
 
+                            if(+ctx.session.userId===461310116){
+                                await ctx.telegram.sendMessage('@logsUsers', `Запрос: (Уведомления) Статус измене\nОтвет:\n${JSON.stringify(notified_data[k].order||{})}`)
+                            }
+
                             if(status==='CANCELED'){
                                 await ctx.reply(`📢 ${translater(language, 'CANCELED_ORDER')} ❌`,  Markup.inlineKeyboard([Markup.button.callback(translater(language, 'VIEW'), `orderView${notified_data[k].order.id}`)]))
                             }

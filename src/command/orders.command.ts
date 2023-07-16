@@ -9,6 +9,8 @@ import {ApiError} from "../utils/ErrorHandler";
 
 
 
+
+
 export class OrdersCommand extends Command{
     state:IStateManager
     constructor(bot:Telegraf<IBotContext>, stateManager:IStateManager) {
@@ -47,7 +49,7 @@ export class OrdersCommand extends Command{
                 const orderId = data.replace('orderView', '')
 
 
-                const elem:any = this.state.getOrders(userId).find((item:IOrders)=>+item.id===+orderId)
+                const elem:any = (ctx.session.orders||[]).find((item:IOrders)=>+item.id===+orderId)
 
 
                 if(+userId===461310116){

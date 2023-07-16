@@ -19,7 +19,7 @@ export  default class OrdersService{
     async initData(ctx:any){
         try{
             const {token, userId, shops} = ctx.session
-            const orders_uzum = await this.getOrders({status: 'ALL', ctx, shopId: undefined, token, page:'1', size: 200})
+            const orders_uzum = await this.getOrders({status: 'ALL', ctx, shopId: undefined, token, page:'1', size: 3000})
             const orderItems = orders_uzum?.orderItems||[]
 
 
@@ -35,12 +35,16 @@ export  default class OrdersService{
                 }
             })
 
-            this.state.setOrders(orders_with_shop, userId)
+            ctx.session.orders = orders_with_shop
+
+            //this.state.setOrders(orders_with_shop, userId)
 
         }catch(err:any){
             throw new Error(err)
         }
     }
+
+
 
     async getOrders(data:{shopId?:number, token:string, status:string, ctx:any, page?:string, size?:number}){
         try{
@@ -128,11 +132,11 @@ export  default class OrdersService{
         try{
 
             const {token, userId, shops} = ctx.session
-            const orders = this.state.getOrders(userId)
+            const orders = ctx.session.orders||[]
 
 
 
-            const orders_uzum = await this.getOrders({status: 'ALL', ctx, shopId: undefined, token, page:'1', size: 200})
+            const orders_uzum = await this.getOrders({status: 'ALL', ctx, shopId: undefined, token, page:'1', size: 3000})
             let is_notified = false
 
             let orderItems:any[] = orders_uzum?.orderItems || []
@@ -168,12 +172,14 @@ export  default class OrdersService{
 
                             let newOrder = orderItems.find((order:IOrders)=>order.id===order_ids_uzum[i])
 
-                            this.state.setOrders([...this.state.getOrders(userId), newOrder], userId)
-                            is_notified = true
-                            data_n['type'] = 'new_order'
-                            data_n['order'] = newOrder
-                            notify_data.push(data_n)
-
+                            if(newOrder.status==='PROCESSING'&&!newOrder.dateIssued){
+                                ctx.session.orders = [...ctx.session.orders, newOrder]
+                                //this.state.setOrders([...this.state.getOrders(userId), newOrder], userId)
+                                is_notified = true
+                                data_n['type'] = 'new_order'
+                                data_n['order'] = newOrder
+                                notify_data.push(data_n)
+                            }
 
                         }
                     }
@@ -192,7 +198,7 @@ export  default class OrdersService{
                                 notify_data.push(data_n)
                                 is_notified = true
 
-                                this.state.setOrders(this.state.getOrders(userId).map((item:IOrders)=>{
+                                ctx.session.orders = (ctx.session.orders||[]).map((item:IOrders)=>{
                                     if(item.orderId===elem.orderId){
                                         if(elem.status==='CANCELED'){
                                             return {
@@ -208,7 +214,25 @@ export  default class OrdersService{
                                     }
 
                                     return item
-                                }), userId)
+                                })
+
+                                // this.state.setOrders(this.state.getOrders(userId).map((item:IOrders)=>{
+                                //     if(item.orderId===elem.orderId){
+                                //         if(elem.status==='CANCELED'){
+                                //             return {
+                                //                 ...item,
+                                //                 ...elem
+                                //             }
+                                //         }else{
+                                //             return {
+                                //                 ...item,
+                                //                 ...elem
+                                //             }
+                                //         }
+                                //     }
+                                //
+                                //     return item
+                                // }), userId)
 
 
                             }else if(elem.status!=='CANCELED'&&+elem.dateIssued!==+orders[k].dateIssued){
@@ -217,7 +241,7 @@ export  default class OrdersService{
                                 notify_data.push(data_n)
                                 is_notified = true
 
-                                this.state.setOrders(this.state.getOrders(userId).map((item:IOrders)=>{
+                                ctx.session.orders = (ctx.session.orders||[]).map((item:IOrders)=>{
                                     if(item.orderId===elem.orderId){
                                         return {
                                             ...item,
@@ -226,14 +250,26 @@ export  default class OrdersService{
                                     }
 
                                     return item
-                                }), userId)
+                                })
+
+                                // this.state.setOrders(this.state.getOrders(userId).map((item:IOrders)=>{
+                                //     if(item.orderId===elem.orderId){
+                                //         return {
+                                //             ...item,
+                                //             ...elem
+                                //         }
+                                //     }
+                                //
+                                //     return item
+                                // }), userId)
                             }
                         }
                     }
 
 
                 }else {
-                    this.state.setOrders(orderItems, userId)
+                    ctx.session.orders = orderItems
+                    //this.state.setOrders(orderItems, userId)
                 }
 
                 if(is_notified) return notify_data
