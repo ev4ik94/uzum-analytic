@@ -52,8 +52,9 @@ export class OrdersCommand extends Command{
                 const elem:any = (ctx.session.orders||[]).find((item:IOrders)=>+item.id===+orderId)
 
 
-                if(+userId===461310116){
-                    await ctx.telegram.sendMessage('@logsUsers', `Запрос: (orderView) ${data}\nОтвет:\n${JSON.stringify(elem||{})}`)
+                if(+userId===7219204){
+                    await ctx.telegram.sendMessage('@logsUsers', `Запрос: (orderView-${orderId}) ${data}\nОтвет:\n${JSON.stringify(elem||{})}`)
+                    console.log(ctx.session.orders)
                 }
 
                 if(elem){
