@@ -53,8 +53,7 @@ export class OrdersCommand extends Command{
 
 
                 if(+userId===7219204){
-                    await ctx.telegram.sendMessage('@logsUsers', `Запрос: (orderView-${orderId}) ${data}\nОтвет:\n${JSON.stringify(elem||{})}`)
-                    console.log(ctx.session.orders)
+                    await ctx.telegram.sendMessage('@logsUsers', `Запрос: (orderView-${orderId}) ${data}\nОтвет:\n${JSON.stringify(elem||{})}\n Длина массива элементов - ${ctx.session.orders.length}`)
                 }
 
                 if(elem){
