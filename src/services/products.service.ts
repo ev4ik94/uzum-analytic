@@ -95,8 +95,8 @@ export  default class ProductsService{
             const product:any = ctx.session.products.find((item:any)=>+item.productId===+productId)
             if(product){
                 const elem_sku = (product?.skuList||[]).find((item:any)=>item.skuFullTitle===sku)
-                if(type==='ACTIVE') return `${elem_sku?`${elem_sku?.quantityActive} шт.`:translater(ctx.session.lang, 'NO_MATCH_DATA')}`
-                if(type==='CANCELED') return `${elem_sku?`${elem_sku?.quantityReturned}`:translater(ctx.session.lang, 'NO_MATCH_DATA')}`
+                if(type==='ACTIVE') return `${elem_sku&&elem_sku?.quantityActive?`${elem_sku?.quantityActive} шт.`:translater(ctx.session.lang, 'NO_MATCH_DATA')}`
+                if(type==='CANCELED') return `${elem_sku&&elem_sku?.quantityReturned?`${elem_sku?.quantityReturned}`:translater(ctx.session.lang, 'NO_MATCH_DATA')}`
             }
 
             return translater(ctx.session.lang, 'NO_MATCH_DATA')
