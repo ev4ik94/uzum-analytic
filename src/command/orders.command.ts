@@ -5,8 +5,9 @@ import OrdersService from "../services/orders.service";
 import {DateFormatter, HTMLFormatter, NumReplace, translater} from "../utils";
 import {IStateManager} from "../config/config.interface";
 import {ApiError} from "../utils/ErrorHandler";
+import ProductsService from "../services/products.service";
 
-
+const productService = new ProductsService()
 
 
 
@@ -57,6 +58,8 @@ export class OrdersCommand extends Command{
                 }
 
                 if(elem){
+                    let remaindSku = await productService.remainderSku(ctx, ctx.session.token, elem.productId, elem.skuTitle)
+                    let canceledSku = await productService.remainderSku(ctx, ctx.session.token, elem.productId, elem.skuTitle, 'CANCELED')
                     const date:string = DateFormatter(new Date(elem.date))
 
 
@@ -82,7 +85,10 @@ export class OrdersCommand extends Command{
                             `/b${translater(ctx.session.lang||'ru', 'COST')}:/b ${NumReplace(elem.sellPrice)} сум/n`,
                             `/b${translater(ctx.session.lang||'ru', 'SELLER_COST')}:/b ${NumReplace(elem.sellerProfit)} сум/n/n`,
                             `/b${translater(ctx.session.lang||'ru', 'DATE_BUY')}:/b ${date}/n`,
-                            `/b${translater(ctx.session.lang||'ru', 'DATE_CANCELED')}:/b ${dateIssue}/n/n`,
+                            `/b${translater(ctx.session.lang||'ru', 'DATE_CANCELED')}:/b ${dateIssue}/n`,
+                            `-----------------------------------------------/n/n`,
+                            `/b${translater(ctx.session.lang||'ru', 'CANCELED_ITEMS')}: ${canceledSku}/b/n`,
+                            `/b${translater(ctx.session.lang||'ru', 'REMAIND_ITEMS')}: ${remaindSku}/b`,
                         ])
 
                     }else if(elem.dateIssued){
@@ -94,7 +100,9 @@ export class OrdersCommand extends Command{
                             `/b${translater(ctx.session.lang||'ru', 'COST')}:/b ${NumReplace(elem.sellPrice)} сум/n`,
                             `/b${translater(ctx.session.lang||'ru', 'SELLER_COST')}:/b ${NumReplace(elem.sellerProfit)} сум/n/n`,
                             `/b${translater(ctx.session.lang||'ru', 'DATE_BUY')}:/b ${date}/n`,
-                            `/b${translater(ctx.session.lang||'ru', 'DATE_ISSUED')}:/b ${dateIssue}/n/n`,
+                            `/b${translater(ctx.session.lang||'ru', 'DATE_ISSUED')}:/b ${dateIssue}/n`,
+                            `-----------------------------------------------/n/n`,
+                            `/b${translater(ctx.session.lang||'ru', 'REMAIND_ITEMS')}: ${remaindSku}/b`,
                         ])
                     }else{
                         message+=HTMLFormatter([
@@ -105,7 +113,9 @@ export class OrdersCommand extends Command{
                             `/b${translater(ctx.session.lang||'ru', 'COST')}:/b ${NumReplace(elem.sellPrice)} сум/n`,
                             `/b${translater(ctx.session.lang||'ru', 'SELLER_COST')}:/b ${NumReplace(elem.sellerProfit)} сум/n/n`,
                             `/b${translater(ctx.session.lang||'ru', 'DATE_BUY')}:/b ${date}/n`,
-                            `/b${translater(ctx.session.lang||'ru', 'DATE_ISSUED')}:/b --- /n/n`,
+                            `/b${translater(ctx.session.lang||'ru', 'DATE_ISSUED')}:/b --- /n`,
+                            `-----------------------------------------------/n/n`,
+                            `/b${translater(ctx.session.lang||'ru', 'REMAIND_ITEMS')}: ${remaindSku}/b`,
                         ])
 
                     }

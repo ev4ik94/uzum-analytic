@@ -18,15 +18,39 @@ export class FinanceCommand extends Command{
 
     handle() {
 
+        const regexp_finance = new RegExp(/^finance/)
+
         this.bot.hears('/finance', async(ctx)=>{
             try{
-                const response_data:IFinanceData = await FinanceSevice.getFinanceInfo(ctx)
-                const history_data = await FinanceSevice.requestHistory(ctx)
+                const buttons_orders = [
+                    Markup.button.callback(`${translater(ctx.session.lang||'ru', 'ALL_SHOPS')}`, `financeALL`),
+                    Markup.button.callback(`${translater(ctx.session.lang||'ru', 'CURRENT_SHOPS')}`, `financeCURRENT`)
+                ]
+
+                await ctx.reply(translater(ctx.session.lang||'ru', 'COMMAND_FINANCE'), Markup.inlineKeyboard(buttons_orders))
+
+            }catch (err:any){
+                throw new Error(err)
+            }
+        })
+
+
+        this.bot.action(regexp_finance, async(ctx)=>{
+            try{
+                const {update} = ctx
+                const {userId, current_shop} = ctx.session
+
+                //@ts-ignore
+                const data = update.callback_query.data
+                const type = data.replace(regexp_finance, '')
+
+                const response_data:IFinanceData = await FinanceSevice.getFinanceInfo(ctx, type==='ALL'?undefined:current_shop)
+                const history_data = await FinanceSevice.requestHistory(ctx, type==='ALL')
 
                 if(response_data||history_data){
 
                     if(response_data){
-                        let message = translater(ctx.session.lang||'ru', 'NO_MATCH_DATA')
+                        let message = ''
 
 
                         let date_now = new Date()
@@ -43,6 +67,8 @@ export class FinanceCommand extends Command{
                             `-----------------------------------------------/n`,
                             `/b⏺ ${translater(ctx.session.lang||'ru', 'FINANCE_PERIOD_ALL_TIME')}:/n/n    ${NumReplace(response_data.withdrawn+'')} сум/b/n`
                         ])
+
+                        if(!message.length) message = translater(ctx.session.lang||'ru', 'NO_MATCH_DATA')
 
 
                         await ctx.replyWithHTML(message)
@@ -80,13 +106,14 @@ export class FinanceCommand extends Command{
                 await ctx.reply(ApiError.serverError())
                 await ctx.telegram.sendMessage('@cacheErrorBot', ApiError.errorMessageFormatter(ctx, err_message))
                 throw new Error(err)
-
             }
         })
 
 
         this.bot.hears('/invoice', async(ctx)=>{
             try{
+
+
                 const invoice_data:any = await FinanceSevice.getInvoiceInfo(ctx)
 
                 if(invoice_data){
@@ -111,7 +138,11 @@ export class FinanceCommand extends Command{
                         ])
                     }
 
-                    if(!message.length) translater(ctx.session.lang||'ru', 'NO_MATCH_DATA')
+                    if(!message.length) {
+                        message = translater(ctx.session.lang||'ru', 'NO_MATCH_DATA')
+                    }
+
+
                     await ctx.reply(`${translater(ctx.session.lang||'ru', 'LAST_LIST_INVOICE')}`)
                     await ctx.replyWithHTML(message)
 

@@ -199,7 +199,7 @@ export  default class OrdersService{
                                 is_notified = true
 
                                 ctx.session.orders = (ctx.session.orders||[]).map((item:IOrders)=>{
-                                    if(item.orderId===elem.orderId){
+                                    if(item.id===elem.id){
                                         if(elem.status==='CANCELED'){
                                             return {
                                                 ...item,
@@ -242,7 +242,7 @@ export  default class OrdersService{
                                 is_notified = true
 
                                 ctx.session.orders = (ctx.session.orders||[]).map((item:IOrders)=>{
-                                    if(item.orderId===elem.orderId){
+                                    if(item.id===elem.id){
                                         return {
                                             ...item,
                                             ...elem

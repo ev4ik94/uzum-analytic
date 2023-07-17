@@ -27,11 +27,11 @@ export  default class FinanceSevice {
         }
     }
 
-    static async getFinanceInfo(ctx:any){
+    static async getFinanceInfo(ctx:any, shopId?:number){
         try{
             const language:string = ctx.session.lang||'ru'
             const {current_shop, token} = ctx.session
-            const finance_response = await fetch(`${process.env.API}/seller/finance/statement?shopId=${current_shop}`, {
+            const finance_response = await fetch(`${process.env.API}/seller/finance/statement${shopId?`?shopId=${current_shop}`:''}`, {
                 headers: {'Authorization': `Bearer ${token}`, 'accept-language': language==='ru'?'ru-RU':'uz-UZ'}
             })
 
@@ -55,6 +55,8 @@ export  default class FinanceSevice {
             if(!invoice_response.ok) {
                 if(invoice_response.status===401){
                     await AuthService.refreshToken(ctx)
+                    return
+                }else if(invoice_response.status===403){
                     return
                 }else{
                     await ctx.telegram.sendMessage('@cacheBotError', ApiError.errorMessageFormatter(ctx, `URL: ${invoice_response.url} STATUS: ${invoice_response.status} USER_ID: ${ctx.session.userId} TEXT: ${invoice_response.statusText}`))

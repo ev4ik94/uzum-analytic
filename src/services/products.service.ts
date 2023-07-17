@@ -1,11 +1,13 @@
 import {IAuth, IConfig} from "../config/config.interface";
+import {IResponseProduct} from "../context/context.interface";
+import {translater} from "../utils";
 const fetch = require('node-fetch')
 
 
 
 
 export  default class ProductsService{
-    constructor(private readonly authService: IAuth) {
+    constructor() {
     }
 
     async getProducts(data:{shopId:number, token:string, page:number, ctx:any}){
@@ -84,6 +86,23 @@ export  default class ProductsService{
             return {...product_find, ...product_info, actions: bodyActions}
         }catch (err){
             return err
+        }
+    }
+
+
+    async remainderSku(ctx:any, token:string, productId: number, sku:string, type:string='ACTIVE'){
+        try{
+            const product:any = ctx.session.products.find((item:any)=>+item.productId===+productId)
+            if(product){
+                const elem_sku = (product?.skuList||[]).find((item:any)=>item.skuFullTitle===sku)
+                if(type==='ACTIVE') return `${elem_sku?`${elem_sku?.quantityActive} шт.`:translater(ctx.session.lang, 'NO_MATCH_DATA')}`
+                if(type==='CANCELED') return `${elem_sku?`${elem_sku?.quantityReturned}`:translater(ctx.session.lang, 'NO_MATCH_DATA')}`
+            }
+
+            return translater(ctx.session.lang, 'NO_MATCH_DATA')
+
+        }catch (err:any){
+
         }
     }
 

@@ -8,7 +8,7 @@ import {ApiError} from "../utils/ErrorHandler";
 
 const authService = new AuthenticatedService()
 
-const productsService = new ProductsService(authService)
+const productsService = new ProductsService()
 
 
 export class ProductsCommand extends Command{
@@ -23,6 +23,7 @@ export class ProductsCommand extends Command{
 
         const action_productId_regexp = new RegExp(/^productId/)
         const action_shopId_regexp = new RegExp(/^shopId/)
+        const action_productView_regexp = new RegExp(/^productView/)
 
         this.bot.hears('/shops', async (ctx)=>{
             try{
@@ -79,6 +80,9 @@ export class ProductsCommand extends Command{
                 throw new Error(err)
             }
         })
+
+
+
 
         this.bot.action(action_shopId_regexp, async (ctx)=>{
             try{
@@ -200,34 +204,34 @@ export class ProductsCommand extends Command{
                 const data = update.callback_query.data
 
 
-                if(data.match('productId')){
 
-                    const get_page = +data.replace('productId', '')
+                const get_page = data.match('productId')?+data.replace('productId', ''):null
 
-                    if(!this.currentPage.find((item:any)=>item.id===userId)){
-                        this.currentPage.push({
-                            id: userId,
-                            page:get_page
-                        })
-                    }else{
-                        this.currentPage = this.currentPage.map((item:any)=>{
-                            if(item.id===userId){
-                                return{
-                                    ...item,
-                                    page: get_page
-                                }
 
+                if(!this.currentPage.find((item:any)=>item.id===userId)){
+                    this.currentPage.push({
+                        id: userId,
+                        page:get_page||1
+                    })
+                }else{
+                    this.currentPage = this.currentPage.map((item:any)=>{
+                        if(item.id===userId){
+                            return{
+                                ...item,
+                                page: get_page||1
                             }
-                            return item
-                        })
 
-                    }
+                        }
+                        return item
+                    })
+
+                }
 
 
+                let message:string = ''
+                const get_current_page = this.currentPage.find((item:any)=>item.id===userId)?.page
+                const current_product = ctx.session.products[get_current_page-1]
 
-                    let message:string = ''
-                    const get_current_page = this.currentPage.find((item:any)=>item.id===userId)?.page
-                    const current_product = ctx.session.products[get_current_page-1]
 
                     if(current_product){
                         message  =HTMLFormatter([
@@ -249,30 +253,26 @@ export class ProductsCommand extends Command{
                         message = translater(ctx.session.lang||'ru', 'PRODUCT_NOT_FOUND')
                     }
 
+                const buttons:any[] = []
 
-
-
-                    const buttons:any[] = []
-
-                    if(get_current_page-1>0){
-                        buttons.push( Markup.button.callback(`⬅️${translater(ctx.session.lang||'ru', 'BACK')}`, `productId${get_current_page-1}`))
-                    }
-
-                    if(ctx.session.products.length) buttons.push( Markup.button.callback(`${get_current_page}/${ctx.session.products.length}`, `no-action`))
-
-
-                    if(get_current_page-1<ctx.session.products.length-1){
-                        buttons.push( Markup.button.callback(`${translater(ctx.session.lang||'ru', 'FRONT')} ➡️`, `productId${get_current_page+1}`))
-                    }
-
-                    if(buttons.length){
-                        return  await ctx.editMessageText(message, Markup.inlineKeyboard(buttons))
-                    }
-
-                    return  await ctx.editMessageText(message)
-
-
+                if(get_current_page-1>0){
+                    buttons.push( Markup.button.callback(`⬅️${translater(ctx.session.lang||'ru', 'BACK')}`, `productId${get_current_page-1}`))
                 }
+
+                if(ctx.session.products.length) buttons.push( Markup.button.callback(`${get_current_page}/${ctx.session.products.length}`, `no-action`))
+
+
+                if(get_current_page-1<ctx.session.products.length-1){
+                    buttons.push( Markup.button.callback(`${translater(ctx.session.lang||'ru', 'FRONT')} ➡️`, `productId${get_current_page+1}`))
+                }
+
+
+
+                if(buttons.length){
+                    return  await ctx.editMessageText(message, Markup.inlineKeyboard(buttons))
+                }
+
+                return  await ctx.editMessageText(message)
             }catch (err:any){
                 const err_message = `Метод: Command /productId\n\nОШИБКА: ${err}`
                 await ctx.telegram.sendMessage('@cacheBotError', ApiError.errorMessageFormatter(ctx, err_message))

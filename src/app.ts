@@ -261,6 +261,8 @@ class Bot{
             res.sendFile(filepath);
         });
 
+
+
         app.post('/support-data', async(req:Request, res:Response)=>{
             const {query_id, phone_number, content, tg_data, images} = req.body
 
@@ -330,11 +332,16 @@ class Bot{
         await this.serverStart()
         await this.routing()
 
+        // const read_data:any = fs.readFileSync(path.resolve(__dirname, '../sessions.json'))
+        // const data_parse = JSON.parse(read_data)
+        //
+        // console.log(data_parse)
 
 
-        for(let chatId of chat_ids){
-            this.bot.telegram.sendMessage(chatId, '<strong>📢 Были добавлены обновления:</strong>\n\n \nДля продолжения работы с ботом \nнеобходимо перезапустить его\n<strong><a href="https://t.me/uselleruz_bot?start=restart">Перезапуск</a></strong>', {parse_mode: 'HTML'})
-        }
+
+        // for(let chatId of chat_ids){
+        //     this.bot.telegram.sendMessage(chatId, '<strong>📢 Были добавлены обновления:</strong>\n\n \nДля продолжения работы с ботом \nнеобходимо перезапустить его\n<strong><a href="https://t.me/uselleruz_bot?start=restart">Перезапуск</a></strong>', {parse_mode: 'HTML'})
+        // }
 
 
 
