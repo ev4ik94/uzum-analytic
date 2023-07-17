@@ -99,8 +99,8 @@
   "ALL_SHOPS": "Barcha do'konlarni ko'rsatish",
   "CURRENT_SHOPS": "Joriy do'konni ko'rsatish",
   "COMMAND_FINANCE": "Do'koningiz moliyasi",
-  "REMAIND_ITEMS": "Qolgan tovarlar",
-  "CANCELED_ITEMS": "Qaytishlar soni",
+  "REMAIND_ITEMS": "Qolgan tovarlar SKU tomonidan",
+  "CANCELED_ITEMS": "Qaytishlar soni SKU tomonidan",
 
   "SUPPORT_DIRECTORY": "<strong>Menyu</strong>\n\n<b>Faol tovarlar</b> - siz turgan do'konda sotiladigan tovarlar.\n\n                                             Bildirishnoma\n\n<b>Yangi buyurtma ❗️❗️❗️</b>️ - har biriga yangi mahsulotga buyurtma berish\n\n<b>Buyurtma qabul qilindi \uD83D\uDECD</b> -  Mijoz sizning molingizni qabul qilish joyidan oldi.\n\n<b>Buyurtma tasdiqlangan ✅</b> - Joriy mahsulot uchun pul yechib olish uchun mavjud.\n\n<b>Buyurtma bekor qilindi ❌</b> - mijoz tomonidan buyurtmani bekor qilish yoki mijoz o'z tovarini qabul qilish joyidan o'z vaqtida olmagan\n\n<b>Yangi otziv \uD83D\uDC8C</b> -  mijoz tomonidan qoldirilgan mahsulot otzivi\n\n<b>Pul yechib olish tasdiqlandi \uD83D\uDCB8</b> - qaytarib olish talabingiz ma'qullandi.\n\n<b>Buyum sklatda qabul qilingan \uD83D\uDCE6</b> - Sizning tovarlaringiz skladga qabul qilindi va sotishga tayyor.\n\n<b>\uD83D\uDCE2 Yangilanishlar qo'shildi:</b> Yangi funksiyalar qo'shilganda yoki botda aniqlangan xatolarni tahrirlashda. Bot barcha yangilanishlarni olish uchun sizni qayta ishga tushirish haqida xabar beradi"
 

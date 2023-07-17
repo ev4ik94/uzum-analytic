@@ -87,8 +87,8 @@ export class OrdersCommand extends Command{
                             `/b${translater(ctx.session.lang||'ru', 'DATE_BUY')}:/b ${date}/n`,
                             `/b${translater(ctx.session.lang||'ru', 'DATE_CANCELED')}:/b ${dateIssue}/n`,
                             `-----------------------------------------------/n/n`,
-                            `/b${translater(ctx.session.lang||'ru', 'CANCELED_ITEMS')}: ${canceledSku}/b/n`,
-                            `/b${translater(ctx.session.lang||'ru', 'REMAIND_ITEMS')}: ${remaindSku}/b`,
+                            `/b${translater(ctx.session.lang||'ru', 'CANCELED_ITEMS')}: ${canceledSku||translater(ctx.session.lang||'ru', 'NO_MATCH_DATA')}/b/n`,
+                            `/b${translater(ctx.session.lang||'ru', 'REMAIND_ITEMS')}: ${remaindSku||translater(ctx.session.lang||'ru', 'NO_MATCH_DATA')}/b`,
                         ])
 
                     }else if(elem.dateIssued){
@@ -102,7 +102,7 @@ export class OrdersCommand extends Command{
                             `/b${translater(ctx.session.lang||'ru', 'DATE_BUY')}:/b ${date}/n`,
                             `/b${translater(ctx.session.lang||'ru', 'DATE_ISSUED')}:/b ${dateIssue}/n`,
                             `-----------------------------------------------/n/n`,
-                            `/b${translater(ctx.session.lang||'ru', 'REMAIND_ITEMS')}: ${remaindSku}/b`,
+                            `/b${translater(ctx.session.lang||'ru', 'REMAIND_ITEMS')}: ${remaindSku||translater(ctx.session.lang||'ru', 'NO_MATCH_DATA')}/b`,
                         ])
                     }else{
                         message+=HTMLFormatter([
@@ -115,7 +115,7 @@ export class OrdersCommand extends Command{
                             `/b${translater(ctx.session.lang||'ru', 'DATE_BUY')}:/b ${date}/n`,
                             `/b${translater(ctx.session.lang||'ru', 'DATE_ISSUED')}:/b --- /n`,
                             `-----------------------------------------------/n/n`,
-                            `/b${translater(ctx.session.lang||'ru', 'REMAIND_ITEMS')}: ${remaindSku}/b`,
+                            `/b${translater(ctx.session.lang||'ru', 'REMAIND_ITEMS')}: ${remaindSku||translater(ctx.session.lang||'ru', 'NO_MATCH_DATA')}/b`,
                         ])
 
                     }
