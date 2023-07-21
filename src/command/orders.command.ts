@@ -53,9 +53,9 @@ export class OrdersCommand extends Command{
                 const elem:any = (ctx.session.orders||[]).find((item:IOrders)=>+item.id===+orderId)
 
 
-                if(+userId===7219204){
-                    await ctx.telegram.sendMessage('@logsUsers', `Запрос: (orderView-${orderId}) ${data}\nОтвет:\n${JSON.stringify(elem||{})}\n Длина массива элементов - ${ctx.session.orders.length}`)
-                }
+                // if(+userId===7219204){
+                //     await ctx.telegram.sendMessage('@logsUsers', `Запрос: (orderView-${orderId}) ${data}\nОтвет:\n${JSON.stringify(elem||{})}\n Длина массива элементов - ${ctx.session.orders.length}`)
+                // }
 
                 if(elem){
                     let remaindSku = await productService.remainderSku(ctx, ctx.session.token, elem.productId, elem.skuTitle)

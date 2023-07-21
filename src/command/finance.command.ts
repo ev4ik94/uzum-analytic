@@ -5,9 +5,9 @@ import {IBotContext, IFinanceData, IHistoryRequest} from "../context/context.int
 import FinanceSevice from "../services/finance.sevice";
 import {DateFormatter, HTMLFormatter, month, NumReplace, translater} from "../utils";
 import {ApiError} from "../utils/ErrorHandler";
+import {TimeslotsService} from "../services/timeslots.service";
 
-
-
+const timeslotsService = new TimeslotsService()
 
 
 export class FinanceCommand extends Command{
@@ -156,6 +156,18 @@ export class FinanceCommand extends Command{
                 await ctx.reply(ApiError.serverError())
                 await ctx.telegram.sendMessage('@cacheErrorBot', ApiError.errorMessageFormatter(ctx, err_message))
                 throw new Error(err)
+
+            }
+        })
+
+
+        this.bot.hears('/timeslots-cache', async(ctx)=>{
+            try{
+                const {token} = ctx.session
+                const dateFrom = new Date('20-07-2023').getTime()
+                const dateTo = new Date('30-07-2023').getTime()
+                await timeslotsService.getTimeslots(token, [249637], ctx, {from:dateFrom, to:dateTo})
+            }catch (err:any){
 
             }
         })

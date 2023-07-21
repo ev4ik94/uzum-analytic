@@ -27,6 +27,15 @@ export  default class PermissionsService{
         }
     }
 
+    async getChatIdsNoActive(){
+        try{
+            let users:any[] = await this.getUsersAllNoActive()
+            return users.map((item:any)=>item.chatId)
+        }catch (err:any){
+            throw new Error(err)
+        }
+    }
+
     async getUser(id:number){
         try{
             const user = await Users.findOne({where:{id}})
@@ -55,6 +64,16 @@ export  default class PermissionsService{
                         { status: Statuses.ACTIVE },
                         { status: Statuses.TRIAL }
                     ]
+                }})
+        }catch(err:any){
+            throw new Error(err)
+        }
+    }
+
+    async getUsersAllNoActive(){
+        try{
+            return await Users.findAll({where: {
+                    status: Statuses.NO_ACTIVE
                 }})
         }catch(err:any){
             throw new Error(err)

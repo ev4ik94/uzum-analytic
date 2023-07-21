@@ -1,7 +1,6 @@
 import express, { Express, Request, Response } from 'express';
 const cors = require('cors')
 import {Markup, Telegraf} from "telegraf";
-const TelegramApi = require('node-telegram-bot-api')
 const fileupload = require("express-fileupload")
 import fs from 'fs';
 import {IBotContext} from "./context/context.interface";
@@ -11,17 +10,18 @@ import LocalSession from 'telegraf-session-local'
 import {sequelize} from "./db";
 import {ProductsCommand} from "./command/products.command";
 import {OrdersCommand} from "./command/orders.command";
-import OrdersService from "./services/orders.service";
 import AuthenticatedService from "./services/authenticated.service";
 import {ReviewsCommand} from "./command/reviews.command";
-import ReviewsService from "./services/reviews.service";
 import UpdatesService from "./services/updates.service";
 import PermissionService from "./services/permissions.service";
 import dotenv from "dotenv"
 import {StateManager} from "./state";
-import {IStateManager} from "./config/config.interface";
 import {FinanceCommand} from "./command/finance.command";
-import {ApiError} from "./utils/ErrorHandler";
+
+
+
+
+
 
 const AuthService = new AuthenticatedService()
 
@@ -41,6 +41,8 @@ app.use(express.static(path.resolve(__dirname, 'static')))
 dotenv.config()
 
 
+
+
 class Bot{
     bot: Telegraf<IBotContext>
     commands: Command[] = []
@@ -48,13 +50,15 @@ class Bot{
     constructor() {
         console.log('БОТ запущен')
 
-        this.bot = new Telegraf<IBotContext>(process.env.TOKEN!);
 
+
+        this.bot = new Telegraf<IBotContext>(process.env.TOKEN!);
         this.bot.use((new LocalSession({ database: 'sessions.json' })).middleware())
 
 
-        this.bot.use(async(ctx, next)=>{
 
+
+        this.bot.use(async(ctx, next)=>{
 
 
             if(ctx?.session?.token){
@@ -325,6 +329,32 @@ class Bot{
         })
     }
 
+    static async clearCashe(){
+        try{
+            const chat_ids_delete  = await PermissionServiceData.getChatIdsNoActive()
+            const read_data:any = fs.readFileSync(path.resolve(__dirname, '../sessions.json'))
+            const data_parse = JSON.parse(read_data)
+
+            const clear_list = (data_parse?.sessions||[]).filter((item:any)=>{
+                const id = (item?.id||'').replace(/^.+?:/, '')
+                if(chat_ids_delete.includes(+id)) return false
+                return true
+            })
+
+
+            data_parse.sessions = clear_list
+console.log(clear_list.map((item:any)=>item.id))
+            fs.writeFile(path.resolve(__dirname, '../sessions.json'), JSON.stringify(data_parse), (err)=>{
+                console.log(err)
+            })
+
+
+        }catch (err:any){
+
+        }
+    }
+
+
     async init(){
         await sequelize.authenticate()
         await sequelize.sync()
@@ -332,16 +362,12 @@ class Bot{
         await this.serverStart()
         await this.routing()
 
-        // const read_data:any = fs.readFileSync(path.resolve(__dirname, '../sessions.json'))
-        // const data_parse = JSON.parse(read_data)
-        //
-        // console.log(data_parse)
 
 
 
-        for(let chatId of chat_ids){
-            this.bot.telegram.sendMessage(chatId, '<strong>📢 Были добавлены обновления:</strong>\n\n \nДля продолжения работы с ботом \nнеобходимо перезапустить его\n<strong><a href="https://t.me/uselleruz_bot?start=restart">Перезапуск</a></strong>', {parse_mode: 'HTML'})
-        }
+        // for(let chatId of chat_ids){
+        //     this.bot.telegram.sendMessage(chatId, '<strong>📢 Были добавлены обновления:</strong>\n\n \nДля продолжения работы с ботом \nнеобходимо перезапустить его\n<strong><a href="https://t.me/uselleruz_bot?start=restart">Перезапуск</a></strong>', {parse_mode: 'HTML'})
+        // }
 
 
 
@@ -363,6 +389,8 @@ class Bot{
     }
 
 }
+
+Bot.clearCashe()
 
 const bot = new Bot();
 bot.init()

@@ -25,7 +25,16 @@ export class StartCommand extends Command{
             const language = ctx.session.lang || 'ru'
 
 
+            // if(ctx.message.from.id===424705333) {
+            //     ctx.session.token = 'sdfdsf'
+            //     ctx.session.refresh_token = 'yz_TtM9MRXM1Ehm_-fojn5ER-_k'
+            // }
+
+
+
+
             if(!ctx.session.token){
+
                 const buttons = Markup.inlineKeyboard([
                     [Markup.button.callback('Русский 🇷🇺', 'langRU'), Markup.button.callback('O`zbek 🇺🇿', 'langUZ')]
                 ])
@@ -33,6 +42,7 @@ export class StartCommand extends Command{
 
 
             }else{
+
                 await ctx.replyWithHTML(`❗️${translater(language, 'UPDATES')}`)
                 //await ctx.replyWithHTML( translater(language, 'BOT_WORK_AGAIN'))
             }

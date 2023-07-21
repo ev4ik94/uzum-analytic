@@ -94,14 +94,15 @@ export  default class UpdatesService{
                 const language = ctx.session.lang||'ru'
 
 
+
                 if(notified_data){
 
 
                     for(let k=0; k<notified_data.length;k++){
                         if(notified_data[k].type==='new_order'){
-                            if(+ctx.session.userId===7219204){
-                                await ctx.telegram.sendMessage('@logsUsers', `Запрос: (Уведомления) Новый заказ\nОтвет:\n${JSON.stringify(notified_data[k].order||{})}`)
-                            }
+                            // if(+ctx.session.userId===7219204){
+                            //     await ctx.telegram.sendMessage('@logsUsers', `Запрос: (Уведомления) Новый заказ\nОтвет:\n${JSON.stringify(notified_data[k].order||{})}`)
+                            // }
                             await ctx.reply(`📢 ${translater(language, 'NEW_ORDER')} ❗️❗️❗️`,  Markup.inlineKeyboard([Markup.button.callback(translater(language, 'VIEW'), `orderView${notified_data[k].order.id}`)]))
                         }else if(notified_data[k].type==='change_status'){
                             const status = notified_data[k].order?.status
@@ -122,9 +123,9 @@ export  default class UpdatesService{
 
                         }else if(notified_data[k].type==='change_date'){
                             if(notified_data[k].order.dateIssued){
-                                if(+ctx.session.userId===7219204){
-                                    await ctx.telegram.sendMessage('@logsUsers', `Запрос: (Уведомления) Заказ получен\nОтвет:\n${JSON.stringify(notified_data[k].order||{})}`)
-                                }
+                                // if(+ctx.session.userId===7219204){
+                                //     await ctx.telegram.sendMessage('@logsUsers', `Запрос: (Уведомления) Заказ получен\nОтвет:\n${JSON.stringify(notified_data[k].order||{})}`)
+                                // }
                                 await ctx.reply(`📢 ${translater(language, 'WITH_DRAW_ORDER')} 🛍`,  Markup.inlineKeyboard([Markup.button.callback(translater(language, 'VIEW'), `orderView${notified_data[k].order.id}`)]))
                             }
 

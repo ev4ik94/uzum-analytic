@@ -3,7 +3,8 @@ import {IStateManager} from "../config/config.interface";
 const fetch = require('node-fetch')
 import {IOrders} from '../context/context.interface'
 import AuthenticatedService from "./authenticated.service";
-import {ApiError} from "../utils/ErrorHandler";
+
+import {Orders, Users} from "../models";
 
 
 const AuthService = new AuthenticatedService()
@@ -27,6 +28,8 @@ export  default class OrdersService{
                 const shop_info = shops.find((sho:any)=>sho.id===item.shopId)
                 return{
                     ...item,
+                    // productImage: item.productImage.photo['480'].high,
+                    // shopTitle: shop_info.shopTitle,
                     shop: {
                         title: shop_info.shopTitle,
                         id:  shop_info.id
@@ -34,6 +37,8 @@ export  default class OrdersService{
 
                 }
             })
+
+            //await this.addOrders(userId, orders_with_shop)
 
             ctx.session.orders = orders_with_shop
 
@@ -280,6 +285,23 @@ export  default class OrdersService{
 
 
             return false
+
+        }catch (err:any){
+            throw new Error(err)
+        }
+    }
+
+
+    async addOrders(userId:number, orders:any[]){
+        try{
+            const user = await Users.findOne({where: {userId:userId}})
+
+            if(!user) throw new Error('Пользователь не найден')
+
+            for(let k=0; k<orders.length; k++){
+                await Orders.create({...orders[k], userId:userId})
+            }
+
 
         }catch (err:any){
             throw new Error(err)
