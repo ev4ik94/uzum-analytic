@@ -281,8 +281,6 @@ export  default class PermissionsService{
                     userId: userId
                 }})
 
-            if(!search_result) throw new Error('Такого пользователя не существует')
-
             return search_result
 
         }catch(err:any){

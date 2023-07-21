@@ -204,7 +204,10 @@ class Bot{
         app.get(`/users/:userId`, async(req:Request, res:Response)=>{
             const {userId} = req.params
             const result = await PermissionServiceData.searchUserByUserId(+userId)
-            res.status(200).json(result)
+
+            if(result) res.status(200).json(result)
+            res.status(404).json({message: 'Такого пользователя нет'})
+
         })
 
         app.get(`/users/:id`, async(req:Request, res:Response)=>{
