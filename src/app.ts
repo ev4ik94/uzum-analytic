@@ -344,6 +344,7 @@ class Bot{
 
             const clear_list = (data_parse?.sessions||[]).filter((item:any)=>{
                 const id = (item?.id||'').replace(/^.+?:/, '')
+                console.log(chat_ids_delete.includes(+id))
                 if(chat_ids_delete.includes(+id)) return false
                 return true
             })
