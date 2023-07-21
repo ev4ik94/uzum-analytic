@@ -343,7 +343,8 @@ class Bot{
 
 
             data_parse.sessions = clear_list
-console.log(clear_list.map((item:any)=>item.id))
+console.log(clear_list.length)
+console.log(chat_ids_delete)
             fs.writeFile(path.resolve(__dirname, '../sessions.json'), JSON.stringify(data_parse), (err)=>{
                 console.log(err)
             })
