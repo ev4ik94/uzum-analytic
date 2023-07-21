@@ -80,6 +80,8 @@ export  default class OrdersService{
 
             if(!response_orders.ok) {
 
+                await data.ctx.telegram.sendMessage('@logsUsers', `ApiError.errorMessageFormatter(data.ctx, \`URL: ${response_orders.url} STATUS: ${response_orders.status} USER_ID: ${data.ctx.session.userId} TEXT: ${response_orders.statusText}\n userId: ${data.ctx.session.userId}\n DATA: ${data.ctx.session.refresh_token}`)
+
                 if(response_orders.status===401){
                     await AuthService.refreshToken(data.ctx)
                     return
