@@ -69,7 +69,14 @@ class Bot{
                 await AuthService.checkToken(ctx)
 
 
+
+
                 if(ctx.session&&!ctx.session?.userId){
+
+                    if(+ctx.session.userId===645164294){
+                        await ctx.telegram.sendMessage('@logsUsers', `Магазины ${ctx.session.shops}\n Текущий магазин ${ctx.session.current_shop}`)
+                    }
+
                     //@ts-ignore
                     if(ctx.message&&ctx.message.from){
                         //@ts-ignore
@@ -343,7 +350,7 @@ class Bot{
 
 
             data_parse.sessions = clear_list
-console.log(clear_list.length)
+console.log(clear_list.map((item:any)=>item.id).length)
 console.log(chat_ids_delete)
             fs.writeFile(path.resolve(__dirname, '../sessions.json'), JSON.stringify(data_parse), (err)=>{
                 console.log(err)
