@@ -339,19 +339,20 @@ class Bot{
     static async clearCashe(){
         try{
             const chat_ids_delete  = await PermissionServiceData.getChatIdsNoActive()
+            const chat_ids_active  = await PermissionServiceData.getChatIds()
             const read_data:any = fs.readFileSync(path.resolve(__dirname, '../sessions.json'))
             const data_parse = JSON.parse(read_data)
 
             const clear_list = (data_parse?.sessions||[]).filter((item:any)=>{
                 const id = (item?.id||'').replace(/^.+?:/, '')
-                console.log(id)
-                if(chat_ids_delete.includes(+id)) return false
-                return true
+
+                if(chat_ids_active.includes(+id)) return true
+                return false
             })
 
 
             data_parse.sessions = clear_list
-console.log(clear_list.map((item:any)=>item.id).length)
+console.log(clear_list.map((item:any)=>item.id))
 console.log(chat_ids_delete)
             fs.writeFile(path.resolve(__dirname, '../sessions.json'), JSON.stringify(data_parse), (err)=>{
                 console.log(err)
