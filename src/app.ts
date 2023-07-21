@@ -346,19 +346,23 @@ class Bot{
             const read_data:any = fs.readFileSync(path.resolve(__dirname, '../sessions.json'))
             const data_parse = JSON.parse(read_data)
 
-            const clear_list = (data_parse?.sessions||[]).filter((item:any)=>{
-                const id = (item?.id||'').replace(/^.+?:/, '')
+            const user = data_parse?.sessions.find((item:any)=>item.id==="645164294:645164294")
+            console.log(user.shops)
+            console.log(user.current_shop)
 
-                if(chat_ids_active.includes(+id)) return true
-                return false
-            })
-
-
-            data_parse.sessions = clear_list
-
-            fs.writeFile(path.resolve(__dirname, '../sessions.json'), JSON.stringify(data_parse), (err)=>{
-                console.log(err)
-            })
+            // const clear_list = (data_parse?.sessions||[]).filter((item:any)=>{
+            //     const id = (item?.id||'').replace(/^.+?:/, '')
+            //
+            //     if(chat_ids_active.includes(+id)) return true
+            //     return false
+            // })
+            //
+            //
+            // data_parse.sessions = clear_list
+            //
+            // fs.writeFile(path.resolve(__dirname, '../sessions.json'), JSON.stringify(data_parse), (err)=>{
+            //     console.log(err)
+            // })
 
 
         }catch (err:any){
@@ -377,9 +381,9 @@ class Bot{
 
 
 
-        for(let chatId of chat_ids){
-            this.bot.telegram.sendMessage(chatId, '<strong>📢 Были добавлены обновления:</strong>\n\n \nДля продолжения работы с ботом \nнеобходимо перезапустить его\n<strong><a href="https://t.me/uselleruz_bot?start=restart">Перезапуск</a></strong>', {parse_mode: 'HTML'})
-        }
+        // for(let chatId of chat_ids){
+        //     this.bot.telegram.sendMessage(chatId, '<strong>📢 Были добавлены обновления:</strong>\n\n \nДля продолжения работы с ботом \nнеобходимо перезапустить его\n<strong><a href="https://t.me/uselleruz_bot?start=restart">Перезапуск</a></strong>', {parse_mode: 'HTML'})
+        // }
 
 
 
@@ -402,7 +406,7 @@ class Bot{
 
 }
 
-// Bot.clearCashe()
+Bot.clearCashe()
 
 const bot = new Bot();
 bot.init()
