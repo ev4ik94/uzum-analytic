@@ -199,32 +199,32 @@ class Bot{
                 users = await PermissionServiceData.getUsersAll()
             }
 
-            res.status(200).json(users)
+            return res.status(200).json(users)
         })
         app.get(`/users/:userId`, async(req:Request, res:Response)=>{
             const {userId} = req.params
             const result = await PermissionServiceData.searchUserByUserId(+userId)
 
-            if(result) res.status(200).json(result)
-            res.status(404).json({message: 'Такого пользователя нет'})
+            if(result) return res.status(200).json(result)
+            return res.status(404).json({message: 'Такого пользователя нет'})
 
         })
 
         app.get(`/users/:id`, async(req:Request, res:Response)=>{
             const {id} = req.params
             const user = await PermissionServiceData.getUser(+id)
-            res.status(200).json(user)
+            return res.status(200).json(user)
         })
         app.put(`/users/:id`, async(req:Request, res:Response)=>{
             const {id} = req.params
             const {body} = req
             await PermissionServiceData.userUpdate(+id, body)
-            res.status(200).json({status:'ok'})
+            return res.status(200).json({status:'ok'})
         })
         app.delete(`/users/:id`, async(req:Request, res:Response)=>{
             const {id} = req.params
             await PermissionServiceData.userDelete(+id)
-            res.status(200).json({status:'ok'})
+            return res.status(200).json({status:'ok'})
         })
         app.post('/web-data', async(req:Request, res:Response)=>{
             const {query_id, token, refresh_token, tg_data} = req.body
@@ -341,7 +341,7 @@ class Bot{
 
     static async clearCashe(){
         try{
-            const chat_ids_delete  = await PermissionServiceData.getChatIdsNoActive()
+
             const chat_ids_active  = await PermissionServiceData.getChatIds()
             const read_data:any = fs.readFileSync(path.resolve(__dirname, '../sessions.json'))
             const data_parse = JSON.parse(read_data)
@@ -355,15 +355,14 @@ class Bot{
 
 
             data_parse.sessions = clear_list
-console.log(clear_list.map((item:any)=>item.id))
-console.log(chat_ids_delete)
+
             fs.writeFile(path.resolve(__dirname, '../sessions.json'), JSON.stringify(data_parse), (err)=>{
                 console.log(err)
             })
 
 
         }catch (err:any){
-
+            throw new Error(err)
         }
     }
 
@@ -378,9 +377,9 @@ console.log(chat_ids_delete)
 
 
 
-        // for(let chatId of chat_ids){
-        //     this.bot.telegram.sendMessage(chatId, '<strong>📢 Были добавлены обновления:</strong>\n\n \nДля продолжения работы с ботом \nнеобходимо перезапустить его\n<strong><a href="https://t.me/uselleruz_bot?start=restart">Перезапуск</a></strong>', {parse_mode: 'HTML'})
-        // }
+        for(let chatId of chat_ids){
+            this.bot.telegram.sendMessage(chatId, '<strong>📢 Были добавлены обновления:</strong>\n\n \nДля продолжения работы с ботом \nнеобходимо перезапустить его\n<strong><a href="https://t.me/uselleruz_bot?start=restart">Перезапуск</a></strong>', {parse_mode: 'HTML'})
+        }
 
 
 
@@ -403,7 +402,7 @@ console.log(chat_ids_delete)
 
 }
 
-Bot.clearCashe()
+// Bot.clearCashe()
 
 const bot = new Bot();
 bot.init()
