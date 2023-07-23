@@ -1,5 +1,13 @@
 import {sequelize} from "../db";
-import {Model, DataTypes, Optional, CreationOptional} from 'sequelize'
+import {
+    Model,
+    DataTypes,
+    Optional,
+    CreationOptional,
+    ForeignKey,
+    HasManyGetAssociationsMixin,
+    Association
+} from 'sequelize'
 export enum Statuses {
     TRIAL= 'TRIAL',
     ACTIVE= 'ACTIVE',
@@ -36,6 +44,11 @@ export class Users extends Model {
     declare status: Statuses
     declare date_start: Date
     declare date_end: Date
+    public getOrders: HasManyGetAssociationsMixin<Orders>;
+
+    public static associtations: {
+        projects: Association<Users, Orders>;
+    };
 
 }
 
@@ -44,6 +57,7 @@ export class Users extends Model {
 export class Orders extends Model {
     declare id: CreationOptional<number>
     declare status: string
+    declare userId: ForeignKey<number>
     declare date: number
     declare orderId: number
     declare skuTitle: string
@@ -122,11 +136,11 @@ Orders.init(
             allowNull: false
         },
         date: {
-            type: DataTypes.INTEGER,
+            type: DataTypes.BIGINT,
             allowNull: false,
         },
         orderId: {
-            type: DataTypes.INTEGER,
+            type: DataTypes.BIGINT,
             allowNull: false,
         },
         skuTitle: {
@@ -135,7 +149,7 @@ Orders.init(
         },
 
         productId: {
-            type: DataTypes.INTEGER,
+            type: DataTypes.BIGINT,
             allowNull: false,
         },
         productImage: {
@@ -143,11 +157,11 @@ Orders.init(
             allowNull: false,
         },
         shopId: {
-            type: DataTypes.INTEGER,
+            type: DataTypes.BIGINT,
             allowNull: false,
         },
         dateIssued: {
-            type: DataTypes.INTEGER,
+            type: DataTypes.BIGINT,
             allowNull: true,
         },
         sellPrice: {
@@ -198,6 +212,10 @@ Orders.init(
         shopTitle: {
             type: DataTypes.STRING,
             allowNull: true,
+        },
+        userId: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
         }
     },
 
@@ -209,10 +227,18 @@ Orders.init(
 
 
 Users.hasMany(Orders, { as: "orders" });
-Orders.belongsTo(Users, {
-    foreignKey: "userId",
-    as: "user",
-});
+// Orders.belongsTo(Users, {
+//     as: "user",
+// });
+
+
+//@ts-ignore
+Orders.sequelize.sync({alter: true})
+
+// (async () => {
+//     await sequelize.sync();
+// })();
+
 
 
 

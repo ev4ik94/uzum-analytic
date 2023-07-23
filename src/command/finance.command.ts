@@ -19,6 +19,7 @@ export class FinanceCommand extends Command{
     handle() {
 
         const regexp_finance = new RegExp(/^finance/)
+        const regexp_invoice_id = new RegExp(/^\/invoiceId+.\d/)
 
         this.bot.hears('/finance', async(ctx)=>{
             try{
@@ -161,12 +162,93 @@ export class FinanceCommand extends Command{
         })
 
 
-        this.bot.hears('/timeslots-cache', async(ctx)=>{
+        this.bot.hears('/timeslots', async(ctx)=>{
             try{
                 const {token} = ctx.session
-                const dateFrom = new Date('20-07-2023').getTime()
-                const dateTo = new Date('30-07-2023').getTime()
-                await timeslotsService.getTimeslots(token, [249637], ctx, {from:dateFrom, to:dateTo})
+                const invoice_data:any = await FinanceSevice.getInvoiceInfo(ctx)
+
+                if(invoice_data){
+
+                    let message = ''
+                    const invoice_statuses:any = {
+                        "ACCEPTANCE_IN_PROGRESS": "🕒",
+                        "ACCEPTED": "✅",
+                        "CANCELED": "❌"
+                    }
+
+                    const filterCreated = invoice_data.filter((item:any)=>item.invoiceStatus.value==='CREATED')
+
+                    for(let k=0; k<filterCreated.length; k++){
+
+                        const status = filterCreated[k].invoiceStatus.value
+                        message+=HTMLFormatter([
+                            `/n/s${invoice_statuses[status]?invoice_statuses[status]:''} ${translater(ctx.session.lang||'ru', 'STATUS')}: ${filterCreated[k].status}/s/n/n`,
+                            `/b${translater(ctx.session.lang||'ru', 'INVOICE_NUMBER')}: ${filterCreated[k].invoiceNumber}/b/n/n`,
+                            `/b${translater(ctx.session.lang||'ru', 'DATE_CREATED')}: ${filterCreated[k].dateCreated}/b/n/n`,
+                            `/b${translater(ctx.session.lang||'ru', 'TIMESLOT')}: ${filterCreated[k].timeSlotReservation?DateFormatter(new Date(filterCreated[k].timeSlotReservation.timeFrom)):'-'}/b/n/n`,
+                            `/b${translater(ctx.session.lang||'ru', 'BY_SUM')}: ${NumReplace(filterCreated[k].fullPrice+'')} сум/b/n/n`,
+                            `\/invoiceId${filterCreated[k].id}/n`,
+                            `-----------------------------------------------/n`,
+                        ])
+                    }
+
+                    if(!message.length) {
+                        message = translater(ctx.session.lang||'ru', 'NO_MATCH_DATA')
+                    }
+
+
+                    await ctx.reply(`${translater(ctx.session.lang||'ru', 'SELECT_INVOICE')}`)
+                    await ctx.replyWithHTML(message)
+
+
+
+                } else{
+                    await ctx.replyWithHTML(`${translater(ctx.session.lang||'ru', 'ERROR_HANDLER')}`)
+                }
+
+
+            }catch (err:any){
+
+            }
+        })
+
+
+        this.bot.hears(regexp_invoice_id, async(ctx)=>{
+            try{
+                const {message} = ctx
+                const {token} = ctx.session
+
+
+                //@ts-ignore
+                const data = message.text
+                const invoiceId = data.replace(/^\/invoiceId/, '')
+                let messageData = ''
+
+                if(invoiceId){
+                    const timeslots = await timeslotsService.getTimeslots(token, [+invoiceId], ctx)
+
+                    for(let i=0; i<timeslots.length; i++){
+                        const dateFrom = new Date(timeslots[i].timeFrom)
+                        const dateTo = new Date(timeslots[i].timeTo)
+                        const day = dateFrom.getDate()<10?`0${dateFrom.getDate()}`:dateFrom.getDate()
+                        const hoursFrom = dateFrom.getHours()<10?`0${dateFrom.getHours()}`:dateFrom.getHours()
+                        const minutesFrom = dateFrom.getMinutes()<10?`0${dateFrom.getMinutes()}`:dateFrom.getMinutes()
+                        const hoursTo = dateTo.getHours()<10?`0${dateTo.getHours()}`:dateTo.getHours()
+                        const minutesTo = dateTo.getMinutes()<10?`0${dateTo.getMinutes()}`:dateTo.getMinutes()
+
+                            messageData+=HTMLFormatter([
+                            `/n/s${day} ${month[dateFrom.getMonth()]}  ${hoursFrom}:${minutesFrom} - ${hoursTo}:${minutesTo}/s/n`,
+                            `-----------------------------------------------/n`,
+                        ])
+                    }
+
+                }
+
+                if(!messageData.length) messageData = 'Нет данных'
+
+                await ctx.replyWithHTML(messageData)
+
+
             }catch (err:any){
 
             }

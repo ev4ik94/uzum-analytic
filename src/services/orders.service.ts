@@ -20,7 +20,7 @@ export  default class OrdersService{
     async initData(ctx:any){
         try{
             const {token, userId, shops} = ctx.session
-            const orders_uzum = await this.getOrders({status: 'ALL', ctx, shopId: undefined, token, page:'1', size: 3000})
+            const orders_uzum = await this.getOrders({status: 'ALL', ctx, shopId: undefined, token, page:'1', size: 1500})
             const orderItems = orders_uzum?.orderItems||[]
 
 
@@ -79,8 +79,6 @@ export  default class OrdersService{
 
 
             if(!response_orders.ok) {
-
-                await data.ctx.telegram.sendMessage('@logsUsers', `ApiError.errorMessageFormatter(data.ctx, \`URL: ${response_orders.url} STATUS: ${response_orders.status} USER_ID: ${data.ctx.session.userId} TEXT: ${response_orders.statusText}\n userId: ${data.ctx.session.userId}\n DATA: ${data.ctx.session.refresh_token}`)
 
                 if(response_orders.status===401){
                     await AuthService.refreshToken(data.ctx)
@@ -143,7 +141,7 @@ export  default class OrdersService{
 
 
 
-            const orders_uzum = await this.getOrders({status: 'ALL', ctx, shopId: undefined, token, page:'1', size: 3000})
+            const orders_uzum = await this.getOrders({status: 'ALL', ctx, shopId: undefined, token, page:'1', size: 1500})
             let is_notified = false
 
             let orderItems:any[] = orders_uzum?.orderItems || []
@@ -300,14 +298,36 @@ export  default class OrdersService{
 
             if(!user) throw new Error('Пользователь не найден')
 
-            for(let k=0; k<orders.length; k++){
-                await Orders.create({...orders[k], userId:userId})
-            }
+
+            await Orders.bulkCreate(orders.map((item:any)=>{return {...item, userId:+userId}}))
+                .then((result)=>{
+
+                })
+                .catch((err:any)=>{
+                    throw new Error(err)
+                })
+
+            // for(let k=0; k<orders.length; k++){
+            //     await Orders.bulkCreate({...orders[k], userId:userId})
+            // }
 
 
         }catch (err:any){
             throw new Error(err)
         }
+    }
+
+
+    async deleteAllOrdersByUser(userId:number){
+
+        try{
+            await Orders.destroy({
+                where: {userId:userId}
+            })
+        }catch (err:any){
+
+        }
+
     }
 
 

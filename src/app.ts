@@ -346,9 +346,8 @@ class Bot{
             const read_data:any = fs.readFileSync(path.resolve(__dirname, '../sessions.json'))
             const data_parse = JSON.parse(read_data)
 
-            const user = data_parse?.sessions.find((item:any)=>item.id==="645164294:645164294")
-            console.log(user.shops)
-            console.log(user.current_shop)
+
+
 
             // const clear_list = (data_parse?.sessions||[]).filter((item:any)=>{
             //     const id = (item?.id||'').replace(/^.+?:/, '')
@@ -381,9 +380,9 @@ class Bot{
 
 
 
-        // for(let chatId of chat_ids){
-        //     this.bot.telegram.sendMessage(chatId, '<strong>📢 Были добавлены обновления:</strong>\n\n \nДля продолжения работы с ботом \nнеобходимо перезапустить его\n<strong><a href="https://t.me/uselleruz_bot?start=restart">Перезапуск</a></strong>', {parse_mode: 'HTML'})
-        // }
+        for(let chatId of chat_ids){
+            this.bot.telegram.sendMessage(chatId, '<strong>📢 Были добавлены обновления:</strong>\n\n \nДля продолжения работы с ботом \nнеобходимо перезапустить его\n<strong><a href="https://t.me/uselleruz_bot?start=restart">Перезапуск</a></strong>', {parse_mode: 'HTML'})
+        }
 
 
 
@@ -406,7 +405,7 @@ class Bot{
 
 }
 
-Bot.clearCashe()
+// Bot.clearCashe()
 
 const bot = new Bot();
 bot.init()
