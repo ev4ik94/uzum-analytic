@@ -285,7 +285,7 @@ export class FinanceCommand extends Command{
                             ])
                         }
                     }
-console.log(invoice_data)
+
 
 
                 }
