@@ -3,7 +3,7 @@ import {Markup, Telegraf} from "telegraf";
 import {IBotContext, IResponseProduct, IReview} from "../context/context.interface";
 import ProductsService from "../services/products.service";
 import AuthenticatedService from "../services/authenticated.service";
-import {DateFormatter, HTMLFormatter, NumReplace, translater} from "../utils";
+import {DateFormatter, HTMLFormatter, NumReplace, recursiveSymbols, translater} from "../utils";
 import {ApiError} from "../utils/ErrorHandler";
 
 const authService = new AuthenticatedService()
@@ -150,7 +150,7 @@ export class ProductsCommand extends Command{
                             `${translater(ctx.session.lang||'ru', 'READY_TO_SHIP')}: ${current_product.quantityCreated}/n`,
                             `${translater(ctx.session.lang||'ru', 'VIEWS')}: ${current_product.viewers||0}/n`,
                             `ROI: ${current_product.roi}%/n`,
-                            `${translater(ctx.session.lang||'ru', 'RAITING')}: ${current_product.rating}/n`,
+                            `${translater(ctx.session.lang||'ru', 'RAITING')}: ${current_product.rating>0?recursiveSymbols(current_product.rating?+current_product.rating:0, '⭐️'):0}/n`,
                             `${translater(ctx.session.lang||'ru', 'SOLD')}: ${current_product.quantitySold}/n`,
                             `${translater(ctx.session.lang||'ru', 'RETURN')}: ${current_product.quantityReturned}/n`,
                             `${translater(ctx.session.lang||'ru', 'BRAK')}: ${current_product.quantityDefected}/n`,
@@ -241,7 +241,7 @@ export class ProductsCommand extends Command{
                             `${translater(ctx.session.lang||'ru', 'READY_TO_SHIP')}: ${current_product?.quantityCreated}/n`,
                             `${translater(ctx.session.lang||'ru', 'VIEWS')}: ${current_product?.viewers||0}/n`,
                             `ROI: ${current_product?.roi}%/n`,
-                            `${translater(ctx.session.lang||'ru', 'RAITING')}: ${current_product?.rating}/n`,
+                            `${translater(ctx.session.lang||'ru', 'RAITING')}: ${current_product.rating>0?recursiveSymbols(current_product.rating?+current_product.rating:0, '⭐️'):0}/n`,
                             `${translater(ctx.session.lang||'ru', 'SOLD')}: ${current_product?.quantitySold}/n`,
                             `${translater(ctx.session.lang||'ru', 'RETURN')}: ${current_product?.quantityReturned}/n`,
                             `${translater(ctx.session.lang||'ru', 'BRAK')}: ${current_product?.quantityDefected}/n`,

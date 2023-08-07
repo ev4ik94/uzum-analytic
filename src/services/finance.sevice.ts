@@ -48,9 +48,44 @@ export  default class FinanceSevice {
         try{
             const language:string = ctx.session.lang||'ru'
             const {current_shop, token} = ctx.session
-            const invoice_response = await fetch(`${process.env.API}/seller/shop/${current_shop}/invoice?page=0&size=20`, {
+            const invoice_response = await fetch(`${process.env.API}/seller/shop/${current_shop}/invoice?page=0&size=10`, {
                 headers: {'Authorization': `Bearer ${token}`, 'accept-language': language==='ru'?'ru-RU':'uz-UZ'}
             })
+
+            if(!invoice_response.ok) {
+                if(invoice_response.status===401){
+                    await AuthService.refreshToken(ctx)
+                    return
+                }else if(invoice_response.status===403){
+                    return
+                }else{
+                    await ctx.telegram.sendMessage('@cacheBotError', ApiError.errorMessageFormatter(ctx, `URL: ${invoice_response.url} STATUS: ${invoice_response.status} USER_ID: ${ctx.session.userId} TEXT: ${invoice_response.statusText}`))
+                    return
+                }
+
+                //throw new Error(`URL: ${invoice_response.url} STATUS: ${invoice_response.status} TEXT: ${invoice_response.statusText}`)
+
+            }
+
+            return  await invoice_response.json()
+
+        }catch(err:any){
+            //await ctx.telegram.sendMessage('@cacheErrorBot', ApiError.errorMessageFormatter(ctx, JSON.stringify(err)))
+            //throw new Error(err)
+        }
+    }
+
+
+    static async getInvoiceData(ctx:any, invoiceId:string){
+        try{
+
+            const language:string = ctx.session.lang||'ru'
+            const {current_shop, token} = ctx.session
+            const invoice_response = await fetch(`${process.env.API}/seller/shop/${current_shop}/invoice/getInvoiceProducts?invoiceId=${invoiceId}`, {
+                headers: {'Authorization': `Bearer ${token}`, 'accept-language': language==='ru'?'ru-RU':'uz-UZ'}
+            })
+
+
 
             if(!invoice_response.ok) {
                 if(invoice_response.status===401){

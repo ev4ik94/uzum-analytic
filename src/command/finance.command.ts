@@ -20,6 +20,7 @@ export class FinanceCommand extends Command{
 
         const regexp_finance = new RegExp(/^finance/)
         const regexp_invoice_id = new RegExp(/^\/invoiceId+.\d/)
+        const regexp_invoice_id_view = new RegExp(/^\/invoiceView+.\d/)
 
         this.bot.hears('/finance', async(ctx)=>{
             try{
@@ -59,13 +60,13 @@ export class FinanceCommand extends Command{
 
                         message+=HTMLFormatter([
                             `/n/s✅ ${translater(ctx.session.lang||'ru', 'FINANCE_APPROVED')}:/n/n    ${NumReplace(response_data.forWithdraw+'')} сум/s/n`,
-                            `-----------------------------------------------/n`,
+                            `---------------------------------------------/n`,
                             `/b🕘 ${translater(ctx.session.lang||'ru', 'FINANCE_PROCESSING')}:/n/n    ${NumReplace(response_data.processing+'')} сум/b/n`,
-                            `-----------------------------------------------/n`,
+                            `---------------------------------------------/n`,
                             `/b❌ ${translater(ctx.session.lang||'ru', 'FINANCE_CANCELED')}:/n/n    ${NumReplace(response_data.cancelled+'')} сум/b/n`,
-                            `-----------------------------------------------/n`,
+                            `---------------------------------------------/n`,
                             `/b🗓 ${translater(ctx.session.lang||'ru', 'FINANCE_PERIOD')} ${month[month_current]}:/n/n    ${NumReplace(response_data.withdrawnForCurrentMonth+'')} сум/b/n`,
-                            `-----------------------------------------------/n`,
+                            `---------------------------------------------/n`,
                             `/b⏺ ${translater(ctx.session.lang||'ru', 'FINANCE_PERIOD_ALL_TIME')}:/n/n    ${NumReplace(response_data.withdrawn+'')} сум/b/n`
                         ])
 
@@ -90,7 +91,7 @@ export class FinanceCommand extends Command{
                             message_history+=HTMLFormatter([
                                 `/b${translater(ctx.session.lang||'ru', 'FINANCE_AMOUNT')}: ${NumReplace(item.amount+'')} сум/b/n`,
                                 `/b${DateFormatter(new Date(item.createdDate))}/n/n${item.status==='APPROVED'?`✅ ${translater(ctx.session.lang||'ru', 'FINANCE_AMOUNT')}`:item.status==='CREATED'?`🕘 ${translater(ctx.session.lang||'ru', 'PROCESSING_HISTORY')}`:`❌ ${translater(ctx.session.lang||'ru', 'CANCELED_STATUS')}`}/b/n`,
-                                `-----------------------------------------------/n`,
+                                `--------------------------------------------/n`,
                             ])
                         })
 
@@ -135,7 +136,8 @@ export class FinanceCommand extends Command{
                             `/b${translater(ctx.session.lang||'ru', 'DATE_CREATED')}: ${invoice_data[k].dateCreated}/b/n/n`,
                             `/b${translater(ctx.session.lang||'ru', 'TIMESLOT')}: ${invoice_data[k].timeSlotReservation?DateFormatter(new Date(invoice_data[k].timeSlotReservation.timeFrom)):'-'}/b/n/n`,
                             `/b${translater(ctx.session.lang||'ru', 'BY_SUM')}: ${NumReplace(invoice_data[k].fullPrice+'')} сум/b/n/n`,
-                            `-----------------------------------------------/n`,
+                            `\/invoiceView${invoice_data[k].id}/n`,
+                            `--------------------------------------------/n`,
                         ])
                     }
 
@@ -164,7 +166,7 @@ export class FinanceCommand extends Command{
 
         this.bot.hears('/timeslots', async(ctx)=>{
             try{
-                const {token} = ctx.session
+
                 const invoice_data:any = await FinanceSevice.getInvoiceInfo(ctx)
 
                 if(invoice_data){
@@ -188,7 +190,7 @@ export class FinanceCommand extends Command{
                             `/b${translater(ctx.session.lang||'ru', 'TIMESLOT')}: ${filterCreated[k].timeSlotReservation?DateFormatter(new Date(filterCreated[k].timeSlotReservation.timeFrom)):'-'}/b/n/n`,
                             `/b${translater(ctx.session.lang||'ru', 'BY_SUM')}: ${NumReplace(filterCreated[k].fullPrice+'')} сум/b/n/n`,
                             `\/invoiceId${filterCreated[k].id}/n`,
-                            `-----------------------------------------------/n`,
+                            `--------------------------------------------/n`,
                         ])
                     }
 
@@ -238,9 +240,53 @@ export class FinanceCommand extends Command{
 
                             messageData+=HTMLFormatter([
                             `/n/s${day} ${month[dateFrom.getMonth()]}  ${hoursFrom}:${minutesFrom} - ${hoursTo}:${minutesTo}/s/n`,
-                            `-----------------------------------------------/n`,
+                            `--------------------------------------------/n`,
                         ])
                     }
+
+                }
+
+                if(!messageData.length) messageData = 'Нет данных'
+
+                await ctx.replyWithHTML(messageData)
+
+
+            }catch (err:any){
+
+            }
+        })
+
+
+        this.bot.hears(regexp_invoice_id_view, async(ctx)=>{
+            try{
+                const {message} = ctx
+
+
+                //@ts-ignore
+                const data = message.text
+                const invoiceId = data.replace(/^\/invoiceView/, '')
+                let messageData = ''
+
+                if(invoiceId){
+
+                    const invoice_data = await FinanceSevice.getInvoiceData(ctx, invoiceId)
+
+                    if(invoice_data&&invoice_data.length){
+                        for(let i=0; i<invoice_data.length; i++){
+                            let elem = invoice_data[i]
+
+                            messageData+=HTMLFormatter([
+                                `/n/sSKU:/s ${elem.skuTitle}/n`,
+                                `/n/s${translater(ctx.session.lang||'ru', 'INVOICE_PRODUCT_TITLE')}:/s ${elem.productTitle}/n`,
+                                `/n/s${translater(ctx.session.lang||'ru', 'INVOICE_PRODUCT_STOCK')}:/s ${elem.quantityToStock}/n`,
+                                `/n/s${translater(ctx.session.lang||'ru', 'INVOICE_PRODUCT_ACCEPTED')}:/s ${elem.quantityAccepted}/n`,
+                                `/n/s${translater(ctx.session.lang||'ru', 'INVOICE_PRODUCT_PRICE')}:/s ${NumReplace(elem.purchasePrice+'')} сум/n`,
+                                `---------------------------------------------/n`,
+                            ])
+                        }
+                    }
+console.log(invoice_data)
+
 
                 }
 

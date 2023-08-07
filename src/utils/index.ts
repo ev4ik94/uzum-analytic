@@ -37,6 +37,8 @@ export function translater(language:string, id:string){
 
 export const month:string[] = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь']
 
-
+export function recursiveSymbols(num:number, symbol:string):any{
+    return num>1?recursiveSymbols(num-1, symbol) + symbol: symbol
+}
 
 
