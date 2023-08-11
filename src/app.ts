@@ -61,17 +61,19 @@ class Bot{
 
         this.bot.use(async(ctx, next)=>{
 
-            //@ts-ignore
-            const text = ctx.update?.message?.text
-            const commands = ['/start', '/cabinet']
+            // //@ts-ignore
+            // const text = ctx.update?.message?.text
+            // const commands = ['/start', '/cabinet']
+            //
+            // //@ts-ignore
+            // const callback = ctx.update?.callback_query?.data || ''
+            // const callback_query = ['support', 'directory', 'sign-out', 'signoutYES', 'signoutNO', 'language', 'langRU', 'langUZ']
+            //
+            // if(callback_query.includes(callback)&&!commands.includes(text)) {
+            //     await next()
+            // }
 
-            //@ts-ignore
-            const callback = ctx.update?.callback_query?.data || ''
-            const callback_query = ['support', 'directory', 'sign-out', 'signoutYES', 'signoutNO', 'language', 'langRU', 'langUZ']
 
-            if(callback_query.includes(callback)&&!commands.includes(text)) {
-                await next()
-            }
             if(ctx?.session?.token){
 
 
@@ -397,9 +399,9 @@ class Bot{
 
 
 
-        // for(let chatId of chat_ids){
-        //     this.bot.telegram.sendMessage(chatId, '<strong>📢 Были добавлены обновления:</strong>\n\n \nДля продолжения работы с ботом \nнеобходимо перезапустить его\n<strong><a href="https://t.me/uselleruz_bot?start=restart">Перезапуск</a></strong>', {parse_mode: 'HTML'})
-        // }
+        for(let chatId of chat_ids){
+            this.bot.telegram.sendMessage(chatId, '<strong>📢 Были добавлены обновления:</strong>\n\n \nДля продолжения работы с ботом \nнеобходимо перезапустить его\n<strong><a href="https://t.me/uselleruz_bot?start=restart">Перезапуск</a></strong>', {parse_mode: 'HTML'})
+        }
 
 
 
