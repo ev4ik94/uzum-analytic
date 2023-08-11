@@ -64,7 +64,9 @@ class Bot{
             if(ctx?.session?.token){
 
 
-
+                if(+ctx.session.userId===256610968){
+                    console.log(ctx.session)
+                }
 
                 await AuthService.checkToken(ctx)
 
@@ -72,6 +74,8 @@ class Bot{
 
 
                 if(ctx.session&&!ctx.session?.userId){
+
+
 
                     //@ts-ignore
                     if(ctx.message&&ctx.message.from){

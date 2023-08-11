@@ -34,23 +34,14 @@ export  default class AuthenticatedService{
 
             if(!response.ok) {
                 ctx.session = null
+                console.log(ctx.session)
+                console.log(`${response.status} TEXT: ${response.statusText}`)
                 return ctx.reply('Ваша сессия была прервана, пожалуйста авторизуйтесь снова /start')
             }
 
             const body: any = await response.json();
 
-            if (body.status > 300) {
-                throw new Error(`${process.env.API}/oauth/token`)
-            }
-
-            if (body.errors || body.error) {
-                if (body.errors.length) {
-                    throw new Error(body.errors[0].code + ': ' + body.errors[0].detailMessage)
-                }
-                if (body.error) {
-                    throw new Error('Ошибка' + ': ' + body.error)
-                }
-            }
+           console.log('Next ')
 
             ctx.session.token = body.access_token
             ctx.session.refresh_token = body.refresh_token
