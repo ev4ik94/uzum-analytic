@@ -1,7 +1,7 @@
 import {IAuth, IConfig} from "../config/config.interface";
 import {IResponseProduct} from "../context/context.interface";
 import {translater} from "../utils";
-const fetch = require('node-fetch')
+
 
 
 

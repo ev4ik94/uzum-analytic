@@ -73,10 +73,6 @@ class Bot{
 
                 if(ctx.session&&!ctx.session?.userId){
 
-                    if(+ctx.session.userId===645164294){
-                        await ctx.telegram.sendMessage('@logsUsers', `Магазины ${ctx.session.shops}\n Текущий магазин ${ctx.session.current_shop}`)
-                    }
-
                     //@ts-ignore
                     if(ctx.message&&ctx.message.from){
                         //@ts-ignore
@@ -385,9 +381,9 @@ class Bot{
 
 
 
-        for(let chatId of chat_ids){
-            this.bot.telegram.sendMessage(chatId, '<strong>📢 Были добавлены обновления:</strong>\n\n \nДля продолжения работы с ботом \nнеобходимо перезапустить его\n<strong><a href="https://t.me/uselleruz_bot?start=restart">Перезапуск</a></strong>', {parse_mode: 'HTML'})
-        }
+        // for(let chatId of chat_ids){
+        //     this.bot.telegram.sendMessage(chatId, '<strong>📢 Были добавлены обновления:</strong>\n\n \nДля продолжения работы с ботом \nнеобходимо перезапустить его\n<strong><a href="https://t.me/uselleruz_bot?start=restart">Перезапуск</a></strong>', {parse_mode: 'HTML'})
+        // }
 
 
 

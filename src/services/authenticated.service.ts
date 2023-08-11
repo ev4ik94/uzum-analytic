@@ -32,6 +32,11 @@ export  default class AuthenticatedService{
                 }
             });
 
+            if(!response.ok) {
+                ctx.session = null
+                return ctx.reply('Ваша сессия была прервана, пожалуйста авторизуйтесь снова /start')
+            }
+
             const body: any = await response.json();
 
             if (body.status > 300) {
