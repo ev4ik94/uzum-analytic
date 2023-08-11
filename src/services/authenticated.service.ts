@@ -49,7 +49,7 @@ export  default class AuthenticatedService{
 
             const body: any = await response.json();
 
-           console.log('Next ')
+        
 
             ctx.session.token = body.access_token
             ctx.session.refresh_token = body.refresh_token

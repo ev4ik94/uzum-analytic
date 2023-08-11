@@ -61,7 +61,17 @@ class Bot{
 
         this.bot.use(async(ctx, next)=>{
 
+            //@ts-ignore
+            const text = ctx.update?.message?.text
+            const commands = ['/start', '/cabinet']
 
+            //@ts-ignore
+            const callback = ctx.update?.callback_query?.data || ''
+            const callback_query = ['support', 'directory', 'sign-out', 'signoutYES', 'signoutNO', 'language', 'langRU', 'langUZ']
+
+            if(callback_query.includes(callback)&&!commands.includes(text)) {
+                await next()
+            }
             if(ctx?.session?.token){
 
 
