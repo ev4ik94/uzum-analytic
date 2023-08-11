@@ -5,9 +5,10 @@ import {IOrders} from '../context/context.interface'
 import AuthenticatedService from "./authenticated.service";
 
 import {Orders, Users} from "../models";
+import {StateManager} from "../state";
 
-
-const AuthService = new AuthenticatedService()
+const stateManagers = new StateManager()
+const AuthService = new AuthenticatedService(stateManagers)
 
 
 export  default class OrdersService{

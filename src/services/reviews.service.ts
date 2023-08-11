@@ -3,8 +3,11 @@ import AuthenticatedService from "./authenticated.service";
 const fetch = require('node-fetch')
 import {IReview} from "../context/context.interface";
 import {ApiError} from "../utils/ErrorHandler";
+import {StateManager} from "../state";
 
-const AuthService = new AuthenticatedService()
+
+const stateManagers = new StateManager()
+const AuthService = new AuthenticatedService(stateManagers)
 
 
 export  default class ReviewsService{

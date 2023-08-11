@@ -5,8 +5,11 @@ import ProductsService from "../services/products.service";
 import AuthenticatedService from "../services/authenticated.service";
 import {DateFormatter, HTMLFormatter, NumReplace, recursiveSymbols, translater} from "../utils";
 import {ApiError} from "../utils/ErrorHandler";
+import {StateManager} from "../state";
 
-const authService = new AuthenticatedService()
+const stateManagers = new StateManager()
+
+const authService = new AuthenticatedService(stateManagers)
 
 const productsService = new ProductsService()
 

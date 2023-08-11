@@ -3,8 +3,11 @@ const fetch = require('node-fetch')
 import {ApiError} from "../utils/ErrorHandler";
 import {IOrders} from "../context/context.interface";
 import AuthenticatedService from "./authenticated.service";
+import {StateManager} from "../state";
 
-const AuthService = new AuthenticatedService()
+const stateManagers = new StateManager()
+
+const AuthService = new AuthenticatedService(stateManagers)
 
 export  default class FinanceSevice {
 

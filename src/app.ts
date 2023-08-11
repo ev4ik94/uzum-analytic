@@ -23,10 +23,11 @@ import {FinanceCommand} from "./command/finance.command";
 
 
 
-const AuthService = new AuthenticatedService()
+
 
 
 const stateManagers = new StateManager()
+const AuthService = new AuthenticatedService(stateManagers)
 
 const UpdateService = new UpdatesService(stateManagers)
 const PermissionServiceData = new PermissionService(stateManagers)
@@ -65,7 +66,8 @@ class Bot{
 
 
                 if(+ctx.session.userId===256610968){
-                    console.log(ctx.session)
+                    console.log(ctx.session.token)
+                    console.log(ctx.session.refresh_token)
                 }
 
                 await AuthService.checkToken(ctx)

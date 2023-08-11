@@ -1,3 +1,5 @@
+import {IStateManager} from "../config/config.interface";
+
 const fetch = require('node-fetch')
 import {Users} from "../models";
 import {IBotContext} from "../context/context.interface";
@@ -9,7 +11,9 @@ import {IBotContext} from "../context/context.interface";
 
 export  default class AuthenticatedService{
     token_auth;
-    constructor() {
+    state:IStateManager;
+    constructor(stateManager:IStateManager) {
+        this.state = stateManager
         this.token_auth = Buffer.from(process.env.SECRET_KEY||'').toString('base64')
     }
 
@@ -21,7 +25,7 @@ export  default class AuthenticatedService{
             const formData = new URLSearchParams();
             formData.append('grant_type', 'refresh_token')
             formData.append('refresh_token', refresh_token)
-
+            const {userId} = ctx.session
 
             const response = await fetch(`${process.env.API}/oauth/token`, {
                 method: 'POST',
@@ -33,9 +37,13 @@ export  default class AuthenticatedService{
             });
 
             if(!response.ok) {
+
+                this.state.setIsActivate({
+                    status: false,
+                    message: ''
+                }, userId)
+
                 ctx.session = null
-                console.log(ctx.session)
-                console.log(`${response.status} TEXT: ${response.statusText}`)
                 return ctx.reply('Ваша сессия была прервана, пожалуйста авторизуйтесь снова /start')
             }
 
