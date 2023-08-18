@@ -47,11 +47,11 @@ export  default class FinanceSevice {
         }
     }
 
-    static async getInvoiceInfo(ctx:any){
+    static async getInvoiceInfo(ctx:any, size:number=10){
         try{
             const language:string = ctx.session.lang||'ru'
             const {current_shop, token} = ctx.session
-            const invoice_response = await fetch(`${process.env.API}/seller/shop/${current_shop}/invoice?page=0&size=10`, {
+            const invoice_response = await fetch(`${process.env.API}/seller/shop/${current_shop}/invoice?page=0&size=${size}`, {
                 headers: {'Authorization': `Bearer ${token}`, 'accept-language': language==='ru'?'ru-RU':'uz-UZ'}
             })
 
@@ -211,7 +211,7 @@ export  default class FinanceSevice {
     async notifyInvoice(ctx:any){
         try{
             const {userId} = ctx.session
-            const invoice_request = await FinanceSevice.getInvoiceInfo(ctx)
+            const invoice_request = await FinanceSevice.getInvoiceInfo(ctx, 30)
             const invoice = this.state.getInvoice(userId)
             let is_notified = false
 
