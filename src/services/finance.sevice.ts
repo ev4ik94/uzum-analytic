@@ -20,7 +20,7 @@ export  default class FinanceSevice {
         try{
             const {userId} = ctx.session
             const payments_uzum = await FinanceSevice.requestHistory(ctx, true)
-            const invoice = await FinanceSevice.getInvoiceInfo(ctx)
+            const invoice = await FinanceSevice.getInvoiceInfo(ctx, 30)
 
             if(payments_uzum) this.state.setPayments(payments_uzum?.withdrawList||[], userId)
             if(invoice) this.state.setInvoice(invoice||[], userId)
