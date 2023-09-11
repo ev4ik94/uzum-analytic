@@ -4,11 +4,14 @@ import {IBotContext} from "../context/context.interface";
 import {ApiError} from "../utils/ErrorHandler";
 import {IStateManager} from "../config/config.interface";
 import {translater} from "../utils";
+import {StateManager} from "../state";
+import PermissionService from "../services/permissions.service";
 
 
 
 
-
+const stateManagers = new StateManager()
+const PermissionServiceData = new PermissionService(stateManagers)
 
 
 export class StartCommand extends Command{
@@ -57,6 +60,7 @@ export class StartCommand extends Command{
                 const {update} = ctx
                 const {userId} = ctx.session
 
+
                 //@ts-ignore
                 const data = update.callback_query.data
                 const language = data.replace(regexp_language, '')
@@ -65,17 +69,24 @@ export class StartCommand extends Command{
 
 
                 if(!ctx.session.token){
-                    return await ctx.reply(translater(language.toLowerCase(), 'START_AUTHORIZATION'), {
-                        reply_markup:{
-                            inline_keyboard: [
-                                [{text: translater(language.toLowerCase(), 'AUTHORIZATION'), web_app:{url:process.env.FRONT_URL!}}]
-                            ]
-                        },
+                    const user = await PermissionServiceData.getChatIds()
 
-                    })
+                    if(user.includes(+userId)){
+                        return await ctx.reply(translater(language.toLowerCase(), 'START_AUTHORIZATION'), {
+                            reply_markup:{
+                                inline_keyboard: [
+                                    [{text: translater(language.toLowerCase(), 'AUTHORIZATION'), web_app:{url:process.env.FRONT_URL!}}]
+                                ]
+                            },
+
+                        })
+                    }else{
+                        return await ctx.reply('Доступ закрыт, бот прекратил свою работу')
+                    }
+
                 }
 
-                return await ctx.reply(`${translater(language.toLowerCase(), 'SELECTED')} ${language==='RU'?'Русский язык':'O`zbek tilini'}`)
+                //return await ctx.reply(`${translater(language.toLowerCase(), 'SELECTED')} ${language==='RU'?'Русский язык':'O`zbek tilini'}`)
             }catch (err:any){
                 throw new Error(err)
             }

@@ -53,10 +53,6 @@ export class OrdersCommand extends Command{
                 const elem:any = (ctx.session.orders||[]).find((item:IOrders)=>+item.id===+orderId)
 
 
-                // if(+userId===7219204){
-                //     await ctx.telegram.sendMessage('@logsUsers', `Запрос: (orderView-${orderId}) ${data}\nОтвет:\n${JSON.stringify(elem||{})}\n Длина массива элементов - ${ctx.session.orders.length}`)
-                // }
-
                 if(elem){
                     let remaindSku = await productService.remainderSku(ctx, ctx.session.token, elem.productId, elem.skuTitle)
                     let canceledSku = await productService.remainderSku(ctx, ctx.session.token, elem.productId, elem.skuTitle, 'CANCELED')
@@ -87,8 +83,7 @@ export class OrdersCommand extends Command{
                             `/b${translater(ctx.session.lang||'ru', 'DATE_BUY')}:/b ${date}/n`,
                             `/b${translater(ctx.session.lang||'ru', 'DATE_CANCELED')}:/b ${dateIssue}/n`,
                             `-----------------------------------------------/n/n`,
-                            `/b${translater(ctx.session.lang||'ru', 'CANCELED_ITEMS')}: ${canceledSku||translater(ctx.session.lang||'ru', 'NO_MATCH_DATA')}/b/n`,
-                            `/b${translater(ctx.session.lang||'ru', 'REMAIND_ITEMS')}: ${remaindSku||translater(ctx.session.lang||'ru', 'NO_MATCH_DATA')}/b`,
+
                         ])
 
                     }else if(elem.dateIssued){
@@ -102,7 +97,7 @@ export class OrdersCommand extends Command{
                             `/b${translater(ctx.session.lang||'ru', 'DATE_BUY')}:/b ${date}/n`,
                             `/b${translater(ctx.session.lang||'ru', 'DATE_ISSUED')}:/b ${dateIssue}/n`,
                             `-----------------------------------------------/n/n`,
-                            `/b${translater(ctx.session.lang||'ru', 'REMAIND_ITEMS')}: ${remaindSku||translater(ctx.session.lang||'ru', 'NO_MATCH_DATA')}/b`,
+
                         ])
                     }else{
                         message+=HTMLFormatter([
@@ -115,7 +110,7 @@ export class OrdersCommand extends Command{
                             `/b${translater(ctx.session.lang||'ru', 'DATE_BUY')}:/b ${date}/n`,
                             `/b${translater(ctx.session.lang||'ru', 'DATE_ISSUED')}:/b --- /n`,
                             `-----------------------------------------------/n/n`,
-                            `/b${translater(ctx.session.lang||'ru', 'REMAIND_ITEMS')}: ${remaindSku||translater(ctx.session.lang||'ru', 'NO_MATCH_DATA')}/b`,
+
                         ])
 
                     }

@@ -100,16 +100,11 @@ export  default class UpdatesService{
 
                     for(let k=0; k<notified_data.length;k++){
                         if(notified_data[k].type==='new_order'){
-                            // if(+ctx.session.userId===7219204){
-                            //     await ctx.telegram.sendMessage('@logsUsers', `Запрос: (Уведомления) Новый заказ\nОтвет:\n${JSON.stringify(notified_data[k].order||{})}`)
-                            // }
+
                             await ctx.reply(`📢 ${translater(language, 'NEW_ORDER')} ❗️❗️❗️`,  Markup.inlineKeyboard([Markup.button.callback(translater(language, 'VIEW'), `orderView${notified_data[k].order.id}`)]))
                         }else if(notified_data[k].type==='change_status'){
                             const status = notified_data[k].order?.status
 
-                            // if(+ctx.session.userId===7219204){
-                            //     await ctx.telegram.sendMessage('@logsUsers', `Запрос: (Уведомления) Статус измене\nОтвет:\n${JSON.stringify(notified_data[k].order||{})}`)
-                            // }
 
                             if(status==='CANCELED'){
                                 await ctx.reply(`📢 ${translater(language, 'CANCELED_ORDER')} ❌`,  Markup.inlineKeyboard([Markup.button.callback(translater(language, 'VIEW'), `orderView${notified_data[k].order.id}`)]))
@@ -123,9 +118,6 @@ export  default class UpdatesService{
 
                         }else if(notified_data[k].type==='change_date'){
                             if(notified_data[k].order.dateIssued){
-                                // if(+ctx.session.userId===7219204){
-                                //     await ctx.telegram.sendMessage('@logsUsers', `Запрос: (Уведомления) Заказ получен\nОтвет:\n${JSON.stringify(notified_data[k].order||{})}`)
-                                // }
                                 await ctx.reply(`📢 ${translater(language, 'WITH_DRAW_ORDER')} 🛍`,  Markup.inlineKeyboard([Markup.button.callback(translater(language, 'VIEW'), `orderView${notified_data[k].order.id}`)]))
                             }
 
@@ -150,7 +142,7 @@ export  default class UpdatesService{
 
                 if(invoice){
                     for(let k=0; k<invoice.length; k++){
-                        await ctx.replyWithHTML(`<strong>📢 ${translater(language, 'CHANGE_INVOICE')} 📦</strong>\n${translater(language, 'INVOICE_NUMBER')} ${invoice[k].invoice.invoiceNumber}\nСтатус: ${invoice[k].invoice.status}`, {parse_mode:'HTML'})
+                        await ctx.replyWithHTML(`<strong>📢 ${translater(language, 'CHANGE_INVOICE')} 📦</strong>\n${translater(language, 'INVOICE_NUMBER')} ${invoice[k].invoice.invoiceNumber}\nСтатус: ${invoice[k].invoice.status}\n\/invoiceId${invoice[k].invoice.id}`, {parse_mode:'HTML'})
                     }
                 }
             }

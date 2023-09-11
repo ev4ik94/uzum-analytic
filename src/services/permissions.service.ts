@@ -40,8 +40,6 @@ export  default class PermissionsService{
         try{
             const user = await Users.findOne({where:{id}})
 
-            if(!user) throw new Error('Такого пользователя нет')
-
             return user
         }catch(err:any){
             throw new Error(err)
@@ -140,7 +138,7 @@ export  default class PermissionsService{
 
                 this.state.setIsActivate({
                     status: false,
-                    message:'<strong>Подписка истекла❗</strong>️\nДля получения подписки обратитесь в <a href="https://t.me/manager_useller">Службу поддержки</a>'
+                    message:'<strong>Подписка истекла❗</strong>'
                 }, userId+'')
                 const diffTime = Math.abs(date_end - date_now);
                 const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
@@ -219,7 +217,7 @@ export  default class PermissionsService{
 
             this.state.setIsActivate({
                 status: false,
-                message:find_user.status===Statuses.TRIAL?'<strong>Ваш пробный период окончен❗</strong>\nДля получения подписки обратитесь в <a href="https://t.me/manager_useller">Службу поддержки</a>':'<strong>Подписка истекла❗</strong>\nДля получения подписки обратитесь в <a href="https://t.me/manager_useller">Службу поддержки</a>'
+                message:find_user.status===Statuses.TRIAL?'<strong>Ваш пробный период окончен❗</strong>':'<strong>Подписка истекла❗</strong>'
             }, userId+'')
 
         }catch(err:any){
