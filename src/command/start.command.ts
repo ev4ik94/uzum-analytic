@@ -28,14 +28,6 @@ export class StartCommand extends Command{
             const language = ctx.session.lang || 'ru'
 
 
-            // if(ctx.message.from.id===424705333) {
-            //     ctx.session.token = 'sdfdsf'
-            //     ctx.session.refresh_token = 'yz_TtM9MRXM1Ehm_-fojn5ER-_k'
-            // }
-
-
-
-
             if(!ctx.session.token){
                 //@ts-ignore
                 ctx.session.userId = ctx.message.from.id
@@ -72,8 +64,7 @@ export class StartCommand extends Command{
 
                 if(!ctx.session.token){
                     const user = await PermissionServiceData.getChatIds()
-console.log(user)
-console.log(+userId)
+
                     if(user.includes(+userId)){
                         return await ctx.reply(translater(language.toLowerCase(), 'START_AUTHORIZATION'), {
                             reply_markup:{
