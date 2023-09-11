@@ -70,7 +70,8 @@ export class StartCommand extends Command{
 
                 if(!ctx.session.token){
                     const user = await PermissionServiceData.getChatIds()
-
+console.log(user)
+console.log(+userId)
                     if(user.includes(+userId)){
                         return await ctx.reply(translater(language.toLowerCase(), 'START_AUTHORIZATION'), {
                             reply_markup:{
