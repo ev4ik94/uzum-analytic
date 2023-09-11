@@ -37,7 +37,8 @@ export class StartCommand extends Command{
 
 
             if(!ctx.session.token){
-
+                //@ts-ignore
+                ctx.session.userId = ctx.message.from.id
                 const buttons = Markup.inlineKeyboard([
                     [Markup.button.callback('Русский 🇷🇺', 'langRU'), Markup.button.callback('O`zbek 🇺🇿', 'langUZ')]
                 ])
@@ -58,12 +59,8 @@ export class StartCommand extends Command{
 
             try{
                 const {update} = ctx
-                let userId = 0
-console.log(ctx)
-                if(ctx.message) {
-                    //@ts-ignore
-                    userId = ctx.message.from.id
-                }
+                let userId = ctx.session.userId
+
 
 
                 //@ts-ignore
