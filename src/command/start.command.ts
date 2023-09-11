@@ -59,7 +59,7 @@ export class StartCommand extends Command{
             try{
                 const {update} = ctx
                 let userId = 0
-
+console.log(ctx)
                 if(ctx.message) {
                     //@ts-ignore
                     userId = ctx.message.from.id
