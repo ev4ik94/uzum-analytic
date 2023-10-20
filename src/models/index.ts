@@ -233,7 +233,7 @@ Users.hasMany(Orders, { as: "orders" });
 
 
 //@ts-ignore
-Orders.sequelize.sync({alter: true})
+// Orders.sequelize.sync({alter: true})
 
 // (async () => {
 //     await sequelize.sync();

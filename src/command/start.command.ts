@@ -63,20 +63,16 @@ export class StartCommand extends Command{
 
 
                 if(!ctx.session.token){
-                    const user = await PermissionServiceData.getChatIds()
+                    // const user = await PermissionServiceData.getChatIds()
 
-                    if(user.includes(+userId)){
-                        return await ctx.reply(translater(language.toLowerCase(), 'START_AUTHORIZATION'), {
-                            reply_markup:{
-                                inline_keyboard: [
-                                    [{text: translater(language.toLowerCase(), 'AUTHORIZATION'), web_app:{url:process.env.FRONT_URL!}}]
-                                ]
-                            },
+                    return await ctx.reply(translater(language.toLowerCase(), 'START_AUTHORIZATION'), {
+                        reply_markup:{
+                            inline_keyboard: [
+                                [{text: translater(language.toLowerCase(), 'AUTHORIZATION'), web_app:{url:process.env.FRONT_URL!}}]
+                            ]
+                        },
 
-                        })
-                    }else{
-                        return await ctx.reply('Доступ закрыт, бот прекратил свою работу')
-                    }
+                    })
 
                 }
 

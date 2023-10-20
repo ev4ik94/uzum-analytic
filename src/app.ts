@@ -41,7 +41,7 @@ app.use(fileupload({}))
 app.use(express.static(path.resolve(__dirname, 'static')))
 dotenv.config()
 
-
+const users = ['eva_4eva', 'Akhadov']
 
 
 class Bot{
@@ -64,7 +64,10 @@ class Bot{
             //@ts-ignore
             if(ctx.message&&ctx.message.from){
                 //@ts-ignore
-                console.log(ctx.message.from)
+                if(!users.includes(ctx.message.from.username)){
+                    return
+                }
+
                 // //@ts-ignore
                 // ctx.session.userId = ctx.message.from.id
             }
@@ -389,9 +392,9 @@ class Bot{
 
 
 
-        for(let chatId of chat_ids){
-            this.bot.telegram.sendMessage(chatId, '<strong>📢 Были добавлены обновления:</strong>\n\n \nДля продолжения работы с ботом \nнеобходимо перезапустить его\n<strong><a href="https://t.me/uselleruz_bot?start=restart">Перезапуск</a></strong>', {parse_mode: 'HTML'})
-        }
+        // for(let chatId of chat_ids){
+        //     this.bot.telegram.sendMessage(chatId, '<strong>📢 Были добавлены обновления:</strong>\n\n \nДля продолжения работы с ботом \nнеобходимо перезапустить его\n<strong><a href="https://t.me/uselleruz_bot?start=restart">Перезапуск</a></strong>', {parse_mode: 'HTML'})
+        // }
 
 
 
