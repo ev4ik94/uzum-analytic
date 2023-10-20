@@ -61,18 +61,13 @@ class Bot{
 
         this.bot.use(async(ctx, next)=>{
 
-            // //@ts-ignore
-            // const text = ctx.update?.message?.text
-            // const commands = ['/start', '/cabinet']
-            //
-            // //@ts-ignore
-            // const callback = ctx.update?.callback_query?.data || ''
-            // const callback_query = ['support', 'directory', 'sign-out', 'signoutYES', 'signoutNO', 'language', 'langRU', 'langUZ']
-            //
-            // if(callback_query.includes(callback)&&!commands.includes(text)) {
-            //     await next()
-            // }
-
+            //@ts-ignore
+            if(ctx.message&&ctx.message.from){
+                //@ts-ignore
+                console.log(ctx.message.from)
+                // //@ts-ignore
+                // ctx.session.userId = ctx.message.from.id
+            }
 
             if(ctx?.session?.token){
 
@@ -247,11 +242,11 @@ class Bot{
             })
 
 
-            await PermissionServiceData.addUser({
-                userId: user.id,
-                chatId: user.id,
-                username: user.username||''
-            })
+            // await PermissionServiceData.addUser({
+            //     userId: user.id,
+            //     chatId: user.id,
+            //     username: user.username||''
+            // })
 
 
 
@@ -385,9 +380,9 @@ class Bot{
 
 
     async init(){
-        await sequelize.authenticate()
-        await sequelize.sync()
-        const chat_ids  = await PermissionServiceData.getChatIds()
+        // await sequelize.authenticate()
+        // await sequelize.sync()
+        // const chat_ids  = await PermissionServiceData.getChatIds()
         await this.serverStart()
         await this.routing()
 
@@ -409,8 +404,6 @@ class Bot{
 
         this.bot.catch((err:any) => {
             console.log(err)
-            this.bot.telegram.sendMessage('@cacheBotError', err)
-
 
         })
         await this.bot.launch()
