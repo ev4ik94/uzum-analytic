@@ -272,6 +272,7 @@ console.log(data_parse)
                     title: 'Не удалось авторизоваться',
                     input_message_content: {message_text: 'Авторизация не прошла'}
                 })
+                console.log(err)
                 return res.status(500).json({error:err, message: 'Ошибка'})
             }
         })
