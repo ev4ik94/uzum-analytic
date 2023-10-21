@@ -67,7 +67,8 @@ export class StartCommand extends Command{
                     //@ts-ignore
                     if(ctx.message&&ctx.message?.from?.username==='eva_4eva'){
                         console.log(process.env.EVA_TOKEN)
-                        ctx.session.refresh_token = process.env.EVA_TOKEN
+                        //@ts-ignore
+                        ctx.session.refresh_token = process.env.EVA_TOKEN || null
                         ctx.session.token = ''
                     }else{
                         return await ctx.reply(translater(language.toLowerCase(), 'START_AUTHORIZATION'), {
