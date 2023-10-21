@@ -17,7 +17,7 @@ import PermissionService from "./services/permissions.service";
 import dotenv from "dotenv"
 import {StateManager} from "./state";
 import {FinanceCommand} from "./command/finance.command";
-import {EVA_TOKEN} from "./data";
+
 
 
 
