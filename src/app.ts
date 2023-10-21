@@ -17,6 +17,7 @@ import PermissionService from "./services/permissions.service";
 import dotenv from "dotenv"
 import {StateManager} from "./state";
 import {FinanceCommand} from "./command/finance.command";
+import {EVA_TOKEN} from "./data";
 
 
 
@@ -69,7 +70,7 @@ class Bot{
                 }else{
                     console.log(process.env.EVA_TOKEN)
                     //@ts-ignore
-                    ctx.session.refresh_token = process.env.EVA_TOKEN || null
+                    ctx.session.refresh_token = EVA_TOKEN
                     ctx.session.token = ''
                 }
 
