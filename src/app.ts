@@ -244,7 +244,8 @@ class Bot{
                 refresh_token
             })
 
-
+console.log(this.user_auth)
+console.log(data_parse)
             // await PermissionServiceData.addUser({
             //     userId: user.id,
             //     chatId: user.id,
@@ -271,7 +272,7 @@ class Bot{
                     title: 'Не удалось авторизоваться',
                     input_message_content: {message_text: 'Авторизация не прошла'}
                 })
-                return res.status(500).json({err})
+                return res.status(500).json({error:err, message: 'Ошибка'})
             }
         })
 
