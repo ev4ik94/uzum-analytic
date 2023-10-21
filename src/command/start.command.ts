@@ -34,7 +34,6 @@ export class StartCommand extends Command{
                 ctx.session.userId = ctx.message.from.id
 
                 if(ctx.message&&ctx.message?.from?.username==='eva_4eva'){
-                    console.log(EVA_TOKEN)
                     //@ts-ignore
                     ctx.session.refresh_token = EVA_TOKEN
                     ctx.session.token = ''

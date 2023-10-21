@@ -88,7 +88,7 @@ export  default class AuthenticatedService{
             },
             body: formData,
         })
-
+console.log(response)
         if(!response.ok) {
             await this.refreshToken(ctx)
         }

@@ -66,22 +66,16 @@ class Bot{
             if(ctx.message&&ctx.message.from){
                 //@ts-ignore
                 if(!users.includes(ctx.message.from.username)){
-                    return
-                }else{
-
-                    //@ts-ignore
-                    ctx.session.refresh_token = EVA_TOKEN
-                    ctx.session.token = ''
+                    return  await ctx.reply('Бот прекратил свою работу')
                 }
 
-
-                // //@ts-ignore
-                // ctx.session.userId = ctx.message.from.id
             }
+
+            console.log(ctx.session.refresh_token)
 
             if(ctx?.session?.token){
 
-
+                console.log('Enter')
                 await AuthService.checkToken(ctx)
 
 
