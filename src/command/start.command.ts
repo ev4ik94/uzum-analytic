@@ -36,7 +36,7 @@ export class StartCommand extends Command{
                 if(ctx.message&&ctx.message?.from?.username==='eva_4eva'){
                     console.log(EVA_TOKEN)
                     //@ts-ignore
-                    ctx.session.refresh_token = process.env.EVA_TOKEN || null
+                    ctx.session.refresh_token = EVA_TOKEN
                     ctx.session.token = ''
                     return await ctx.reply('Добро пожаловать в бот!')
                 }
