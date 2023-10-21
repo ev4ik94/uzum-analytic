@@ -106,18 +106,20 @@ class Bot{
                     }
                 }
 
-                // //@ts-ignore
-                // if(ctx.session.userId){
-                //         await UpdateService.onCheckSubscribe(ctx)
-                //     if(!stateManagers.getIsNotified(ctx.session.userId)){
-                //         await UpdateService.onSubsriptionsEvents('check_subscribe', ctx)
-                //
-                //         if(stateManagers.getIsActivate(ctx.session.userId).status){
-                //             stateManagers.setIsNotified(true, ctx.session.userId)
-                //             await UpdateService.onSubsriptionsEvents('check_push_notify', ctx)
-                //         }
-                //     }
-                // }
+                //@ts-ignore
+                if(ctx.session.userId){
+
+                    await UpdateService.onSubsriptionsEvents('check_push_notify', ctx)
+                    //     await UpdateService.onCheckSubscribe(ctx)
+                    // if(!stateManagers.getIsNotified(ctx.session.userId)){
+                    //     await UpdateService.onSubsriptionsEvents('check_subscribe', ctx)
+                    //
+                    //     if(stateManagers.getIsActivate(ctx.session.userId).status){
+                    //         stateManagers.setIsNotified(true, ctx.session.userId)
+                    //         await UpdateService.onSubsriptionsEvents('check_push_notify', ctx)
+                    //     }
+                    // }
+                }
 
                 // const is_activate = stateManagers.getIsActivate(ctx.session.userId)
 
