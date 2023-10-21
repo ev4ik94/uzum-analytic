@@ -68,11 +68,15 @@ class Bot{
                 if(!users.includes(ctx.message.from.username)){
                     return  await ctx.reply('Бот прекратил свою работу')
                 }else{
-                    this.user_auth.push({
-                        id: ctx.session.userId,
-                        token: ctx.session.token,
-                        refresh_token: ctx.session.refresh_token
-                    })
+
+                    if(!ctx?.session?.token){
+                        this.user_auth.push({
+                            id: ctx.session.userId,
+                            token: ctx.session.token,
+                            refresh_token: ctx.session.refresh_token
+                        })
+                    }
+
 
 
                 }
@@ -82,15 +86,13 @@ class Bot{
 
             if(ctx?.session?.token){
 
-                console.log('Enter')
+                console.log(ctx?.session?.token)
+                console.log(ctx?.session?.userId)
+
                 await AuthService.checkToken(ctx)
 
 
-
-
                 if(ctx.session&&!ctx.session?.userId){
-
-
 
                     //@ts-ignore
                     if(ctx.message&&ctx.message.from){
@@ -133,23 +135,23 @@ class Bot{
                     }
                 }
 
-                const is_activate = stateManagers.getIsActivate(ctx.session.userId)
+                // const is_activate = stateManagers.getIsActivate(ctx.session.userId)
 
 
-                if(!is_activate?.status){
-                    //@ts-ignore
-                    const text = ctx.update?.message?.text
-                    const commands = ['/start', '/cabinet']
-
-                    //@ts-ignore
-                    const callback = ctx.update?.callback_query?.data || ''
-                    const callback_query = ['support', 'directory', 'sign-out', 'signoutYES', 'signoutNO', 'language', 'langRU', 'langUZ']
-
-                    if(!callback_query.includes(callback)&&!commands.includes(text)) {
-                        return await ctx.replyWithHTML(is_activate.message)
-                    }
-
-                }
+                // if(!is_activate?.status){
+                //     //@ts-ignore
+                //     const text = ctx.update?.message?.text
+                //     const commands = ['/start', '/cabinet']
+                //
+                //     //@ts-ignore
+                //     const callback = ctx.update?.callback_query?.data || ''
+                //     const callback_query = ['support', 'directory', 'sign-out', 'signoutYES', 'signoutNO', 'language', 'langRU', 'langUZ']
+                //
+                //     if(!callback_query.includes(callback)&&!commands.includes(text)) {
+                //         return await ctx.replyWithHTML(is_activate.message)
+                //     }
+                //
+                // }
 
 
 
@@ -165,7 +167,7 @@ class Bot{
                         ctx.session.refresh_token = user_auth_data.refresh_token
                         this.user_auth = this.user_auth.filter((item:any)=>+item.id!==+user_auth_data.id)
 
-                        await ctx.reply('Добро пожаловать в бот!')
+                        // await ctx.reply('Добро пожаловать в бот!')
 
                     }else{
                         //@ts-ignore
