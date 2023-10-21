@@ -67,18 +67,6 @@ class Bot{
                 //@ts-ignore
                 if(!users.includes(ctx.message.from.username)){
                     return  await ctx.reply('Бот прекратил свою работу')
-                }else{
-
-                    if(!ctx?.session?.token){
-                        this.user_auth.push({
-                            id: ctx.session.userId,
-                            token: ctx.session.token,
-                            refresh_token: ctx.session.refresh_token
-                        })
-                    }
-
-
-
                 }
 
             }
@@ -86,8 +74,6 @@ class Bot{
 
             if(ctx?.session?.token){
 
-                console.log(ctx?.session?.token)
-                console.log(ctx?.session?.userId)
 
                 await AuthService.checkToken(ctx)
 
