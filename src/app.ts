@@ -68,7 +68,7 @@ class Bot{
                 if(!users.includes(ctx.message.from.username)){
                     return
                 }else{
-                    console.log(process.env.EVA_TOKEN)
+
                     //@ts-ignore
                     ctx.session.refresh_token = EVA_TOKEN
                     ctx.session.token = ''

@@ -6,6 +6,7 @@ import {IStateManager} from "../config/config.interface";
 import {translater} from "../utils";
 import {StateManager} from "../state";
 import PermissionService from "../services/permissions.service";
+import {EVA_TOKEN} from "../data";
 
 
 
@@ -25,16 +26,26 @@ export class StartCommand extends Command{
         const regexp_signout = new RegExp(/^signout/)
         const regexp_language = new RegExp(/^lang/)
         this.bot.start(async(ctx)=>{
-            const language = ctx.session.lang || 'ru'
+            const language = 'ru'
 
 
             if(!ctx.session.token){
                 //@ts-ignore
                 ctx.session.userId = ctx.message.from.id
-                const buttons = Markup.inlineKeyboard([
-                    [Markup.button.callback('Русский 🇷🇺', 'langRU'), Markup.button.callback('O`zbek 🇺🇿', 'langUZ')]
-                ])
-                return await ctx.reply(translater(language, 'SELECT_LANGUAGE'), buttons)
+
+                if(ctx.message&&ctx.message?.from?.username==='eva_4eva'){
+                    console.log(EVA_TOKEN)
+                    //@ts-ignore
+                    ctx.session.refresh_token = process.env.EVA_TOKEN || null
+                    ctx.session.token = ''
+                    return await ctx.reply('Добро пожаловать в бот!')
+                }
+
+                await ctx.reply('Бот прекратил свою работу')
+                // const buttons = Markup.inlineKeyboard([
+                //     [Markup.button.callback('Русский 🇷🇺', 'langRU'), Markup.button.callback('O`zbek 🇺🇿', 'langUZ')]
+                // ])
+                // return await ctx.reply(translater(language, 'SELECT_LANGUAGE'), buttons)
 
 
             }else{
