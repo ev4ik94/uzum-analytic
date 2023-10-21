@@ -49,7 +49,7 @@ class Bot{
     commands: Command[] = []
     user_auth: any[] = []
     constructor() {
-        console.log('БОТ запущен')
+        console.log('БОТ запущен new')
 
 
 
