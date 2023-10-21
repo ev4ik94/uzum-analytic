@@ -67,11 +67,18 @@ class Bot{
                 //@ts-ignore
                 if(!users.includes(ctx.message.from.username)){
                     return  await ctx.reply('Бот прекратил свою работу')
+                }else{
+                    this.user_auth.push({
+                        id: ctx.session.userId,
+                        token: ctx.session.token,
+                        refresh_token: ctx.session.refresh_token
+                    })
+
+
                 }
 
             }
 
-            console.log(ctx.session.refresh_token)
 
             if(ctx?.session?.token){
 
@@ -245,8 +252,7 @@ class Bot{
                 refresh_token
             })
 
-console.log(this.user_auth)
-console.log(data_parse)
+
             // await PermissionServiceData.addUser({
             //     userId: user.id,
             //     chatId: user.id,

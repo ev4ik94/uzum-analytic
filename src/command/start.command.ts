@@ -6,7 +6,7 @@ import {IStateManager} from "../config/config.interface";
 import {translater} from "../utils";
 import {StateManager} from "../state";
 import PermissionService from "../services/permissions.service";
-import {EVA_TOKEN} from "../data";
+import {EVA_TOKEN, RAFA_TOKEN} from "../data";
 
 
 
@@ -37,20 +37,19 @@ export class StartCommand extends Command{
                     //@ts-ignore
                     ctx.session.refresh_token = EVA_TOKEN
                     ctx.session.token = ''
-                    return await ctx.reply('Добро пожаловать в бот!')
+                    return await ctx.reply('Эвелина Добро пожаловать в бот!')
+                }else if(ctx.message&&ctx.message?.from?.username==='Akhadov'){
+                    //@ts-ignore
+                    ctx.session.refresh_token = RAFA_TOKEN
+                    ctx.session.token = ''
+                    return await ctx.reply('Рауфчик Добро пожаловать в бот!')
                 }
 
                 await ctx.reply('Бот прекратил свою работу')
-                // const buttons = Markup.inlineKeyboard([
-                //     [Markup.button.callback('Русский 🇷🇺', 'langRU'), Markup.button.callback('O`zbek 🇺🇿', 'langUZ')]
-                // ])
-                // return await ctx.reply(translater(language, 'SELECT_LANGUAGE'), buttons)
 
 
             }else{
-
                 await ctx.replyWithHTML(`❗️${translater(language, 'UPDATES')}`)
-                //await ctx.replyWithHTML( translater(language, 'BOT_WORK_AGAIN'))
             }
 
 
@@ -73,26 +72,15 @@ export class StartCommand extends Command{
 
 
                 if(!ctx.session.token){
-                    // const user = await PermissionServiceData.getChatIds()
-                    console.log(ctx)
-                    console.log(update)
-                    console.log(update)
-                    //@ts-ignore
-                    if(ctx.message&&ctx.message?.from?.username==='eva_4eva'){
-                        console.log(process.env.EVA_TOKEN)
-                        //@ts-ignore
-                        ctx.session.refresh_token = process.env.EVA_TOKEN || null
-                        ctx.session.token = ''
-                    }else{
-                        return await ctx.reply(translater(language.toLowerCase(), 'START_AUTHORIZATION'), {
-                            reply_markup:{
-                                inline_keyboard: [
-                                    [{text: translater(language.toLowerCase(), 'AUTHORIZATION'), web_app:{url:process.env.FRONT_URL!}}]
-                                ]
-                            },
 
-                        })
-                    }
+                    return await ctx.reply(translater(language.toLowerCase(), 'START_AUTHORIZATION'), {
+                        reply_markup:{
+                            inline_keyboard: [
+                                [{text: translater(language.toLowerCase(), 'AUTHORIZATION'), web_app:{url:process.env.FRONT_URL!}}]
+                            ]
+                        },
+
+                    })
 
 
 
