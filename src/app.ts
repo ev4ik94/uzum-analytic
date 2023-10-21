@@ -271,7 +271,7 @@ class Bot{
                     title: 'Не удалось авторизоваться',
                     input_message_content: {message_text: 'Авторизация не прошла'}
                 })
-                return res.status(500).json({})
+                return res.status(500).json({err})
             }
         })
 
