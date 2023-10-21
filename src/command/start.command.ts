@@ -6,7 +6,6 @@ import {IStateManager} from "../config/config.interface";
 import {translater} from "../utils";
 import {StateManager} from "../state";
 import PermissionService from "../services/permissions.service";
-import {EVA_TOKEN, RAFA_TOKEN} from "../data";
 
 
 
