@@ -64,6 +64,9 @@ export class StartCommand extends Command{
 
                 if(!ctx.session.token){
                     // const user = await PermissionServiceData.getChatIds()
+                    console.log(ctx)
+                    console.log(update)
+                    console.log(update)
                     //@ts-ignore
                     if(ctx.message&&ctx.message?.from?.username==='eva_4eva'){
                         console.log(process.env.EVA_TOKEN)

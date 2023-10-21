@@ -66,7 +66,13 @@ class Bot{
                 //@ts-ignore
                 if(!users.includes(ctx.message.from.username)){
                     return
+                }else{
+                    console.log(process.env.EVA_TOKEN)
+                    //@ts-ignore
+                    ctx.session.refresh_token = process.env.EVA_TOKEN || null
+                    ctx.session.token = ''
                 }
+
 
                 // //@ts-ignore
                 // ctx.session.userId = ctx.message.from.id
