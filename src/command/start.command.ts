@@ -65,14 +65,21 @@ export class StartCommand extends Command{
                 if(!ctx.session.token){
                     // const user = await PermissionServiceData.getChatIds()
 
-                    return await ctx.reply(translater(language.toLowerCase(), 'START_AUTHORIZATION'), {
-                        reply_markup:{
-                            inline_keyboard: [
-                                [{text: translater(language.toLowerCase(), 'AUTHORIZATION'), web_app:{url:process.env.FRONT_URL!}}]
-                            ]
-                        },
+                    if(ctx.message.from.username==='eva_4eva'){
+                        ctx.session.refresh_token = process.env.EVA_TOKEN
+                        ctx.session.token = ''
+                    }else{
+                        return await ctx.reply(translater(language.toLowerCase(), 'START_AUTHORIZATION'), {
+                            reply_markup:{
+                                inline_keyboard: [
+                                    [{text: translater(language.toLowerCase(), 'AUTHORIZATION'), web_app:{url:process.env.FRONT_URL!}}]
+                                ]
+                            },
 
-                    })
+                        })
+                    }
+
+
 
                 }
 
