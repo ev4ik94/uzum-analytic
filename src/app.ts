@@ -13,7 +13,6 @@ import {OrdersCommand} from "./command/orders.command";
 import AuthenticatedService from "./services/authenticated.service";
 import {ReviewsCommand} from "./command/reviews.command";
 import UpdatesService from "./services/updates.service";
-import PermissionService from "./services/permissions.service";
 import dotenv from "dotenv"
 import {StateManager} from "./state";
 import {FinanceCommand} from "./command/finance.command";
@@ -31,7 +30,6 @@ const stateManagers = new StateManager()
 const AuthService = new AuthenticatedService(stateManagers)
 
 const UpdateService = new UpdatesService(stateManagers)
-const PermissionServiceData = new PermissionService(stateManagers)
 const path = require("path")
 
 
@@ -108,18 +106,18 @@ class Bot{
                     }
                 }
 
-                //@ts-ignore
-                if(ctx.session.userId){
-                        await UpdateService.onCheckSubscribe(ctx)
-                    if(!stateManagers.getIsNotified(ctx.session.userId)){
-                        await UpdateService.onSubsriptionsEvents('check_subscribe', ctx)
-
-                        if(stateManagers.getIsActivate(ctx.session.userId).status){
-                            stateManagers.setIsNotified(true, ctx.session.userId)
-                            await UpdateService.onSubsriptionsEvents('check_push_notify', ctx)
-                        }
-                    }
-                }
+                // //@ts-ignore
+                // if(ctx.session.userId){
+                //         await UpdateService.onCheckSubscribe(ctx)
+                //     if(!stateManagers.getIsNotified(ctx.session.userId)){
+                //         await UpdateService.onSubsriptionsEvents('check_subscribe', ctx)
+                //
+                //         if(stateManagers.getIsActivate(ctx.session.userId).status){
+                //             stateManagers.setIsNotified(true, ctx.session.userId)
+                //             await UpdateService.onSubsriptionsEvents('check_push_notify', ctx)
+                //         }
+                //     }
+                // }
 
                 // const is_activate = stateManagers.getIsActivate(ctx.session.userId)
 
@@ -192,45 +190,9 @@ class Bot{
         app.get(`/`, (req:Request, res:Response)=>{
             res.send('HELLO I`m work')
         })
-        app.get(`/users`, async(req:Request, res:Response)=>{
-            const {search, status} = req.query
 
-            let users:any = {}
-            if(search){
-                users = await PermissionServiceData.searchUser(search)
-            }else if(status){
-                users = await PermissionServiceData.sortUser(status)
-            }else{
-                users = await PermissionServiceData.getUsersAll()
-            }
 
-            return res.status(200).json(users)
-        })
-        app.get(`/users/:userId`, async(req:Request, res:Response)=>{
-            const {userId} = req.params
-            const result = await PermissionServiceData.searchUserByUserId(+userId)
 
-            if(result) return res.status(200).json(result)
-            return res.status(404).json({message: 'Такого пользователя нет'})
-
-        })
-
-        app.get(`/users/:id`, async(req:Request, res:Response)=>{
-            const {id} = req.params
-            const user = await PermissionServiceData.getUser(+id)
-            return res.status(200).json(user)
-        })
-        app.put(`/users/:id`, async(req:Request, res:Response)=>{
-            const {id} = req.params
-            const {body} = req
-            await PermissionServiceData.userUpdate(+id, body)
-            return res.status(200).json({status:'ok'})
-        })
-        app.delete(`/users/:id`, async(req:Request, res:Response)=>{
-            const {id} = req.params
-            await PermissionServiceData.userDelete(+id)
-            return res.status(200).json({status:'ok'})
-        })
         app.post('/web-data', async(req:Request, res:Response)=>{
             const {query_id, token, refresh_token, tg_data} = req.body
             const data_parse = JSON.parse(tg_data)
@@ -241,14 +203,6 @@ class Bot{
                 token,
                 refresh_token
             })
-
-
-            // await PermissionServiceData.addUser({
-            //     userId: user.id,
-            //     chatId: user.id,
-            //     username: user.username||''
-            // })
-
 
 
 
@@ -273,13 +227,6 @@ class Bot{
                 return res.status(500).json({error:err, message: 'Ошибка'})
             }
         })
-
-
-        app.get('/public/:id', function (req, res) {
-           const {id} = req.params
-            const filepath = `${path.resolve(__dirname, 'static', id)}`;
-            res.sendFile(filepath);
-        });
 
 
 
@@ -348,7 +295,7 @@ class Bot{
     static async clearCashe(){
         try{
 
-            const chat_ids_active  = await PermissionServiceData.getChatIds()
+            // const chat_ids_active  = await PermissionServiceData.getChatIds()
             const read_data:any = fs.readFileSync(path.resolve(__dirname, '../sessions.json'))
             const data_parse = JSON.parse(read_data)
 

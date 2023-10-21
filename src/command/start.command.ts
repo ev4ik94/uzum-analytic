@@ -4,14 +4,11 @@ import {IBotContext} from "../context/context.interface";
 import {ApiError} from "../utils/ErrorHandler";
 import {IStateManager} from "../config/config.interface";
 import {translater} from "../utils";
-import {StateManager} from "../state";
-import PermissionService from "../services/permissions.service";
 
 
 
 
-const stateManagers = new StateManager()
-const PermissionServiceData = new PermissionService(stateManagers)
+
 
 
 export class StartCommand extends Command{

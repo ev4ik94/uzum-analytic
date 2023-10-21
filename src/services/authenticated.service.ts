@@ -1,8 +1,6 @@
 import {IStateManager} from "../config/config.interface";
 
 const fetch = require('node-fetch')
-import {Users} from "../models";
-import {IBotContext} from "../context/context.interface";
 import {USERS_DATA} from "../data";
 
 
@@ -75,13 +73,13 @@ export  default class AuthenticatedService{
 
             if(!response.ok) {
 
-                this.state.setIsActivate({
-                    status: false,
-                    message: ''
-                }, userId)
-
-                ctx.session = null
-                return ctx.reply('Ваша сессия была прервана, пожалуйста авторизуйтесь снова /start')
+                // this.state.setIsActivate({
+                //     status: false,
+                //     message: ''
+                // }, userId)
+                //
+                // ctx.session = null
+                // return ctx.reply('Ваша сессия была прервана, пожалуйста авторизуйтесь снова /start')
             }
 
             const body: any = await response.json();
@@ -125,7 +123,7 @@ export  default class AuthenticatedService{
             },
             body: formData,
         })
-console.log(response)
+
         if(!response.ok) {
             await this.refreshToken(ctx)
         }
