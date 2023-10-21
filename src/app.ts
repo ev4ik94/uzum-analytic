@@ -157,25 +157,27 @@ class Bot{
 
 
             }else{
+                await AuthService.Authenticated(ctx)
                 //@ts-ignore
                 if(ctx.message&&ctx.message.from.id){
                     //@ts-ignore
-                    let user_auth_data = this.user_auth.find((item:any)=>+item.id===+ctx.message.from.id)
+                    // let user_auth_data = this.user_auth.find((item:any)=>+item.id===+ctx.message.from.id)
+                    //
+                    // if(user_auth_data){
+                    //     ctx.session.token = user_auth_data.token
+                    //     ctx.session.refresh_token = user_auth_data.refresh_token
+                    //     this.user_auth = this.user_auth.filter((item:any)=>+item.id!==+user_auth_data.id)
+                    //
+                    //     // await ctx.reply('Добро пожаловать в бот!')
+                    //
+                    // }else{
+                    //     //@ts-ignore
+                    //     const text = ctx.update.message.text
+                    //
+                    //     const commands = ['/start', '/cabinet']
+                    //     if(!commands.includes(text)) return await ctx.reply('Вы не авторизованы')
+                    // }
 
-                    if(user_auth_data){
-                        ctx.session.token = user_auth_data.token
-                        ctx.session.refresh_token = user_auth_data.refresh_token
-                        this.user_auth = this.user_auth.filter((item:any)=>+item.id!==+user_auth_data.id)
-
-                        // await ctx.reply('Добро пожаловать в бот!')
-
-                    }else{
-                        //@ts-ignore
-                        const text = ctx.update.message.text
-
-                        const commands = ['/start', '/cabinet']
-                        if(!commands.includes(text)) return await ctx.reply('Вы не авторизованы')
-                    }
                 }else{
                     //@ts-ignore
                     const callback = ctx.update?.callback_query?.data || ''

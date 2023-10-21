@@ -34,14 +34,13 @@ export class StartCommand extends Command{
                 ctx.session.userId = ctx.message.from.id
 
                 if(ctx.message&&ctx.message?.from?.username==='eva_4eva'){
+
                     //@ts-ignore
-                    ctx.session.refresh_token = EVA_TOKEN
-                    ctx.session.token = ''
+                    ctx.session.user_name = ctx.message.from.username
                     return await ctx.reply('Эвелина Добро пожаловать в бот!')
                 }else if(ctx.message&&ctx.message?.from?.username==='Akhadov'){
                     //@ts-ignore
-                    ctx.session.refresh_token = RAFA_TOKEN
-                    ctx.session.token = ''
+                    ctx.session.user_name = ctx.message.from.username
                     return await ctx.reply('Рауфчик Добро пожаловать в бот!')
                 }
 

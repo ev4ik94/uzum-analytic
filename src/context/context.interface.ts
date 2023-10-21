@@ -25,6 +25,7 @@ export interface IHistoryRequest{
 export interface ISessionData{
     auth_email: string
     password: string
+    user_name: string
     userId: string
     lang: string
     token: string

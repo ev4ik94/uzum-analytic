@@ -3,6 +3,7 @@ import {IStateManager} from "../config/config.interface";
 const fetch = require('node-fetch')
 import {Users} from "../models";
 import {IBotContext} from "../context/context.interface";
+import {USERS_DATA} from "../data";
 
 
 
@@ -15,6 +16,42 @@ export  default class AuthenticatedService{
     constructor(stateManager:IStateManager) {
         this.state = stateManager
         this.token_auth = Buffer.from(process.env.SECRET_KEY||'').toString('base64')
+    }
+
+
+
+    async Authenticated(ctx:any){
+        try{
+            const {user_name} = ctx.session
+            const formData = new URLSearchParams();
+            formData.append('grant_type', 'password')
+            formData.append('referer', '')
+            formData.append('username', USERS_DATA[user_name].username)
+            formData.append('password', USERS_DATA[user_name].password)
+
+            const response = await fetch(`${process.env.API}/oauth/token`, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Authorization': `Basic ${this.token_auth}`
+                }
+            });
+
+            if(!response.ok) {
+
+                return ctx.reply('Ошибка авторизации')
+            }
+
+            const body: any = await response.json();
+
+            ctx.session.token = body.access_token
+            ctx.session.refresh_token = body.refresh_token
+
+            return ctx.reply('Вы успешно авторизовались')
+        }catch(err){
+
+        }
     }
 
 
